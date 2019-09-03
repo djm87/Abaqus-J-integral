@@ -1,7 +1,24 @@
-import Utilities
-import Integration
-import C3D20 
-import JCore
+from abaqusConstants import *
+from odbAccess import *
+from textRepr import *
+from shutil import copyfile
+from os import getcwd, path
+import numpy as np
+import pprint
+import time
+import sys
+
+#Set folder with the code to be imported
+sys.path.insert(1, 'E:\Dropbox\Research\Source\Abaqus-J-integral\code')
+
+try:
+	del sys.modules['Utilities']
+	del sys.modules['JCore']
+except KeyError:
+	print 'No modules to remove'
+
+from Utilities import *
+from JCore import *
 
 #Get the working directory 
 workingDir=os.getcwd()
@@ -10,10 +27,11 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbPath = os.path.normpath(workingDir+"/Job-3PB-Quarter-All-C3D20-Dan.odb")
+odbName="ThroughThicknessCrackInInfinitePlaneNoSymm"
+odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
-readOnlyOdb = True
+readOnlyOdb = False
 
 #Close odb before opening 
 closeBeforeOdb=True
@@ -22,31 +40,33 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=False 
-copyodbPath=os.path.normpath(workingDir+"/Job-3PB-Quarter-All-C3D20-Dan.odb")
+copyOdb=True 
+copyodbNameEnd="_copy"
+copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
 #Set the part instance to perform calculations on
-partInstance = "NOCHEDSPECIMEN-C-1"
+partInstance = "PLATE-1"
 
 
-##The following are specific to the J integral
+##The following are specific to the J integral 
 #The crack front axis
-crackFrontAxis=3 
+crackFrontAxis=3 #i.e. 3 is along the z direction
 
+qdir=1
 #Set the number of contour levels
-nContourLvls=10 
+nContourLvls=13 
 
 #Set the first node label at the crack tip 
-nodeLabelTip=512 
+nodeLabelTip=26 
 
-#model is symmetric about the crack tip
+#model is symmetric about the crack tip (matters only for scaling J integral by 2)
 symm=False
 
 #Build element sets (needed for calculating the J integral
-buildElSet=False
+buildElSet=True
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-ElSetName='test2'
+SetPrefix='test2'
 
 #******************************************************************************
 #Open ODB
@@ -57,14 +77,13 @@ if closeBeforeOdb:
 	else:
 		Ensure_ODB_Is_Closed(odbPath,session)
 if copyOdb:
+	Ensure_ODB_Is_Closed(copyodbPath,session)
 	copyfile(odbPath, copyodbPath)
 	odb = openOdb(path=copyodbPath,readOnly=readOnlyOdb)
 else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
-# Get components of odb
-root=odb.rootAssembly
-part=root.instances[partInstance]
+
 steps=odb.steps
 
 # Get the step keys
@@ -80,12 +99,9 @@ lastFrame = frames[-1]
 #current time
 TTAU = lastFrame.frameValue
 
-#Get the elements
-elements=part.elements
 
 if buildElSet:
-
-	BuildElementAndNodeSets(nContourLvls,nodeLabelTip,crackFrontAxis,elements,root,partInstance) #Move elements inside
+	BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
 
 if closeAfterOdb:
 	odb.close()

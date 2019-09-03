@@ -1,3 +1,12 @@
+from abaqusConstants import *
+from odbAccess import *
+from textRepr import *
+from shutil import copyfile
+from os import getcwd, path
+import numpy as np
+import pprint
+import time
+import sys
 def Gauss_Guad_1d(npoints):
 	#determines the integration points and weighting coefficients for 
 	#Gauss-legendre quadrature for 1d integration which can then be used for n-dim quadrature

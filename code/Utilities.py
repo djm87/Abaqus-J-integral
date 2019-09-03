@@ -37,11 +37,11 @@ def Numpy_2_Tuple(nplist):
 def	CheckFieldExists(frame,fieldName,position):
 	try:
 		if position=='ELEMENT_NODAL':
-			field = currentFrame.fieldOutputs[fieldName].getSubset(position=ELEMENT_NODAL)
+			field = frame.fieldOutputs[fieldName].getSubset(position=ELEMENT_NODAL)
 		elif position=='INTEGRATION_POINT':
-			field = currentFrame.fieldOutputs[fieldName].getSubset(position=INTEGRATION_POINT)
+			field = frame.fieldOutputs[fieldName].getSubset(position=INTEGRATION_POINT)
 		elif position=='NODAL':
-			field = currentFrame.fieldOutputs[fieldName].getSubset(position=NODAL)		
+			field = frame.fieldOutputs[fieldName].getSubset(position=NODAL)		
 		else:
 			print 'please enter ELEMENT_NODAL, INTEGRATION_POINT, or NODAL strings for position'
 			raise NameError('invalid position specified')

@@ -1,0 +1,2782 @@
+1
+
+   Abaqus 3DEXPERIENCE R2019x                                  Date 27-Aug-2019   Time 22:50:55
+   For use by UNIVERSITY SYSTEM OF NEW HAMPSHIRE under license from Dassault Systemes or its subsidiary.
+
+
+
+                         The Abaqus Software is a product of:
+
+                           Dassault Systemes SIMULIA Corp.
+                           1301 Atwood Avenue, Suite 101W
+                              Johnston, RI 02919, USA
+ 
+
+
+                   The Abaqus Software is available only under license
+                   from Dassault Systemes or its subsidiary and may be
+                   used or reproduced only in accordance with the terms
+                   of such license.
+ 
+                          On machine Savage 
+                          you are authorized to run
+                          Abaqus/Standard until 14-Dec-2019
+
+                          Your site id is: 200000000057051 
+
+
+ 
+                    For assistance or any other information you may
+                    obtain contact information for your local office
+                    from the world wide web at:
+
+                      http://www.3ds.com/products/simulia/locations/
+
+ 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                *                                                         * 
+                *                   *****************                     * 
+                *                   *  N O T I C E  *                     * 
+                *                   *****************                     * 
+                *                                                         * 
+                *                                                         * 
+                *               Abaqus 3DEXPERIENCE R2019x                * 
+                *                                                         * 
+                *          BUILD ID: 2018_09_24-14.41.51 157541           * 
+                *                                                         * 
+                *                                                         * 
+                *  Please make sure you are using                         * 
+                *  release 3DEXPERIENCE R2019x manuals                    * 
+                *  plus the notes accompanying this release.              * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *                                                         * 
+                *   This program may not be used for commercial purposes  * 
+                *           without payment of a commercial fee.          * 
+                *                                                         * 
+                * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+
+ 
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+  *contourintegral, crackname=J-INTEGRAL_CRACK, contours=10, cracktipnodes, symm
+  *contourintegral, crackname=KI_CRACK, type=KFACTORS, direction=MERR, contours=10, cracktipnodes, symm
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *Heading
+  *Node
+  *Element, type=C3D20
+  *Nset, nset=ASSEMBLY_PLATE-1_SET-8
+  *Elset, elset=ASSEMBLY_PLATE-1_SET-8
+  *Nset, nset="ASSEMBLY_Edge Seeds-1"
+  *Nset, nset="ASSEMBLY_Edge Seeds-2"
+  *Nset, nset=ASSEMBLY_OUTER-SEEDS
+  *Nset, nset=ASSEMBLY_SET-25
+  *Nset, nset=ASSEMBLY_SET-26
+  *Nset, nset=ASSEMBLY_SET-27
+  *Nset, nset=ASSEMBLY_SET-39
+  *Nset, nset=ASSEMBLY_SET-50
+  *Nset, nset=ASSEMBLY__PICKEDSET36
+  *Nset, nset=ASSEMBLY__PICKEDSET36-10_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-11_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-12_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-13_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-14_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-15_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-16_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-17_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-18_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-19_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-1_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-20_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-21_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-22_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-23_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-24_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-25_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-26_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-27_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-28_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-29_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-2_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-30_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-31_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-32_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-33_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-34_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-35_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-36_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-37_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-38_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-39_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-3_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-40_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-41_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-4_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-5_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-6_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-7_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-8_
+  *Nset, nset=ASSEMBLY__PICKEDSET36-9_
+  *Nset, nset=ASSEMBLY__PICKEDSET37
+  *Nset, nset=ASSEMBLY__PICKEDSET37-10_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-11_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-12_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-13_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-14_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-15_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-16_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-17_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-18_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-19_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-1_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-20_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-21_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-22_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-23_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-24_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-25_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-26_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-27_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-28_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-29_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-2_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-30_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-31_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-32_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-33_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-34_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-35_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-36_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-37_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-38_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-39_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-3_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-40_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-41_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-4_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-5_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-6_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-7_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-8_
+  *Nset, nset=ASSEMBLY__PICKEDSET37-9_
+  *Elset, elset="ASSEMBLY_Edge Seeds-1"
+  *Elset, elset="ASSEMBLY_Edge Seeds-2"
+  *Elset, elset=ASSEMBLY_OUTER-SEEDS
+  *Elset, elset=ASSEMBLY_SET-25
+  *Elset, elset=ASSEMBLY_SET-26
+  *Elset, elset=ASSEMBLY_SET-27
+  *Elset, elset=ASSEMBLY_SET-39
+  *Elset, elset=ASSEMBLY_SET-50
+  *Elset, elset=ASSEMBLY__PICKEDSET36
+  *Elset, elset=ASSEMBLY__PICKEDSET37
+  *Elset, elset=ASSEMBLY__SURF-3_S2
+  *Elset, elset=ASSEMBLY__SURF-3_S3
+  *Elset, elset=ASSEMBLY__SURF-3_S4
+  *material, name=MATERIAL-1
+  *elastic
+  *solidsection, elset=ASSEMBLY_PLATE-1_SET-8, material=MATERIAL-1
+  *solidsection, elset=ASSEMBLY_PLATE-1_SET-8, material=MATERIAL-1
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF-3
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF-3
+  *boundary
+  *boundary
+  *boundary
+  *boundary
+  *boundary
+  *boundary
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF-3
+  *output, field
+  *output, history, frequency=0
+  *elementoutput, directions=YES
+  *output, field
+  *output, history, frequency=0
+  *elementoutput, directions=YES
+  *output, field
+  *output, history, frequency=0
+  *elementoutput, directions=YES
+  
+                               E L E M E N T   Q U A L I T Y  C H E C K S        
+  
+  
+ ***NOTES: DISTORTED ISOPARAMETRIC ELEMENTS: ANGLE BETWEEN ISOPARAMETRIC LINES 
+           IS LESS THAN 45 DEGREES OR GREATER THAN 135 DEGREES.
+  
+           TETRAHEDRAL QUALITY MEASURE: VOLUME OF TETRAHEDRON DIVIDED BY THE 
+           VOLUME OF EQUILATERAL TETRAHEDRON WITH SAME CIRCUMSPHERE RADIUS; 
+           0 FOR DEGENERATE TETRAHEDRON AND 1 FOR EQUILATERIAL TETRAHEDRON. IT 
+           IS RECOMMENDED THAT THE TETRAHEDRAL QUALITY MEASURE BE GREATER THAN 
+           0.02, THE MIN INTERIOR (DIHEDRAL) ANGLE BE GREATER THAN 10 DEGREES, 
+           AND THE MAX INTERIOR (DIHEDRAL) ANGLE BE LESS THAN 160 DEGREES. 
+  
+           MODIFIED TETRAHEDRAL QUALITY MEASURE: ANGLES BETWEEN THE TWO LINE 
+           SEGMENTS ON EACH EDGE; THE EDGES OF MODIFIED TETRAHEDRAL SHOULD BE 
+           AS STRAIGHT AS POSSIBLE. IT IS RECOMMENDED THAT THE ANGLE BETWEEN 
+           THE TWO LINE SEGMENTS ON EACH EDGE IS BETWEEN 160 AND 180 DEGREES. 
+  
+           TRIANGULAR QUALITY MEASURE: AREA OF TRIANGLE DIVIDED BY THE AREA OF 
+           EQUILATERAL TRIANGLE WITH SAME CIRCUMCIRCLE RADIUS; 0 FOR DEGENERATE 
+           TRIANGLE AND 1 FOR EQUILATERAL TRIANGLE. IT IS RECOMMENDED THAT THE
+           TRIANGULAR QUALITY MEASURE BE GREATER THAN 0.01, THE MIN INTERIOR 
+           ANGLE BE GREATER THAN 10 DEGREES, AND THE MAX INTERIOR ANGLE BE LESS 
+           THAN 160 DEGREES. 
+  
+           NODAL ADJUSTMENTS ARISING FROM CONTACT INTERACTIONS AND/OR TIE 
+           CONSTRAINTS CAN CAUSE SEVERE ELEMENT DISTORTION. IT MAY BE NECESSARY 
+           TO REMESH IN ORDER TO REDUCE THE AMOUNT OF ADJUSTMENT. 
+
+ ***WARNING: 1279 elements are distorted. Either the isoparametric angles are 
+             out of the suggested limits or the triangular or tetrahedral 
+             quality measure is bad. The elements have been identified in 
+             element set WarnElemDistorted.
+
+ ***WARNING: The aspect ratio for 300 elements exceeds 100 to 1. The elements 
+             have been identified in element set WarnElemAspectRatio.
+  
+ --------------------------------------------------------------------------------
+ Distorted isoparametric elements
+  
+      Element       Min/max angle   Adjusted nodes 
+ ----------------- ---------------- -------------- 
+        PLATE-1.77          44.7459       NO       
+        PLATE-1.94          42.0432       NO       
+        PLATE-1.95          41.7798       NO       
+        PLATE-1.96          42.3473       NO       
+        PLATE-1.97           43.801       NO       
+       PLATE-1.111           43.177       NO       
+       PLATE-1.112          39.4624       NO       
+       PLATE-1.113          39.2372       NO       
+       PLATE-1.114          39.9003       NO       
+       PLATE-1.115          41.4184       NO       
+       PLATE-1.116          43.3748       NO       
+       PLATE-1.129          40.7076       NO       
+       PLATE-1.130          37.2999       NO       
+       PLATE-1.131          37.1147       NO       
+       PLATE-1.132          37.8915       NO       
+       PLATE-1.133          39.4903       NO       
+       PLATE-1.134           41.519       NO       
+       PLATE-1.135          43.8481       NO       
+       PLATE-1.147          38.8779       NO       
+       PLATE-1.148          35.7784       NO       
+       PLATE-1.149          35.6364       NO       
+       PLATE-1.150          36.5562       NO       
+       PLATE-1.151          38.2745       NO       
+       PLATE-1.152          40.4204       NO       
+       PLATE-1.153          42.8668       NO       
+       PLATE-1.165          38.0103       NO       
+       PLATE-1.166          35.1207       NO       
+       PLATE-1.167          35.0108       NO       
+       PLATE-1.168          36.0727       NO       
+       PLATE-1.169           37.941       NO       
+       PLATE-1.170          40.2426       NO       
+       PLATE-1.171          42.7782       NO       
+       PLATE-1.183          37.2427       NO       
+       PLATE-1.184          34.3326       NO       
+       PLATE-1.185           34.203       NO       
+       PLATE-1.186          35.2361       NO       
+       PLATE-1.187          37.0909       NO       
+       PLATE-1.188          39.3559       NO       
+       PLATE-1.189          41.8977       NO       
+       PLATE-1.190           44.698       NO       
+       PLATE-1.301          44.5129       NO       
+       PLATE-1.302          44.5933       NO       
+       PLATE-1.311          41.7859       NO       
+       PLATE-1.312          41.9517       NO       
+       PLATE-1.313          42.8594       NO       
+       PLATE-1.314          44.1117       NO       
+       PLATE-1.321          39.2684       NO       
+       PLATE-1.322          39.5536       NO       
+       PLATE-1.323          40.5482       NO       
+       PLATE-1.324          41.9289       NO       
+       PLATE-1.325          43.7358       NO       
+       PLATE-1.331          37.0231       NO       
+       PLATE-1.332          37.4196       NO       
+       PLATE-1.333          38.4958       NO       
+       PLATE-1.334          40.0007       NO       
+       PLATE-1.335          41.9531       NO       
+       PLATE-1.336          44.4035       NO       
+       PLATE-1.341          35.1855       NO       
+       PLATE-1.342          35.7005       NO       
+       PLATE-1.343          36.8513       NO       
+       PLATE-1.344          38.4733       NO       
+       PLATE-1.345          40.5696       NO       
+       PLATE-1.346          43.1665       NO       
+       PLATE-1.351          34.1752       NO       
+       PLATE-1.352           34.832       NO       
+       PLATE-1.353          36.0503       NO       
+       PLATE-1.354          37.7774       NO       
+       PLATE-1.355            40.01       NO       
+       PLATE-1.356          42.7497       NO       
+       PLATE-1.361          34.3133       NO       
+       PLATE-1.362          35.0164       NO       
+       PLATE-1.363          36.2493       NO       
+       PLATE-1.364          38.0022       NO       
+       PLATE-1.365          40.2714       NO       
+       PLATE-1.366          43.0516       NO       
+       PLATE-1.371          37.2614       NO       
+       PLATE-1.372          38.2337       NO       
+       PLATE-1.373          39.5435       NO       
+       PLATE-1.374          41.4744       NO       
+       PLATE-1.375          43.9908       NO       
+       PLATE-1.391          37.7513       NO       
+       PLATE-1.392          37.9647       NO       
+       PLATE-1.393          38.9899       NO       
+       PLATE-1.394          40.6775       NO       
+       PLATE-1.395          42.8098       NO       
+       PLATE-1.401           34.266       NO       
+       PLATE-1.402          34.7057       NO       
+       PLATE-1.403          35.5867       NO       
+       PLATE-1.404          36.9638       NO       
+       PLATE-1.405          38.7013       NO       
+       PLATE-1.406          40.7523       NO       
+       PLATE-1.407          43.2501       NO       
+       PLATE-1.411          34.9618       NO       
+       PLATE-1.412           35.564       NO       
+       PLATE-1.413          36.3647       NO       
+       PLATE-1.414          37.5436       NO       
+       PLATE-1.415          39.0114       NO       
+       PLATE-1.416          40.7251       NO       
+       PLATE-1.417          42.7843       NO       
+       PLATE-1.421          34.8335       NO       
+       PLATE-1.422          35.3822       NO       
+       PLATE-1.423           35.964       NO       
+       PLATE-1.424          36.8067       NO       
+       PLATE-1.425          37.8664       NO       
+       PLATE-1.426          39.0904       NO       
+       PLATE-1.427          40.5229       NO       
+       PLATE-1.428          42.2856       NO       
+       PLATE-1.429          44.5102       NO       
+       PLATE-1.431          30.8513       NO       
+       PLATE-1.432          31.1757       NO       
+       PLATE-1.433          31.5259       NO       
+       PLATE-1.434            32.02       NO       
+       PLATE-1.435          32.5572       NO       
+       PLATE-1.436          33.1259       NO       
+       PLATE-1.437          33.7712       NO       
+       PLATE-1.438          34.5661       NO       
+       PLATE-1.439          35.5859       NO       
+       PLATE-1.440          36.7893       NO       
+       PLATE-1.441          36.7959       NO       
+       PLATE-1.447          35.4785       NO       
+       PLATE-1.448          44.1876       NO       
+       PLATE-1.453          34.4349       NO       
+       PLATE-1.454          42.0659       NO       
+       PLATE-1.459          33.6287       NO       
+       PLATE-1.460          40.3814       NO       
+       PLATE-1.461           42.904       NO       
+       PLATE-1.462          44.2922       NO       
+       PLATE-1.465          32.9695       NO       
+       PLATE-1.466          38.9727       NO       
+       PLATE-1.467          40.8965       NO       
+       PLATE-1.468          41.7801       NO       
+       PLATE-1.471          32.3995       NO       
+       PLATE-1.472          37.7554       NO       
+       PLATE-1.473          39.1897       NO       
+       PLATE-1.474          39.6719       NO       
+       PLATE-1.475          44.6804       NO       
+       PLATE-1.477          31.9035       NO       
+       PLATE-1.478          36.7247       NO       
+       PLATE-1.479          37.7659       NO       
+       PLATE-1.480          37.9249       NO       
+       PLATE-1.481          42.4556       NO       
+       PLATE-1.483          31.4961       NO       
+       PLATE-1.484          35.9558       NO       
+       PLATE-1.485          36.6999       NO       
+       PLATE-1.486          36.6021       NO       
+       PLATE-1.487          40.7317       NO       
+       PLATE-1.489          31.2458       NO       
+       PLATE-1.490          35.5432       NO       
+       PLATE-1.491          36.1138       NO       
+       PLATE-1.492          35.8332       NO       
+       PLATE-1.493           39.675       NO       
+       PLATE-1.495          30.8605       NO       
+       PLATE-1.496          34.8537       NO       
+       PLATE-1.497          35.0247       NO       
+       PLATE-1.498          34.3901       NO       
+       PLATE-1.499           37.938       NO       
+       PLATE-1.541          44.9192       NO       
+       PLATE-1.545          43.3795       NO       
+       PLATE-1.565           41.816       NO       
+       PLATE-1.569          40.4777       NO       
+       PLATE-1.585          42.3365       NO       
+       PLATE-1.589          39.1627       NO       
+       PLATE-1.590          43.7053       NO       
+       PLATE-1.593          37.9602       NO       
+       PLATE-1.594          42.9793       NO       
+       PLATE-1.605          44.2617       NO       
+       PLATE-1.609          39.6216       NO       
+       PLATE-1.610          43.6335       NO       
+       PLATE-1.613          36.8574       NO       
+       PLATE-1.614          40.4749       NO       
+       PLATE-1.615          44.1354       NO       
+       PLATE-1.617          35.7725       NO       
+       PLATE-1.618          39.7862       NO       
+       PLATE-1.619          43.9171       NO       
+       PLATE-1.629          41.4389       NO       
+       PLATE-1.633          37.2354       NO       
+       PLATE-1.634          40.6604       NO       
+       PLATE-1.635          43.3929       NO       
+       PLATE-1.636           43.699       NO       
+       PLATE-1.637          34.8463       NO       
+       PLATE-1.638          37.7247       NO       
+       PLATE-1.639          40.7652       NO       
+       PLATE-1.640          41.4475       NO       
+       PLATE-1.641           33.869       NO       
+       PLATE-1.642          37.0676       NO       
+       PLATE-1.643          40.5139       NO       
+       PLATE-1.644          41.3332       NO       
+       PLATE-1.653            39.06       NO       
+       PLATE-1.654          43.4488       NO       
+       PLATE-1.657          35.2339       NO       
+       PLATE-1.658          38.2421       NO       
+       PLATE-1.659          40.6494       NO       
+       PLATE-1.660          40.1022       NO       
+       PLATE-1.661          33.1712       NO       
+       PLATE-1.662          35.5131       NO       
+       PLATE-1.663          38.0269       NO       
+       PLATE-1.664          37.7331       NO       
+       PLATE-1.665          32.2618       NO       
+       PLATE-1.666          34.8714       NO       
+       PLATE-1.667          37.7569       NO       
+       PLATE-1.668          37.5854       NO       
+       PLATE-1.677          37.3259       NO       
+       PLATE-1.678          41.4412       NO       
+       PLATE-1.679          43.6834       NO       
+       PLATE-1.680          42.0115       NO       
+       PLATE-1.681          33.8074       NO       
+       PLATE-1.682          36.4984       NO       
+       PLATE-1.683          38.5771       NO       
+       PLATE-1.684          37.1156       NO       
+       PLATE-1.685          31.9832       NO       
+       PLATE-1.686          33.9273       NO       
+       PLATE-1.687          35.9789       NO       
+       PLATE-1.688          34.7315       NO       
+       PLATE-1.689          31.0697       NO       
+       PLATE-1.690          33.2757       NO       
+       PLATE-1.691          35.7027       NO       
+       PLATE-1.692          34.5815       NO       
+       PLATE-1.697          44.4743       NO       
+       PLATE-1.701          36.6207       NO       
+       PLATE-1.702          40.1816       NO       
+       PLATE-1.703          42.1912       NO       
+       PLATE-1.704          39.9319       NO       
+       PLATE-1.705          33.2687       NO       
+       PLATE-1.706          35.4497       NO       
+       PLATE-1.707           37.208       NO       
+       PLATE-1.708          35.1736       NO       
+       PLATE-1.709          31.5191       NO       
+       PLATE-1.710          33.0006       NO       
+       PLATE-1.711          34.6801       NO       
+       PLATE-1.712          32.8655       NO       
+       PLATE-1.713          30.5192       NO       
+       PLATE-1.714          32.3255       NO       
+       PLATE-1.715          34.4136       NO       
+       PLATE-1.716          32.7356       NO       
+       PLATE-1.721          42.9158       NO       
+       PLATE-1.725          35.5656       NO       
+       PLATE-1.726          39.9877       NO       
+       PLATE-1.727          42.0936       NO       
+       PLATE-1.728           39.795       NO       
+       PLATE-1.729          32.6443       NO       
+       PLATE-1.730          35.3436       NO       
+       PLATE-1.731          37.1169       NO       
+       PLATE-1.732          35.0442       NO       
+       PLATE-1.733          31.2261       NO       
+       PLATE-1.734          32.8463       NO       
+       PLATE-1.735          34.5813       NO       
+       PLATE-1.736          32.7394       NO       
+       PLATE-1.737          30.1376       NO       
+       PLATE-1.738           32.138       NO       
+       PLATE-1.739          34.3197       NO       
+       PLATE-1.740           32.618       NO       
+       PLATE-1.742          43.9419       NO       
+       PLATE-1.743          41.7561       NO       
+       PLATE-1.744           40.019       NO       
+       PLATE-1.745          38.6787       NO       
+       PLATE-1.746          37.6995       NO       
+       PLATE-1.747          36.9552       NO       
+       PLATE-1.748           34.434       NO       
+       PLATE-1.749          32.7766       NO       
+       PLATE-1.750          31.8543       NO       
+       PLATE-1.751          31.6205       NO       
+       PLATE-1.752          31.6655       NO       
+       PLATE-1.753          32.3281       NO       
+       PLATE-1.754          33.8875       NO       
+       PLATE-1.755          36.6792       NO       
+       PLATE-1.756          41.4161       NO       
+       PLATE-1.766          43.4058       NO       
+       PLATE-1.767          41.3889       NO       
+       PLATE-1.768          40.2544       NO       
+       PLATE-1.769          39.9617       NO       
+       PLATE-1.770          40.0151       NO       
+       PLATE-1.771          40.8269       NO       
+       PLATE-1.772          42.7355       NO       
+       PLATE-1.795          40.5908       NO       
+       PLATE-1.815           43.337       NO       
+       PLATE-1.816          41.5914       NO       
+       PLATE-1.817          40.2665       NO       
+       PLATE-1.818          39.3283       NO       
+       PLATE-1.819          38.7593       NO       
+       PLATE-1.820          38.5565       NO       
+       PLATE-1.821          38.5633       NO       
+       PLATE-1.822          38.5189       NO       
+       PLATE-1.823          38.1402       NO       
+       PLATE-1.824          38.1783       NO       
+       PLATE-1.825          38.9267       NO       
+       PLATE-1.826          40.7929       NO       
+       PLATE-1.827          44.1805       NO       
+       PLATE-1.838          44.8184       NO       
+       PLATE-1.839           44.827       NO       
+       PLATE-1.867          37.0609       NO       
+       PLATE-1.887          44.3882       NO       
+       PLATE-1.888          42.6544       NO       
+       PLATE-1.889           41.354       NO       
+       PLATE-1.890          40.4545       NO       
+       PLATE-1.891          39.9407       NO       
+       PLATE-1.892          39.8144       NO       
+       PLATE-1.893           39.842       NO       
+       PLATE-1.894          40.2229       NO       
+       PLATE-1.895          41.0715       NO       
+       PLATE-1.896          42.4735       NO       
+       PLATE-1.897            44.56       NO       
+       PLATE-1.939          34.0366       NO       
+       PLATE-1.960          43.2819       NO       
+       PLATE-1.961          41.9998       NO       
+       PLATE-1.962          41.1265       NO       
+       PLATE-1.963           40.648       NO       
+       PLATE-1.964          40.5697       NO       
+       PLATE-1.965          40.6103       NO       
+       PLATE-1.966          41.0577       NO       
+       PLATE-1.967          41.9956       NO       
+       PLATE-1.968          43.5154       NO       
+       PLATE-1.993          41.9268       NO       
+      PLATE-1.1011          31.4846       NO       
+      PLATE-1.1012          42.4443       NO       
+      PLATE-1.1032           43.625       NO       
+      PLATE-1.1033          42.3539       NO       
+      PLATE-1.1034          41.4956       NO       
+      PLATE-1.1035          41.0375       NO       
+      PLATE-1.1036          40.9856       NO       
+      PLATE-1.1037           41.033       NO       
+      PLATE-1.1038          41.5183       NO       
+      PLATE-1.1039          42.5051       NO       
+      PLATE-1.1040          44.0899       NO       
+      PLATE-1.1047          44.3374       NO       
+      PLATE-1.1065          38.4867       NO       
+      PLATE-1.1066          42.9853       NO       
+      PLATE-1.1083          29.3114       NO       
+      PLATE-1.1084          39.0657       NO       
+      PLATE-1.1085          44.3786       NO       
+      PLATE-1.1101          42.1964       NO       
+      PLATE-1.1104          44.0344       NO       
+      PLATE-1.1105          42.7743       NO       
+      PLATE-1.1106          41.9286       NO       
+      PLATE-1.1107           41.486       NO       
+      PLATE-1.1108          41.4429       NO       
+      PLATE-1.1109          41.5061       NO       
+      PLATE-1.1110          42.0171       NO       
+      PLATE-1.1111          43.0373       NO       
+      PLATE-1.1112          44.6654       NO       
+      PLATE-1.1119           40.555       NO       
+      PLATE-1.1120          43.3101       NO       
+      PLATE-1.1137          35.5782       NO       
+      PLATE-1.1138          39.2874       NO       
+      PLATE-1.1139          43.5528       NO       
+      PLATE-1.1155          27.4436       NO       
+      PLATE-1.1156          36.2171       NO       
+      PLATE-1.1157          40.9079       NO       
+      PLATE-1.1158          44.2942       NO       
+      PLATE-1.1173          38.2051       NO       
+      PLATE-1.1174          40.3028       NO       
+      PLATE-1.1175          43.4846       NO       
+      PLATE-1.1177          44.4744       NO       
+      PLATE-1.1178           43.653       NO       
+      PLATE-1.1179          43.2366       NO       
+      PLATE-1.1180          43.2001       NO       
+      PLATE-1.1181           43.296       NO       
+      PLATE-1.1182          43.8462       NO       
+      PLATE-1.1183           44.915       NO       
+      PLATE-1.1191          37.5526       NO       
+      PLATE-1.1192          39.5229       NO       
+      PLATE-1.1193          42.7627       NO       
+      PLATE-1.1209          33.2375       NO       
+      PLATE-1.1210          36.3067       NO       
+      PLATE-1.1211          39.8837       NO       
+      PLATE-1.1212          43.3998       NO       
+      PLATE-1.1227          25.8787       NO       
+      PLATE-1.1228          33.9328       NO       
+      PLATE-1.1229          38.1838       NO       
+      PLATE-1.1230          41.2432       NO       
+      PLATE-1.1231          44.1721       NO       
+      PLATE-1.1245          35.1383       NO       
+      PLATE-1.1246          36.7564       NO       
+      PLATE-1.1247          39.1366       NO       
+      PLATE-1.1248          42.1153       NO       
+      PLATE-1.1263          35.3768       NO       
+      PLATE-1.1264          36.7842       NO       
+      PLATE-1.1265          39.3703       NO       
+      PLATE-1.1266          42.5096       NO       
+      PLATE-1.1281          31.5437       NO       
+      PLATE-1.1282          34.1373       NO       
+      PLATE-1.1283          37.2393       NO       
+      PLATE-1.1284          40.2867       NO       
+      PLATE-1.1285          43.3935       NO       
+      PLATE-1.1299          24.7243       NO       
+      PLATE-1.1300          32.3332       NO       
+      PLATE-1.1301          36.3228       NO       
+      PLATE-1.1302          39.1924       NO       
+      PLATE-1.1303          41.9524       NO       
+      PLATE-1.1304          44.8728       NO       
+      PLATE-1.1317           33.351       NO       
+      PLATE-1.1318           34.728       NO       
+      PLATE-1.1319          36.6832       NO       
+      PLATE-1.1320          39.1315       NO       
+      PLATE-1.1321          41.9394       NO       
+      PLATE-1.1335          34.0301       NO       
+      PLATE-1.1336          35.1779       NO       
+      PLATE-1.1337          37.4326       NO       
+      PLATE-1.1338          40.1711       NO       
+      PLATE-1.1339          43.2243       NO       
+      PLATE-1.1353          30.5085       NO       
+      PLATE-1.1354          32.8886       NO       
+      PLATE-1.1355          35.7519       NO       
+      PLATE-1.1356          38.5496       NO       
+      PLATE-1.1357          41.4022       NO       
+      PLATE-1.1358          44.4252       NO       
+      PLATE-1.1371          24.1093       NO       
+      PLATE-1.1372          31.4892       NO       
+      PLATE-1.1373          35.3406       NO       
+      PLATE-1.1374          38.1098       NO       
+      PLATE-1.1375          40.7899       NO       
+      PLATE-1.1376          43.6351       NO       
+      PLATE-1.1389           33.276       NO       
+      PLATE-1.1390          34.6074       NO       
+      PLATE-1.1391          36.5202       NO       
+      PLATE-1.1392          38.9265       NO       
+      PLATE-1.1393          41.6904       NO       
+      PLATE-1.1394          44.8099       NO       
+      PLATE-1.1407          33.8724       NO       
+      PLATE-1.1408          35.0336       NO       
+      PLATE-1.1409          37.2612       NO       
+      PLATE-1.1410          39.9635       NO       
+      PLATE-1.1411          42.9772       NO       
+      PLATE-1.1425          29.8756       NO       
+      PLATE-1.1426          32.5054       NO       
+      PLATE-1.1427          35.3531       NO       
+      PLATE-1.1428          38.0831       NO       
+      PLATE-1.1429          40.8688       NO       
+      PLATE-1.1430          43.8338       NO       
+      PLATE-1.1443          23.7189       NO       
+      PLATE-1.1444           30.896       NO       
+      PLATE-1.1445          34.6344       NO       
+      PLATE-1.1446          37.2676       NO       
+      PLATE-1.1447          39.8166       NO       
+      PLATE-1.1448          42.5405       NO       
+      PLATE-1.1529          44.6661       NO       
+      PLATE-1.1533          43.3657       NO       
+      PLATE-1.1537          42.7897       NO       
+      PLATE-1.1557          44.0629       NO       
+      PLATE-1.1561          41.2777       NO       
+      PLATE-1.1565          38.9074       NO       
+      PLATE-1.1566          43.2891       NO       
+      PLATE-1.1569          37.0806       NO       
+      PLATE-1.1570          41.2884       NO       
+      PLATE-1.1571          43.8718       NO       
+      PLATE-1.1572          42.5242       NO       
+      PLATE-1.1573          36.0041       NO       
+      PLATE-1.1574          40.0115       NO       
+      PLATE-1.1575          42.4794       NO       
+      PLATE-1.1576          40.9661       NO       
+      PLATE-1.1577           35.493       NO       
+      PLATE-1.1578          39.8905       NO       
+      PLATE-1.1579          42.3582       NO       
+      PLATE-1.1580          40.4582       NO       
+      PLATE-1.1593          42.6767       NO       
+      PLATE-1.1597          39.9021       NO       
+      PLATE-1.1598          43.7629       NO       
+      PLATE-1.1601          37.5149       NO       
+      PLATE-1.1602          40.8063       NO       
+      PLATE-1.1603           43.455       NO       
+      PLATE-1.1604          43.6388       NO       
+      PLATE-1.1605          35.5034       NO       
+      PLATE-1.1606          38.4114       NO       
+      PLATE-1.1607          40.8454       NO       
+      PLATE-1.1608          40.2637       NO       
+      PLATE-1.1609          33.9834       NO       
+      PLATE-1.1610          36.6536       NO       
+      PLATE-1.1611          38.9182       NO       
+      PLATE-1.1612          37.6754       NO       
+      PLATE-1.1613          33.0862       NO       
+      PLATE-1.1614          35.5107       NO       
+      PLATE-1.1615          37.5916       NO       
+      PLATE-1.1616          36.2174       NO       
+      PLATE-1.1617          32.6194       NO       
+      PLATE-1.1618          35.3581       NO       
+      PLATE-1.1619          37.4601       NO       
+      PLATE-1.1620          35.6473       NO       
+      PLATE-1.1629          42.5992       NO       
+      PLATE-1.1633          39.8006       NO       
+      PLATE-1.1634          43.9464       NO       
+      PLATE-1.1637          37.4122       NO       
+      PLATE-1.1638          40.6962       NO       
+      PLATE-1.1639          44.0778       NO       
+      PLATE-1.1641          35.3652       NO       
+      PLATE-1.1642          37.9656       NO       
+      PLATE-1.1643          40.8251       NO       
+      PLATE-1.1644          41.3109       NO       
+      PLATE-1.1645          33.6738       NO       
+      PLATE-1.1646          35.8019       NO       
+      PLATE-1.1647          38.2646       NO       
+      PLATE-1.1648          37.8578       NO       
+      PLATE-1.1649          32.4343       NO       
+      PLATE-1.1650          34.2377       NO       
+      PLATE-1.1651          36.3942       NO       
+      PLATE-1.1652          35.3031       NO       
+      PLATE-1.1653          31.7095       NO       
+      PLATE-1.1654          33.2141       NO       
+      PLATE-1.1655          35.1289       NO       
+      PLATE-1.1656           33.945       NO       
+      PLATE-1.1657          31.2439       NO       
+      PLATE-1.1658          32.8687       NO       
+      PLATE-1.1659          34.8736       NO       
+      PLATE-1.1660          33.3039       NO       
+      PLATE-1.1665          44.1213       NO       
+      PLATE-1.1669          41.0364       NO       
+      PLATE-1.1673          38.3835       NO       
+      PLATE-1.1674           43.091       NO       
+      PLATE-1.1677          36.1177       NO       
+      PLATE-1.1678          39.8857       NO       
+      PLATE-1.1679          43.7415       NO       
+      PLATE-1.1681          34.1793       NO       
+      PLATE-1.1682          37.1947       NO       
+      PLATE-1.1683          40.4805       NO       
+      PLATE-1.1684          41.1536       NO       
+      PLATE-1.1685          32.5638       NO       
+      PLATE-1.1686           35.061       NO       
+      PLATE-1.1687          37.9303       NO       
+      PLATE-1.1688          37.6922       NO       
+      PLATE-1.1689          31.3525       NO       
+      PLATE-1.1690          33.5138       NO       
+      PLATE-1.1691          36.0802       NO       
+      PLATE-1.1692          35.1571       NO       
+      PLATE-1.1693          30.6379       NO       
+      PLATE-1.1694          32.5055       NO       
+      PLATE-1.1695          34.8437       NO       
+      PLATE-1.1696          33.8326       NO       
+      PLATE-1.1697          30.1486       NO       
+      PLATE-1.1698          32.1572       NO       
+      PLATE-1.1699          34.6343       NO       
+      PLATE-1.1700          33.2267       NO       
+      PLATE-1.1712          42.2349       NO       
+      PLATE-1.1715          44.5182       NO       
+      PLATE-1.1716          38.0399       NO       
+      PLATE-1.1719          41.5243       NO       
+      PLATE-1.1720          35.6921       NO       
+      PLATE-1.1723           39.931       NO       
+      PLATE-1.1724          34.5236       NO       
+      PLATE-1.1727          39.3911       NO       
+      PLATE-1.1728           34.229       NO       
+      PLATE-1.1731          39.3955       NO       
+      PLATE-1.1732          34.2665       NO       
+      PLATE-1.1735          39.9396       NO       
+      PLATE-1.1736          34.8817       NO       
+      PLATE-1.1739          41.3369       NO       
+      PLATE-1.1740          36.2269       NO       
+      PLATE-1.1743          43.5639       NO       
+      PLATE-1.1744            36.48       NO       
+      PLATE-1.1747          43.7492       NO       
+      PLATE-1.1748           36.791       NO       
+      PLATE-1.1751           44.316       NO       
+      PLATE-1.1752          37.4327       NO       
+      PLATE-1.1756          38.4122       NO       
+      PLATE-1.1760          39.7468       NO       
+      PLATE-1.1764          41.4599       NO       
+      PLATE-1.1768          43.5785       NO       
+      PLATE-1.1769           41.087       NO       
+      PLATE-1.1792          42.5828       NO       
+      PLATE-1.1796          41.1237       NO       
+      PLATE-1.1800          40.5705       NO       
+      PLATE-1.1804          39.3625       NO       
+      PLATE-1.1807          44.4826       NO       
+      PLATE-1.1808          38.6629       NO       
+      PLATE-1.1811          44.1314       NO       
+      PLATE-1.1812          38.3961       NO       
+      PLATE-1.1815          44.1126       NO       
+      PLATE-1.1816          38.3899       NO       
+      PLATE-1.1819          44.2873       NO       
+      PLATE-1.1820          38.5948       NO       
+      PLATE-1.1823          44.8683       NO       
+      PLATE-1.1824          39.1649       NO       
+      PLATE-1.1828          40.1007       NO       
+      PLATE-1.1832           41.416       NO       
+      PLATE-1.1836          43.1338       NO       
+      PLATE-1.1841           37.367       NO       
+      PLATE-1.1868          44.4562       NO       
+      PLATE-1.1872          42.3521       NO       
+      PLATE-1.1876          40.9459       NO       
+      PLATE-1.1880          40.0967       NO       
+      PLATE-1.1884          39.7176       NO       
+      PLATE-1.1888          39.6904       NO       
+      PLATE-1.1892          39.8176       NO       
+      PLATE-1.1896          40.3321       NO       
+      PLATE-1.1900          41.2305       NO       
+      PLATE-1.1904          42.5261       NO       
+      PLATE-1.1908           44.245       NO       
+      PLATE-1.1913          34.2486       NO       
+      PLATE-1.1944          43.4477       NO       
+      PLATE-1.1948          41.9213       NO       
+      PLATE-1.1952          40.9808       NO       
+      PLATE-1.1956           40.532       NO       
+      PLATE-1.1960          40.4915       NO       
+      PLATE-1.1964          40.5696       NO       
+      PLATE-1.1968          41.0481       NO       
+      PLATE-1.1972          41.9211       NO       
+      PLATE-1.1976          43.2023       NO       
+      PLATE-1.1980          44.9219       NO       
+      PLATE-1.1981          43.1661       NO       
+      PLATE-1.1985           31.628       NO       
+      PLATE-1.1986           41.806       NO       
+      PLATE-1.2016          44.1414       NO       
+      PLATE-1.2020          42.5515       NO       
+      PLATE-1.2024          41.5624       NO       
+      PLATE-1.2028          41.0763       NO       
+      PLATE-1.2032          41.0288       NO       
+      PLATE-1.2036          41.0804       NO       
+      PLATE-1.2040          41.5393       NO       
+      PLATE-1.2044          42.4001       NO       
+      PLATE-1.2048          43.6752       NO       
+      PLATE-1.2053          39.6129       NO       
+      PLATE-1.2054          43.4893       NO       
+      PLATE-1.2057          29.3974       NO       
+      PLATE-1.2058          38.3822       NO       
+      PLATE-1.2059           43.678       NO       
+      PLATE-1.2092          43.4729       NO       
+      PLATE-1.2096          42.4649       NO       
+      PLATE-1.2100           41.965       NO       
+      PLATE-1.2104           41.914       NO       
+      PLATE-1.2108            41.96       NO       
+      PLATE-1.2112           42.416       NO       
+      PLATE-1.2116          43.2771       NO       
+      PLATE-1.2117          44.7013       NO       
+      PLATE-1.2120          44.5576       NO       
+      PLATE-1.2121          41.2715       NO       
+      PLATE-1.2122          44.3111       NO       
+      PLATE-1.2125          36.5884       NO       
+      PLATE-1.2126           39.899       NO       
+      PLATE-1.2127          42.9984       NO       
+      PLATE-1.2128          43.9898       NO       
+      PLATE-1.2129          27.4865       NO       
+      PLATE-1.2130          35.5346       NO       
+      PLATE-1.2131          40.1854       NO       
+      PLATE-1.2132          41.7291       NO       
+      PLATE-1.2172          44.5651       NO       
+      PLATE-1.2176          44.5153       NO       
+      PLATE-1.2180          44.5623       NO       
+      PLATE-1.2185          44.0088       NO       
+      PLATE-1.2189          41.1696       NO       
+      PLATE-1.2190          44.5664       NO       
+      PLATE-1.2193          38.2015       NO       
+      PLATE-1.2194          40.8458       NO       
+      PLATE-1.2195          43.1465       NO       
+      PLATE-1.2196          42.8866       NO       
+      PLATE-1.2197          34.1491       NO       
+      PLATE-1.2198          37.1622       NO       
+      PLATE-1.2199          39.8673       NO       
+      PLATE-1.2200          40.0126       NO       
+      PLATE-1.2201          25.9021       NO       
+      PLATE-1.2202          33.3232       NO       
+      PLATE-1.2203          37.5577       NO       
+      PLATE-1.2204          38.2062       NO       
+      PLATE-1.2253          44.1298       NO       
+      PLATE-1.2257          41.3573       NO       
+      PLATE-1.2261          38.7665       NO       
+      PLATE-1.2262          41.6949       NO       
+      PLATE-1.2263          43.8122       NO       
+      PLATE-1.2264          42.4213       NO       
+      PLATE-1.2265          36.1007       NO       
+      PLATE-1.2266           38.486       NO       
+      PLATE-1.2267          40.4867       NO       
+      PLATE-1.2268          39.5061       NO       
+      PLATE-1.2269          32.4599       NO       
+      PLATE-1.2270          35.2513       NO       
+      PLATE-1.2271          37.6852       NO       
+      PLATE-1.2272          37.3362       NO       
+      PLATE-1.2273          24.7615       NO       
+      PLATE-1.2274          31.7725       NO       
+      PLATE-1.2275          35.7276       NO       
+      PLATE-1.2276          35.7592       NO       
+      PLATE-1.2325          43.1169       NO       
+      PLATE-1.2329          40.3778       NO       
+      PLATE-1.2330          42.9544       NO       
+      PLATE-1.2331          44.9834       NO       
+      PLATE-1.2332          43.5707       NO       
+      PLATE-1.2333          37.8261       NO       
+      PLATE-1.2334          39.8917       NO       
+      PLATE-1.2335          41.6699       NO       
+      PLATE-1.2336          40.5552       NO       
+      PLATE-1.2337           35.224       NO       
+      PLATE-1.2338          36.9525       NO       
+      PLATE-1.2339          38.7151       NO       
+      PLATE-1.2340          37.9919       NO       
+      PLATE-1.2341          31.6768       NO       
+      PLATE-1.2342          33.9522       NO       
+      PLATE-1.2343          36.2023       NO       
+      PLATE-1.2344          36.1041       NO       
+      PLATE-1.2345          24.1957       NO       
+      PLATE-1.2346          30.7516       NO       
+      PLATE-1.2347          34.4888       NO       
+      PLATE-1.2348          34.5861       NO       
+      PLATE-1.2397          42.4876       NO       
+      PLATE-1.2398          44.0278       NO       
+      PLATE-1.2401          39.7745       NO       
+      PLATE-1.2402          41.0367       NO       
+      PLATE-1.2403          43.3781       NO       
+      PLATE-1.2404          42.6086       NO       
+      PLATE-1.2405          37.2388       NO       
+      PLATE-1.2406          38.2291       NO       
+      PLATE-1.2407          40.3092       NO       
+      PLATE-1.2408            39.72       NO       
+      PLATE-1.2409          34.6234       NO       
+      PLATE-1.2410          35.4838       NO       
+      PLATE-1.2411          37.5629       NO       
+      PLATE-1.2412          37.2402       NO       
+      PLATE-1.2413          30.9179       NO       
+      PLATE-1.2414          32.6217       NO       
+      PLATE-1.2415          35.2744       NO       
+      PLATE-1.2416          35.3431       NO       
+      PLATE-1.2417          23.7291       NO       
+      PLATE-1.2418           29.902       NO       
+      PLATE-1.2419          33.9241       NO       
+      PLATE-1.2420          34.1525       NO       
+      PLATE-1.2468             44.4       NO       
+      PLATE-1.2469          43.8028       NO       
+      PLATE-1.2470          43.0901       NO       
+      PLATE-1.2471          35.9595       NO       
+      PLATE-1.2472          35.2442       NO       
+      PLATE-1.2473           34.412       NO       
+      PLATE-1.2474          33.5881       NO       
+      PLATE-1.2475          32.8099       NO       
+      PLATE-1.2476          32.0806       NO       
+      PLATE-1.2477           31.412       NO       
+      PLATE-1.2478          30.8454       NO       
+      PLATE-1.2479          30.4572       NO       
+      PLATE-1.2480           29.948       NO       
+      PLATE-1.2521          43.0899       NO       
+      PLATE-1.2522           43.831       NO       
+      PLATE-1.2523           44.721       NO       
+      PLATE-1.2531          29.9362       NO       
+      PLATE-1.2532          30.3633       NO       
+      PLATE-1.2533          30.8378       NO       
+      PLATE-1.2534          31.4415       NO       
+      PLATE-1.2535          32.1301       NO       
+      PLATE-1.2536          32.8744       NO       
+      PLATE-1.2537          33.6781       NO       
+      PLATE-1.2538          34.5638       NO       
+      PLATE-1.2539          35.5076       NO       
+      PLATE-1.2540          36.3286       NO       
+      PLATE-1.6610          43.2412       NO       
+      PLATE-1.6620          42.1216       NO       
+      PLATE-1.6630          41.7001       NO       
+      PLATE-1.6640          41.6949       NO       
+      PLATE-1.6650          42.1102       NO       
+      PLATE-1.6660          43.2581       NO       
+      PLATE-1.6906          44.2596       NO       
+      PLATE-1.6907          42.6108       NO       
+      PLATE-1.6908          41.7598       NO       
+      PLATE-1.6909          41.6168       NO       
+      PLATE-1.6910          41.6823       NO       
+      PLATE-1.6911          42.3764       NO       
+      PLATE-1.6912          43.7931       NO       
+      PLATE-1.7392          44.4364       NO       
+      PLATE-1.7425          41.2878       NO       
+      PLATE-1.7457           44.037       NO       
+      PLATE-1.7458          39.1294       NO       
+      PLATE-1.7489          44.9362       NO       
+      PLATE-1.7490          42.0465       NO       
+      PLATE-1.7491          37.6689       NO       
+      PLATE-1.7521          44.9428       NO       
+      PLATE-1.7522          43.3658       NO       
+      PLATE-1.7523          40.7179       NO       
+      PLATE-1.7524          36.7422       NO       
+      PLATE-1.7553          44.8801       NO       
+      PLATE-1.7554          43.8833       NO       
+      PLATE-1.7555          42.3848       NO       
+      PLATE-1.7556          39.9234       NO       
+      PLATE-1.7557          36.2509       NO       
+      PLATE-1.7586          44.3181       NO       
+      PLATE-1.7587          43.3373       NO       
+      PLATE-1.7588          41.9008       NO       
+      PLATE-1.7589          39.5819       NO       
+      PLATE-1.7590          36.1361       NO       
+      PLATE-1.7619          44.2077       NO       
+      PLATE-1.7620          43.2429       NO       
+      PLATE-1.7621           41.853       NO       
+      PLATE-1.7622           39.561       NO       
+      PLATE-1.7623          36.1579       NO       
+      PLATE-1.7652          44.2399       NO       
+      PLATE-1.7653          43.2787       NO       
+      PLATE-1.7654          41.9009       NO       
+      PLATE-1.7655          39.7096       NO       
+      PLATE-1.7656          36.4633       NO       
+      PLATE-1.7685          44.6296       NO       
+      PLATE-1.7686          43.6853       NO       
+      PLATE-1.7687          42.3456       NO       
+      PLATE-1.7688           40.231       NO       
+      PLATE-1.7689          37.0987       NO       
+      PLATE-1.7719          44.4817       NO       
+      PLATE-1.7720          43.1781       NO       
+      PLATE-1.7721          41.1246       NO       
+      PLATE-1.7722          38.0703       NO       
+      PLATE-1.7753          44.4351       NO       
+      PLATE-1.7754          42.4175       NO       
+      PLATE-1.7755          39.3937       NO       
+      PLATE-1.7787          44.1589       NO       
+      PLATE-1.7788          41.0911       NO       
+      PLATE-1.7821          43.1953       NO       
+      PLATE-1.8019          44.7915       NO       
+      PLATE-1.8052          42.1059       NO       
+      PLATE-1.8084          43.0927       NO       
+      PLATE-1.8085          40.2588       NO       
+      PLATE-1.8116          43.9269       NO       
+      PLATE-1.8117          41.6447       NO       
+      PLATE-1.8118          39.0459       NO       
+      PLATE-1.8148          44.4661       NO       
+      PLATE-1.8149          42.8925       NO       
+      PLATE-1.8150          40.7604       NO       
+      PLATE-1.8151          38.3414       NO       
+      PLATE-1.8180          44.9906       NO       
+      PLATE-1.8181           43.873       NO       
+      PLATE-1.8182          42.3677       NO       
+      PLATE-1.8183          40.3505       NO       
+      PLATE-1.8184          38.0689       NO       
+      PLATE-1.8213           44.836       NO       
+      PLATE-1.8214          43.7437       NO       
+      PLATE-1.8215          42.2916       NO       
+      PLATE-1.8216          40.3172       NO       
+      PLATE-1.8217          38.0613       NO       
+      PLATE-1.8246          44.8608       NO       
+      PLATE-1.8247          43.7737       NO       
+      PLATE-1.8248          42.3318       NO       
+      PLATE-1.8249          40.4196       NO       
+      PLATE-1.8250          38.2589       NO       
+      PLATE-1.8280          44.1662       NO       
+      PLATE-1.8281          42.7638       NO       
+      PLATE-1.8282          40.9124       NO       
+      PLATE-1.8283            38.82       NO       
+      PLATE-1.8313          44.9814       NO       
+      PLATE-1.8314          43.6073       NO       
+      PLATE-1.8315          41.7954       NO       
+      PLATE-1.8316          39.7447       NO       
+      PLATE-1.8347           44.891       NO       
+      PLATE-1.8348          43.0896       NO       
+      PLATE-1.8349           41.046       NO       
+      PLATE-1.8381          44.8286       NO       
+      PLATE-1.8382          42.7472       NO       
+      PLATE-1.8415          44.8859       NO       
+      PLATE-1.8646          44.0675       NO       
+      PLATE-1.8678          43.8568       NO       
+      PLATE-1.8679          41.9598       NO       
+      PLATE-1.8710          43.9759       NO       
+      PLATE-1.8711          42.3203       NO       
+      PLATE-1.8712          40.5516       NO       
+      PLATE-1.8742          44.2417       NO       
+      PLATE-1.8743          42.9382       NO       
+      PLATE-1.8744          41.3688       NO       
+      PLATE-1.8745          39.7002       NO       
+      PLATE-1.8774          44.7211       NO       
+      PLATE-1.8775          43.6689       NO       
+      PLATE-1.8776          42.4096       NO       
+      PLATE-1.8777          40.9089       NO       
+      PLATE-1.8778          39.3181       NO       
+      PLATE-1.8807          44.5871       NO       
+      PLATE-1.8808           43.555       NO       
+      PLATE-1.8809          42.3309       NO       
+      PLATE-1.8810          40.8659       NO       
+      PLATE-1.8811          39.2901       NO       
+      PLATE-1.8840          44.6159       NO       
+      PLATE-1.8841          43.5879       NO       
+      PLATE-1.8842          42.3708       NO       
+      PLATE-1.8843          40.9336       NO       
+      PLATE-1.8844          39.4128       NO       
+      PLATE-1.8874          43.9915       NO       
+      PLATE-1.8875          42.8023       NO       
+      PLATE-1.8876          41.4023       NO       
+      PLATE-1.8877          39.9213       NO       
+      PLATE-1.8907          44.8151       NO       
+      PLATE-1.8908          43.6454       NO       
+      PLATE-1.8909          42.2695       NO       
+      PLATE-1.8910           40.812       NO       
+      PLATE-1.8941          44.9222       NO       
+      PLATE-1.8942          43.5516       NO       
+      PLATE-1.8943          42.0981       NO       
+      PLATE-1.8976          43.8064       NO       
+      PLATE-1.9272          44.3308       NO       
+      PLATE-1.9273           42.966       NO       
+      PLATE-1.9303          44.9878       NO       
+      PLATE-1.9304          43.9184       NO       
+      PLATE-1.9305          42.7409       NO       
+      PLATE-1.9306          41.4411       NO       
+      PLATE-1.9335          44.9055       NO       
+      PLATE-1.9336          43.9295       NO       
+      PLATE-1.9337          42.8856       NO       
+      PLATE-1.9338          41.7486       NO       
+      PLATE-1.9339          40.5019       NO       
+      PLATE-1.9368          44.3454       NO       
+      PLATE-1.9369          43.3837       NO       
+      PLATE-1.9370          42.3621       NO       
+      PLATE-1.9371          41.2579       NO       
+      PLATE-1.9372          40.0535       NO       
+      PLATE-1.9401          44.2371       NO       
+      PLATE-1.9402          43.2894       NO       
+      PLATE-1.9403           42.287       NO       
+      PLATE-1.9404          41.2092       NO       
+      PLATE-1.9405          40.0129       NO       
+      PLATE-1.9434          44.2706       NO       
+      PLATE-1.9435          43.3259       NO       
+      PLATE-1.9436          42.3276       NO       
+      PLATE-1.9437          41.2551       NO       
+      PLATE-1.9438            40.09       NO       
+      PLATE-1.9467          44.6741       NO       
+      PLATE-1.9468          43.7423       NO       
+      PLATE-1.9469          42.7606       NO       
+      PLATE-1.9470          41.7083       NO       
+      PLATE-1.9471          40.5661       NO       
+      PLATE-1.9501          44.5696       NO       
+      PLATE-1.9502          43.6013       NO       
+      PLATE-1.9503          42.5634       NO       
+      PLATE-1.9504          41.4358       NO       
+      PLATE-1.9535           44.866       NO       
+      PLATE-1.9536          43.8355       NO       
+      PLATE-1.9537           42.713       NO       
+      PLATE-1.9570          44.4282       NO       
+      PLATE-1.9604          44.3572       NO       
+      PLATE-1.9866          44.6782       NO       
+      PLATE-1.9867          43.5253       NO       
+      PLATE-1.9897          44.7775       NO       
+      PLATE-1.9898          43.9155       NO       
+      PLATE-1.9899          43.0608       NO       
+      PLATE-1.9900           41.938       NO       
+      PLATE-1.9929          44.6437       NO       
+      PLATE-1.9930          43.7415       NO       
+      PLATE-1.9931          42.8885       NO       
+      PLATE-1.9932          42.0472       NO       
+      PLATE-1.9933          40.9505       NO       
+      PLATE-1.9962          44.1059       NO       
+      PLATE-1.9963          43.2128       NO       
+      PLATE-1.9964          42.3695       NO       
+      PLATE-1.9965          41.5407       NO       
+      PLATE-1.9966          40.4654       NO       
+      PLATE-1.9994          44.9287       NO       
+      PLATE-1.9995          44.0155       NO       
+      PLATE-1.9996          43.1318       NO       
+      PLATE-1.9997          42.2983       NO       
+      PLATE-1.9998          41.4814       NO       
+      PLATE-1.9999           40.418       NO       
+     PLATE-1.10027          44.9633       NO       
+     PLATE-1.10028          44.0524       NO       
+     PLATE-1.10029          43.1708       NO       
+     PLATE-1.10030          42.3395       NO       
+     PLATE-1.10031          41.5252       NO       
+     PLATE-1.10032            40.47       NO       
+     PLATE-1.10061          44.4672       NO       
+     PLATE-1.10062          43.5962       NO       
+     PLATE-1.10063           42.774       NO       
+     PLATE-1.10064          41.9706       NO       
+     PLATE-1.10065          40.9281       NO       
+     PLATE-1.10095          44.4247       NO       
+     PLATE-1.10096          43.6131       NO       
+     PLATE-1.10097          42.8204       NO       
+     PLATE-1.10098          41.7866       NO       
+     PLATE-1.10129          44.8715       NO       
+     PLATE-1.10130          44.0882       NO       
+     PLATE-1.10131          43.0595       NO       
+     PLATE-1.10164          44.7816       NO       
+     PLATE-1.10198          43.0523       NO       
+     PLATE-1.10461          44.0496       NO       
+     PLATE-1.10491           44.867       NO       
+     PLATE-1.10492          44.2332       NO       
+     PLATE-1.10493          43.6939       NO       
+     PLATE-1.10494          42.4393       NO       
+     PLATE-1.10523          44.6803       NO       
+     PLATE-1.10524          43.8461       NO       
+     PLATE-1.10525          43.2154       NO       
+     PLATE-1.10526          42.6772       NO       
+     PLATE-1.10527          41.4345       NO       
+     PLATE-1.10556          44.1576       NO       
+     PLATE-1.10557          43.3298       NO       
+     PLATE-1.10558          42.7037       NO       
+     PLATE-1.10559            42.17       NO       
+     PLATE-1.10560          40.9369       NO       
+     PLATE-1.10588            44.98       NO       
+     PLATE-1.10589           44.079       NO       
+     PLATE-1.10590          43.2587       NO       
+     PLATE-1.10591          42.6395       NO       
+     PLATE-1.10592          42.1109       NO       
+     PLATE-1.10593          40.8862       NO       
+     PLATE-1.10622          44.1182       NO       
+     PLATE-1.10623          43.2999       NO       
+     PLATE-1.10624          42.6823       NO       
+     PLATE-1.10625          42.1552       NO       
+     PLATE-1.10626           40.932       NO       
+     PLATE-1.10655           44.541       NO       
+     PLATE-1.10656          43.7318       NO       
+     PLATE-1.10657          43.1233       NO       
+     PLATE-1.10658          42.6046       NO       
+     PLATE-1.10659          41.3873       NO       
+     PLATE-1.10689          44.5653       NO       
+     PLATE-1.10690          43.9682       NO       
+     PLATE-1.10691          43.4599       NO       
+     PLATE-1.10692          42.2463       NO       
+     PLATE-1.10724          44.7371       NO       
+     PLATE-1.10725          43.5253       NO       
+     PLATE-1.10792           41.748       NO       
+     PLATE-1.11088          44.1822       NO       
+     PLATE-1.11119          44.8499       NO       
+     PLATE-1.11120          44.7777       NO       
+     PLATE-1.11121          43.1919       NO       
+     PLATE-1.11151          44.5491       NO       
+     PLATE-1.11152          44.3584       NO       
+     PLATE-1.11153          44.2875       NO       
+     PLATE-1.11154          42.7091       NO       
+     PLATE-1.11184          44.4958       NO       
+     PLATE-1.11185            44.31       NO       
+     PLATE-1.11186          44.2398       NO       
+     PLATE-1.11187          42.6631       NO       
+     PLATE-1.11217          44.5405       NO       
+     PLATE-1.11218          44.3606       NO       
+     PLATE-1.11219          44.2958       NO       
+     PLATE-1.11220          42.7257       NO       
+     PLATE-1.11250          44.9896       NO       
+     PLATE-1.11251           44.821       NO       
+     PLATE-1.11252          44.7658       NO       
+     PLATE-1.11253          43.2023       NO       
+     PLATE-1.11286          44.0863       NO       
+     PLATE-1.11386          40.5165       NO       
+     PLATE-1.11980          39.4883       NO       
+     PLATE-1.12574          38.8892       NO       
+     PLATE-1.13168          38.5469       NO       
+     PLATE-1.14223          44.4366       NO       
+     PLATE-1.14553          41.2879       NO       
+     PLATE-1.14586          44.7916       NO       
+     PLATE-1.14882          44.0364       NO       
+     PLATE-1.14883          39.1293       NO       
+     PLATE-1.14916           42.106       NO       
+     PLATE-1.14949          44.0676       NO       
+     PLATE-1.15211          44.9361       NO       
+     PLATE-1.15212          42.0465       NO       
+     PLATE-1.15213          37.6688       NO       
+     PLATE-1.15245          43.0925       NO       
+     PLATE-1.15246          40.2588       NO       
+     PLATE-1.15278          43.8599       NO       
+     PLATE-1.15279          41.9603       NO       
+     PLATE-1.15311          44.3483       NO       
+     PLATE-1.15312          42.9681       NO       
+     PLATE-1.15344          44.7631       NO       
+     PLATE-1.15345          43.5928       NO       
+     PLATE-1.15378          44.4607       NO       
+     PLATE-1.15540          44.9422       NO       
+     PLATE-1.15541          43.3658       NO       
+     PLATE-1.15542          40.7182       NO       
+     PLATE-1.15543          36.7421       NO       
+     PLATE-1.15574          43.9267       NO       
+     PLATE-1.15575          41.6449       NO       
+     PLATE-1.15576          39.0461       NO       
+     PLATE-1.15607          43.9775       NO       
+     PLATE-1.15608          42.3235       NO       
+     PLATE-1.15609          40.5519       NO       
+     PLATE-1.15639          44.9887       NO       
+     PLATE-1.15640          43.9264       NO       
+     PLATE-1.15641          42.7598       NO       
+     PLATE-1.15642          41.4433       NO       
+     PLATE-1.15672          44.7855       NO       
+     PLATE-1.15673          43.9537       NO       
+     PLATE-1.15674          43.1493       NO       
+     PLATE-1.15675          42.0084       NO       
+     PLATE-1.15705          44.8938       NO       
+     PLATE-1.15706          44.3461       NO       
+     PLATE-1.15707          43.9731       NO       
+     PLATE-1.15708          42.8641       NO       
+     PLATE-1.15869            44.88       NO       
+     PLATE-1.15870          43.8832       NO       
+     PLATE-1.15871          42.3847       NO       
+     PLATE-1.15872          39.9234       NO       
+     PLATE-1.15873          36.2509       NO       
+     PLATE-1.15903           44.466       NO       
+     PLATE-1.15904          42.8929       NO       
+     PLATE-1.15905          40.7604       NO       
+     PLATE-1.15906          38.3414       NO       
+     PLATE-1.15936           44.242       NO       
+     PLATE-1.15937          42.9392       NO       
+     PLATE-1.15938          41.3723       NO       
+     PLATE-1.15939          39.7006       NO       
+     PLATE-1.15968          44.9056       NO       
+     PLATE-1.15969          43.9309       NO       
+     PLATE-1.15970          42.8942       NO       
+     PLATE-1.15971          41.7683       NO       
+     PLATE-1.15972          40.5043       NO       
+     PLATE-1.16001          44.6441       NO       
+     PLATE-1.16002          43.7504       NO       
+     PLATE-1.16003          42.9283       NO       
+     PLATE-1.16004           42.138       NO       
+     PLATE-1.16005          41.0242       NO       
+     PLATE-1.16034          44.6836       NO       
+     PLATE-1.16035          43.8741       NO       
+     PLATE-1.16036          43.3309       NO       
+     PLATE-1.16037          42.9629       NO       
+     PLATE-1.16038           41.869       NO       
+     PLATE-1.16071          44.3837       NO       
+     PLATE-1.16199           44.318       NO       
+     PLATE-1.16200          43.3373       NO       
+     PLATE-1.16201          41.9008       NO       
+     PLATE-1.16202          39.5819       NO       
+     PLATE-1.16203          36.1362       NO       
+     PLATE-1.16232          44.9908       NO       
+     PLATE-1.16233           43.873       NO       
+     PLATE-1.16234          42.3676       NO       
+     PLATE-1.16235          40.3509       NO       
+     PLATE-1.16236          38.0688       NO       
+     PLATE-1.16265          44.7212       NO       
+     PLATE-1.16266          43.6694       NO       
+     PLATE-1.16267          42.4111       NO       
+     PLATE-1.16268          40.9126       NO       
+     PLATE-1.16269          39.3186       NO       
+     PLATE-1.16298          44.3454       NO       
+     PLATE-1.16299           43.385       NO       
+     PLATE-1.16300          42.3714       NO       
+     PLATE-1.16301          41.2786       NO       
+     PLATE-1.16302          40.0559       NO       
+     PLATE-1.16331          44.1068       NO       
+     PLATE-1.16332           43.222       NO       
+     PLATE-1.16333          42.4105       NO       
+     PLATE-1.16334           41.634       NO       
+     PLATE-1.16335           40.542       NO       
+     PLATE-1.16364          44.1612       NO       
+     PLATE-1.16365          43.3588       NO       
+     PLATE-1.16366           42.822       NO       
+     PLATE-1.16367          42.4609       NO       
+     PLATE-1.16368          41.3813       NO       
+     PLATE-1.16398          44.6108       NO       
+     PLATE-1.16399          44.5506       NO       
+     PLATE-1.16400           44.632       NO       
+     PLATE-1.16401          43.9172       NO       
+     PLATE-1.16529          44.2083       NO       
+     PLATE-1.16530          43.2438       NO       
+     PLATE-1.16531          41.8529       NO       
+     PLATE-1.16532          39.5611       NO       
+     PLATE-1.16533           36.158       NO       
+     PLATE-1.16562           44.836       NO       
+     PLATE-1.16563          43.7431       NO       
+     PLATE-1.16564          42.2914       NO       
+     PLATE-1.16565          40.3175       NO       
+     PLATE-1.16566          38.0612       NO       
+     PLATE-1.16595          44.5868       NO       
+     PLATE-1.16596          43.5545       NO       
+     PLATE-1.16597          42.3323       NO       
+     PLATE-1.16598          40.8697       NO       
+     PLATE-1.16599          39.2905       NO       
+     PLATE-1.16628          44.2371       NO       
+     PLATE-1.16629          43.2911       NO       
+     PLATE-1.16630           42.297       NO       
+     PLATE-1.16631            41.23       NO       
+     PLATE-1.16632          40.0153       NO       
+     PLATE-1.16660          44.9286       NO       
+     PLATE-1.16661          44.0163       NO       
+     PLATE-1.16662           43.141       NO       
+     PLATE-1.16663          42.3401       NO       
+     PLATE-1.16664           41.577       NO       
+     PLATE-1.16665          40.4951       NO       
+     PLATE-1.16693          44.9797       NO       
+     PLATE-1.16694          44.0827       NO       
+     PLATE-1.16695          43.2886       NO       
+     PLATE-1.16696          42.7605       NO       
+     PLATE-1.16697          42.4082       NO       
+     PLATE-1.16698          41.3338       NO       
+     PLATE-1.16728          44.5583       NO       
+     PLATE-1.16729          44.5006       NO       
+     PLATE-1.16730          44.5852       NO       
+     PLATE-1.16731          43.8747       NO       
+     PLATE-1.16859          44.2406       NO       
+     PLATE-1.16860          43.2796       NO       
+     PLATE-1.16861          41.9009       NO       
+     PLATE-1.16862          39.7096       NO       
+     PLATE-1.16863          36.4633       NO       
+     PLATE-1.16892          44.8606       NO       
+     PLATE-1.16893           43.773       NO       
+     PLATE-1.16894          42.3317       NO       
+     PLATE-1.16895            40.42       NO       
+     PLATE-1.16896          38.2588       NO       
+     PLATE-1.16925          44.6155       NO       
+     PLATE-1.16926          43.5875       NO       
+     PLATE-1.16927          42.3722       NO       
+     PLATE-1.16928          40.9376       NO       
+     PLATE-1.16929          39.4133       NO       
+     PLATE-1.16958          44.2706       NO       
+     PLATE-1.16959          43.3278       NO       
+     PLATE-1.16960          42.3377       NO       
+     PLATE-1.16961          41.2767       NO       
+     PLATE-1.16962          40.0924       NO       
+     PLATE-1.16990          44.9632       NO       
+     PLATE-1.16991          44.0532       NO       
+     PLATE-1.16992            43.18       NO       
+     PLATE-1.16993          42.3815       NO       
+     PLATE-1.16994          41.6213       NO       
+     PLATE-1.16995          40.5496       NO       
+     PLATE-1.17024          44.1219       NO       
+     PLATE-1.17025          43.3299       NO       
+     PLATE-1.17026          42.8038       NO       
+     PLATE-1.17027          42.4538       NO       
+     PLATE-1.17028          41.3879       NO       
+     PLATE-1.17058          44.6034       NO       
+     PLATE-1.17059          44.5463       NO       
+     PLATE-1.17060           44.642       NO       
+     PLATE-1.17061          43.9529       NO       
+     PLATE-1.17189          44.6311       NO       
+     PLATE-1.17190          43.6861       NO       
+     PLATE-1.17191          42.3463       NO       
+     PLATE-1.17192          40.2315       NO       
+     PLATE-1.17193          37.0989       NO       
+     PLATE-1.17223          44.1654       NO       
+     PLATE-1.17224          42.7636       NO       
+     PLATE-1.17225          40.9129       NO       
+     PLATE-1.17226          38.8199       NO       
+     PLATE-1.17256          43.9918       NO       
+     PLATE-1.17257          42.8033       NO       
+     PLATE-1.17258          41.4056       NO       
+     PLATE-1.17259          39.9218       NO       
+     PLATE-1.17288          44.6741       NO       
+     PLATE-1.17289          43.7435       NO       
+     PLATE-1.17290          42.7704       NO       
+     PLATE-1.17291          41.7307       NO       
+     PLATE-1.17292          40.5688       NO       
+     PLATE-1.17321           44.468       NO       
+     PLATE-1.17322          43.6054       NO       
+     PLATE-1.17323          42.8172       NO       
+     PLATE-1.17324          42.0692       NO       
+     PLATE-1.17325          41.0099       NO       
+     PLATE-1.17354          44.5448       NO       
+     PLATE-1.17355          43.7631       NO       
+     PLATE-1.17356          43.2474       NO       
+     PLATE-1.17357          42.9088       NO       
+     PLATE-1.17358          41.8526       NO       
+     PLATE-1.17389          44.9997       NO       
+     PLATE-1.17391          44.4447       NO       
+     PLATE-1.17520          44.4851       NO       
+     PLATE-1.17521          43.1804       NO       
+     PLATE-1.17522          41.1255       NO       
+     PLATE-1.17523          38.0698       NO       
+     PLATE-1.17553          44.9793       NO       
+     PLATE-1.17554          43.6055       NO       
+     PLATE-1.17555           41.795       NO       
+     PLATE-1.17556          39.7443       NO       
+     PLATE-1.17586          44.8137       NO       
+     PLATE-1.17587          43.6455       NO       
+     PLATE-1.17588          42.2723       NO       
+     PLATE-1.17589          40.8128       NO       
+     PLATE-1.17619            44.57       NO       
+     PLATE-1.17620          43.6104       NO       
+     PLATE-1.17621          42.5862       NO       
+     PLATE-1.17622          41.4387       NO       
+     PLATE-1.17652          44.4342       NO       
+     PLATE-1.17653          43.6576       NO       
+     PLATE-1.17654          42.9225       NO       
+     PLATE-1.17655          41.8713       NO       
+     PLATE-1.17685          44.5965       NO       
+     PLATE-1.17686          44.0957       NO       
+     PLATE-1.17687          43.7727       NO       
+     PLATE-1.17688          42.7233       NO       
+     PLATE-1.17851          44.4338       NO       
+     PLATE-1.17852          42.4125       NO       
+     PLATE-1.17853          39.3904       NO       
+     PLATE-1.17884          44.8836       NO       
+     PLATE-1.17885          43.0845       NO       
+     PLATE-1.17886           41.045       NO       
+     PLATE-1.17917          44.9184       NO       
+     PLATE-1.17918          43.5545       NO       
+     PLATE-1.17919          42.1012       NO       
+     PLATE-1.17950          44.8751       NO       
+     PLATE-1.17951          43.8624       NO       
+     PLATE-1.17952          42.7202       NO       
+     PLATE-1.17983          44.9197       NO       
+     PLATE-1.17984           44.201       NO       
+     PLATE-1.17985          43.1525       NO       
+     PLATE-1.18018          44.0212       NO       
+     PLATE-1.18182          44.1287       NO       
+     PLATE-1.18183          41.0738       NO       
+     PLATE-1.18215          44.8155       NO       
+     PLATE-1.18216          42.7449       NO       
+     PLATE-1.18249          43.8205       NO       
+     PLATE-1.18282          44.4546       NO       
+     PLATE-1.18315          44.9056       NO       
+     PLATE-1.18513          43.1332       NO       
+     PLATE-1.18546          44.8853       NO       
+     PLATE-1.18877           44.868       NO       
+     PLATE-1.18910          43.8026       NO       
+     PLATE-1.18943          42.6395       NO       
+     PLATE-1.18976          41.4794       NO       
+     PLATE-1.19009          40.3925       NO       
+     PLATE-1.19042          39.4174       NO       
+     PLATE-1.19075          38.5291       NO       
+     PLATE-1.19108          38.4399       NO       
+  
+ --------------------------------------------------------------------------------
+ Elements with large aspect ratio
+  
+      Element      Adjusted nodes 
+ ----------------- -------------- 
+     PLATE-1.21841       NO       
+     PLATE-1.21842       NO       
+     PLATE-1.21843       NO       
+     PLATE-1.21844       NO       
+     PLATE-1.21845       NO       
+     PLATE-1.21846       NO       
+     PLATE-1.21847       NO       
+     PLATE-1.21848       NO       
+     PLATE-1.21849       NO       
+     PLATE-1.21850       NO       
+     PLATE-1.21851       NO       
+     PLATE-1.21852       NO       
+     PLATE-1.21853       NO       
+     PLATE-1.21854       NO       
+     PLATE-1.21855       NO       
+     PLATE-1.21856       NO       
+     PLATE-1.21857       NO       
+     PLATE-1.21858       NO       
+     PLATE-1.21859       NO       
+     PLATE-1.21860       NO       
+     PLATE-1.21861       NO       
+     PLATE-1.21862       NO       
+     PLATE-1.21863       NO       
+     PLATE-1.21864       NO       
+     PLATE-1.21865       NO       
+     PLATE-1.21866       NO       
+     PLATE-1.21867       NO       
+     PLATE-1.21868       NO       
+     PLATE-1.21869       NO       
+     PLATE-1.21870       NO       
+     PLATE-1.21871       NO       
+     PLATE-1.21872       NO       
+     PLATE-1.21873       NO       
+     PLATE-1.21874       NO       
+     PLATE-1.21875       NO       
+     PLATE-1.21876       NO       
+     PLATE-1.21877       NO       
+     PLATE-1.21878       NO       
+     PLATE-1.21879       NO       
+     PLATE-1.21880       NO       
+     PLATE-1.21881       NO       
+     PLATE-1.21882       NO       
+     PLATE-1.21883       NO       
+     PLATE-1.21884       NO       
+     PLATE-1.21885       NO       
+     PLATE-1.21886       NO       
+     PLATE-1.21887       NO       
+     PLATE-1.21888       NO       
+     PLATE-1.21889       NO       
+     PLATE-1.21890       NO       
+     PLATE-1.21891       NO       
+     PLATE-1.21892       NO       
+     PLATE-1.21893       NO       
+     PLATE-1.21894       NO       
+     PLATE-1.21895       NO       
+     PLATE-1.21896       NO       
+     PLATE-1.21897       NO       
+     PLATE-1.21898       NO       
+     PLATE-1.21899       NO       
+     PLATE-1.21900       NO       
+     PLATE-1.21901       NO       
+     PLATE-1.21902       NO       
+     PLATE-1.21903       NO       
+     PLATE-1.21904       NO       
+     PLATE-1.21905       NO       
+     PLATE-1.21906       NO       
+     PLATE-1.21907       NO       
+     PLATE-1.21908       NO       
+     PLATE-1.21909       NO       
+     PLATE-1.21910       NO       
+     PLATE-1.21911       NO       
+     PLATE-1.21912       NO       
+     PLATE-1.21913       NO       
+     PLATE-1.21914       NO       
+     PLATE-1.21915       NO       
+     PLATE-1.21916       NO       
+     PLATE-1.21917       NO       
+     PLATE-1.21918       NO       
+     PLATE-1.21919       NO       
+     PLATE-1.21920       NO       
+     PLATE-1.21921       NO       
+     PLATE-1.21922       NO       
+     PLATE-1.21923       NO       
+     PLATE-1.21924       NO       
+     PLATE-1.21925       NO       
+     PLATE-1.21926       NO       
+     PLATE-1.21927       NO       
+     PLATE-1.21928       NO       
+     PLATE-1.21929       NO       
+     PLATE-1.21930       NO       
+     PLATE-1.21931       NO       
+     PLATE-1.21932       NO       
+     PLATE-1.21933       NO       
+     PLATE-1.21934       NO       
+     PLATE-1.21935       NO       
+     PLATE-1.21936       NO       
+     PLATE-1.21937       NO       
+     PLATE-1.21938       NO       
+     PLATE-1.21939       NO       
+     PLATE-1.21940       NO       
+     PLATE-1.21941       NO       
+     PLATE-1.21942       NO       
+     PLATE-1.21943       NO       
+     PLATE-1.21944       NO       
+     PLATE-1.21945       NO       
+     PLATE-1.21946       NO       
+     PLATE-1.21947       NO       
+     PLATE-1.21948       NO       
+     PLATE-1.21949       NO       
+     PLATE-1.21950       NO       
+     PLATE-1.21951       NO       
+     PLATE-1.21952       NO       
+     PLATE-1.21953       NO       
+     PLATE-1.21954       NO       
+     PLATE-1.21955       NO       
+     PLATE-1.21956       NO       
+     PLATE-1.21957       NO       
+     PLATE-1.21958       NO       
+     PLATE-1.21959       NO       
+     PLATE-1.21960       NO       
+     PLATE-1.21961       NO       
+     PLATE-1.21962       NO       
+     PLATE-1.21963       NO       
+     PLATE-1.21964       NO       
+     PLATE-1.21965       NO       
+     PLATE-1.21966       NO       
+     PLATE-1.21967       NO       
+     PLATE-1.21968       NO       
+     PLATE-1.21969       NO       
+     PLATE-1.21970       NO       
+     PLATE-1.21971       NO       
+     PLATE-1.21972       NO       
+     PLATE-1.21973       NO       
+     PLATE-1.21974       NO       
+     PLATE-1.21975       NO       
+     PLATE-1.21976       NO       
+     PLATE-1.21977       NO       
+     PLATE-1.21978       NO       
+     PLATE-1.21979       NO       
+     PLATE-1.21980       NO       
+     PLATE-1.21981       NO       
+     PLATE-1.21982       NO       
+     PLATE-1.21983       NO       
+     PLATE-1.21984       NO       
+     PLATE-1.21985       NO       
+     PLATE-1.21986       NO       
+     PLATE-1.21987       NO       
+     PLATE-1.21988       NO       
+     PLATE-1.21989       NO       
+     PLATE-1.21990       NO       
+     PLATE-1.21991       NO       
+     PLATE-1.21992       NO       
+     PLATE-1.21993       NO       
+     PLATE-1.21994       NO       
+     PLATE-1.21995       NO       
+     PLATE-1.21996       NO       
+     PLATE-1.21997       NO       
+     PLATE-1.21998       NO       
+     PLATE-1.21999       NO       
+     PLATE-1.22000       NO       
+     PLATE-1.22001       NO       
+     PLATE-1.22002       NO       
+     PLATE-1.22003       NO       
+     PLATE-1.22004       NO       
+     PLATE-1.22005       NO       
+     PLATE-1.22006       NO       
+     PLATE-1.22007       NO       
+     PLATE-1.22008       NO       
+     PLATE-1.22009       NO       
+     PLATE-1.22010       NO       
+     PLATE-1.22011       NO       
+     PLATE-1.22012       NO       
+     PLATE-1.22013       NO       
+     PLATE-1.22014       NO       
+     PLATE-1.22015       NO       
+     PLATE-1.22016       NO       
+     PLATE-1.22017       NO       
+     PLATE-1.22018       NO       
+     PLATE-1.22019       NO       
+     PLATE-1.22020       NO       
+     PLATE-1.22021       NO       
+     PLATE-1.22022       NO       
+     PLATE-1.22023       NO       
+     PLATE-1.22024       NO       
+     PLATE-1.22025       NO       
+     PLATE-1.22026       NO       
+     PLATE-1.22027       NO       
+     PLATE-1.22028       NO       
+     PLATE-1.22029       NO       
+     PLATE-1.22030       NO       
+     PLATE-1.22031       NO       
+     PLATE-1.22032       NO       
+     PLATE-1.22033       NO       
+     PLATE-1.22034       NO       
+     PLATE-1.22035       NO       
+     PLATE-1.22036       NO       
+     PLATE-1.22037       NO       
+     PLATE-1.22038       NO       
+     PLATE-1.22039       NO       
+     PLATE-1.22040       NO       
+     PLATE-1.22041       NO       
+     PLATE-1.22042       NO       
+     PLATE-1.22043       NO       
+     PLATE-1.22044       NO       
+     PLATE-1.22045       NO       
+     PLATE-1.22046       NO       
+     PLATE-1.22047       NO       
+     PLATE-1.22048       NO       
+     PLATE-1.22049       NO       
+     PLATE-1.22050       NO       
+     PLATE-1.22051       NO       
+     PLATE-1.22052       NO       
+     PLATE-1.22053       NO       
+     PLATE-1.22054       NO       
+     PLATE-1.22055       NO       
+     PLATE-1.22056       NO       
+     PLATE-1.22057       NO       
+     PLATE-1.22058       NO       
+     PLATE-1.22059       NO       
+     PLATE-1.22060       NO       
+     PLATE-1.22061       NO       
+     PLATE-1.22062       NO       
+     PLATE-1.22063       NO       
+     PLATE-1.22064       NO       
+     PLATE-1.22065       NO       
+     PLATE-1.22066       NO       
+     PLATE-1.22067       NO       
+     PLATE-1.22068       NO       
+     PLATE-1.22069       NO       
+     PLATE-1.22070       NO       
+     PLATE-1.22071       NO       
+     PLATE-1.22072       NO       
+     PLATE-1.22073       NO       
+     PLATE-1.22074       NO       
+     PLATE-1.22075       NO       
+     PLATE-1.22076       NO       
+     PLATE-1.22077       NO       
+     PLATE-1.22078       NO       
+     PLATE-1.22079       NO       
+     PLATE-1.22080       NO       
+     PLATE-1.22081       NO       
+     PLATE-1.22082       NO       
+     PLATE-1.22083       NO       
+     PLATE-1.22084       NO       
+     PLATE-1.22085       NO       
+     PLATE-1.22086       NO       
+     PLATE-1.22087       NO       
+     PLATE-1.22088       NO       
+     PLATE-1.22089       NO       
+     PLATE-1.22090       NO       
+     PLATE-1.22091       NO       
+     PLATE-1.22092       NO       
+     PLATE-1.22093       NO       
+     PLATE-1.22094       NO       
+     PLATE-1.22095       NO       
+     PLATE-1.22096       NO       
+     PLATE-1.22097       NO       
+     PLATE-1.22098       NO       
+     PLATE-1.22099       NO       
+     PLATE-1.22100       NO       
+     PLATE-1.22101       NO       
+     PLATE-1.22102       NO       
+     PLATE-1.22103       NO       
+     PLATE-1.22104       NO       
+     PLATE-1.22105       NO       
+     PLATE-1.22106       NO       
+     PLATE-1.22107       NO       
+     PLATE-1.22108       NO       
+     PLATE-1.22109       NO       
+     PLATE-1.22110       NO       
+     PLATE-1.22111       NO       
+     PLATE-1.22112       NO       
+     PLATE-1.22113       NO       
+     PLATE-1.22114       NO       
+     PLATE-1.22115       NO       
+     PLATE-1.22116       NO       
+     PLATE-1.22117       NO       
+     PLATE-1.22118       NO       
+     PLATE-1.22119       NO       
+     PLATE-1.22120       NO       
+     PLATE-1.22121       NO       
+     PLATE-1.22122       NO       
+     PLATE-1.22123       NO       
+     PLATE-1.22124       NO       
+     PLATE-1.22125       NO       
+     PLATE-1.22126       NO       
+     PLATE-1.22127       NO       
+     PLATE-1.22128       NO       
+     PLATE-1.22129       NO       
+     PLATE-1.22130       NO       
+     PLATE-1.22131       NO       
+     PLATE-1.22132       NO       
+     PLATE-1.22133       NO       
+     PLATE-1.22134       NO       
+     PLATE-1.22135       NO       
+     PLATE-1.22136       NO       
+     PLATE-1.22137       NO       
+     PLATE-1.22138       NO       
+     PLATE-1.22139       NO       
+     PLATE-1.22140       NO       
+  
+  
+  *Step, name=Load, nlgeom=NO
+  *output, field
+  *output, history, frequency=0
+  *Step, name=Load, nlgeom=NO
+  *Step, name=Load, nlgeom=NO
+  *static
+  *dsload
+  *output, field
+  *nodeoutput
+  *elementoutput, directions=YES
+  *output, history, frequency=0
+  *endstep
+  *boundary
+  *boundary
+  *boundary
+  *Step, name=Load, nlgeom=NO
+  *static
+  *contourintegral, crackname=J-INTEGRAL_CRACK, contours=10, cracktipnodes, symm
+  *contourintegral, crackname=KI_CRACK, type=KFACTORS, direction=MERR, contours=10, cracktipnodes, symm
+  *endstep
+
+     - (RAMP) OR (STEP) - INDICATE USE OF DEFAULT AMPLITUDES ASSOCIATED WITH THE STEP
+
+
+
+                            P R O B L E M   S I Z E
+
+
+          NUMBER OF ELEMENTS IS                                 22140
+          NUMBER OF NODES IS                                    96014
+          NUMBER OF NODES DEFINED BY THE USER                   96014
+          TOTAL NUMBER OF VARIABLES IN THE MODEL               288042
+          (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
+           VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =   5.7000    
+       SYSTEM TIME (SEC)    =  0.90000    
+       TOTAL CPU TIME (SEC) =   6.6000    
+       WALLCLOCK TIME (SEC) =          8
+1
+
+   Abaqus 3DEXPERIENCE R2019x                                  Date 27-Aug-2019   Time 22:51:06
+   For use by UNIVERSITY SYSTEM OF NEW HAMPSHIRE under license from Dassault Systemes or its subsidiary.
+
+                                                                                               STEP    1  INCREMENT    1
+                                                                                          TIME COMPLETED IN THIS STEP   0.00    
+
+
+                        S T E P       1     S T A T I C   A N A L Y S I S
+
+
+                                                                                          
+
+     AUTOMATIC TIME CONTROL WITH -
+          A SUGGESTED INITIAL TIME INCREMENT OF                 1.00    
+          AND A TOTAL TIME PERIOD OF                            1.00    
+          THE MINIMUM TIME INCREMENT ALLOWED IS                1.000E-05
+          THE MAXIMUM TIME INCREMENT ALLOWED IS                 1.00    
+
+     LINEAR EQUATION SOLVER TYPE         DIRECT SPARSE
+  
+                   M E M O R Y   E S T I M A T E
+  
+ PROCESS      FLOATING PT       MINIMUM MEMORY        MEMORY TO
+              OPERATIONS           REQUIRED          MINIMIZE I/O
+             PER ITERATION           (MB)               (MB)
+  
+     1          1.95E+12              645               4964
+  
+ NOTE:
+      (1) SINCE ABAQUS DOES NOT PRE-ALLOCATE MEMORY AND ONLY ALLOCATES MEMORY AS NEEDED DURING THE ANALYSIS,
+          THE MEMORY REQUIREMENT PRINTED HERE CAN ONLY BE VIEWED AS A GENERAL GUIDELINE BASED ON THE BEST
+          KNOWLEDGE AVAILABLE AT THE BEGINNING OF A STEP BEFORE THE SOLUTION PROCESS HAS BEGUN.
+      (2) THE ESTIMATE IS NORMALLY UPDATED AT THE BEGINNING OF EVERY STEP. IT IS THE MAXIMUM VALUE OF THE
+          ESTIMATE FROM THE CURRENT STEP TO THE LAST STEP OF THE ANALYSIS, WITH UNSYMMETRIC SOLUTION TAKEN
+          INTO ACCOUNT IF APPLICABLE. 
+      (3) SINCE THE ESTIMATE IS BASED ON THE ACTIVE DEGREES OF FREEDOM IN THE FIRST ITERATION OF THE 
+          CURRENT STEP, THE MEMORY ESTIMATE MIGHT BE SIGNIFICANTLY DIFFERENT THAN ACTUAL USAGE FOR 
+          PROBLEMS WITH SUBSTANTIAL CHANGES IN ACTIVE DEGREES OF FREEDOM BETWEEN STEPS (OR EVEN WITHIN
+          THE SAME STEP). EXAMPLES ARE: PROBLEMS WITH SIGNIFICANT CONTACT CHANGES, PROBLEMS WITH MODEL
+          CHANGE, PROBLEMS WITH BOTH STATIC STEP AND STEADY STATE DYNAMIC PROCEDURES WHERE ACOUSTIC 
+          ELEMENTS WILL ONLY BE ACTIVATED IN THE STEADY STATE DYNAMIC STEPS.
+      (4) FOR MULTI-PROCESS EXECUTION, THE ESTIMATED VALUE OF FLOATING POINT OPERATIONS FOR EACH PROCESS
+          IS BASED ON AN INITIAL SCHEDULING OF OPERATIONS AND MIGHT NOT REFLECT THE ACTUAL FLOATING 
+          POINT OPERATIONS COMPLETED ON EACH PROCESS. OPERATIONS ARE DYNAMICALLY BALANCED DURING EXECUTION, 
+          SO THE ACTUAL BALANCE OF OPERATIONS BETWEEN PROCESSES IS EXPECTED TO BE BETTER THAN THE ESTIMATE
+          PRINTED HERE.
+      (5) THE UPPER LIMIT OF MEMORY THAT CAN BE ALLOCATED BY ABAQUS WILL IN GENERAL DEPEND ON THE VALUE OF
+          THE "MEMORY" PARAMETER AND THE AMOUNT OF PHYSICAL MEMORY AVAILABLE ON THE MACHINE. PLEASE SEE
+          THE "ABAQUS ANALYSIS USER'S MANUAL" FOR MORE DETAILS. THE ACTUAL USAGE OF MEMORY AND OF DISK
+          SPACE FOR SCRATCH DATA WILL DEPEND ON THIS UPPER LIMIT AS WELL AS THE MEMORY REQUIRED TO MINIMIZE
+          I/O. IF THE MEMORY UPPER LIMIT IS GREATER THAN THE MEMORY REQUIRED TO MINIMIZE I/O, THEN THE ACTUAL
+          MEMORY USAGE WILL BE CLOSE TO THE ESTIMATED "MEMORY TO MINIMIZE I/O" VALUE, AND THE SCRATCH DISK
+          USAGE WILL BE CLOSE-TO-ZERO; OTHERWISE, THE ACTUAL MEMORY USED WILL BE CLOSE TO THE PREVIOUSLY
+          MENTIONED MEMORY LIMIT, AND THE SCRATCH DISK USAGE WILL BE ROUGHLY PROPORTIONAL TO THE DIFFERENCE
+          BETWEEN THE ESTIMATED "MEMORY TO MINIMIZE I/O" AND THE MEMORY UPPER LIMIT. HOWEVER ACCURATE
+          ESTIMATE OF THE SCRATCH DISK SPACE IS NOT POSSIBLE.
+      (6) USING "*RESTART, WRITE" CAN GENERATE A LARGE AMOUNT OF DATA WRITTEN IN THE WORK DIRECTORY.
+
+
+                                INCREMENT     1 SUMMARY
+
+
+ TIME INCREMENT COMPLETED   1.00    ,  FRACTION OF STEP COMPLETED   1.00    
+ STEP TIME COMPLETED        1.00    ,  TOTAL TIME COMPLETED         1.00    
+
+
+
+                              J - I N T E G R A L   E S T I M A T E S
+
+   CRACK        CRACKFRONT          C O N T O U R S
+   NAME         NODE SET
+                                     1               2               3               4               5
+                                     6               7               8               9              10
+
+
+   J-INTEGRAL_CRACK
+                   -23-              6.9327E-04      7.2065E-04      7.2123E-04      7.2128E-04      7.2129E-04
+                                     7.2129E-04      7.2129E-04      7.2129E-04      7.2128E-04      7.2127E-04
+
+                   -34-              6.9486E-04      7.2273E-04      7.2327E-04      7.2333E-04      7.2334E-04
+                                     7.2334E-04      7.2334E-04      7.2334E-04      7.2334E-04      7.2333E-04
+
+                   -45-              6.9568E-04      7.2366E-04      7.2416E-04      7.2421E-04      7.2422E-04
+                                     7.2422E-04      7.2422E-04      7.2421E-04      7.2421E-04      7.2420E-04
+
+                   -48-              6.9553E-04      7.2353E-04      7.2402E-04      7.2407E-04      7.2407E-04
+                                     7.2407E-04      7.2407E-04      7.2407E-04      7.2407E-04      7.2406E-04
+
+                   -49-              6.9588E-04      7.2400E-04      7.2447E-04      7.2452E-04      7.2453E-04
+                                     7.2453E-04      7.2453E-04      7.2453E-04      7.2453E-04      7.2452E-04
+
+                   -50-              6.9592E-04      7.2403E-04      7.2448E-04      7.2454E-04      7.2455E-04
+                                     7.2455E-04      7.2455E-04      7.2455E-04      7.2455E-04      7.2454E-04
+
+                   -51-              6.9621E-04      7.2436E-04      7.2480E-04      7.2486E-04      7.2487E-04
+                                     7.2487E-04      7.2487E-04      7.2487E-04      7.2487E-04      7.2486E-04
+
+                   -52-              6.9641E-04      7.2457E-04      7.2500E-04      7.2506E-04      7.2507E-04
+                                     7.2507E-04      7.2507E-04      7.2507E-04      7.2507E-04      7.2506E-04
+
+                   -53-              6.9674E-04      7.2493E-04      7.2536E-04      7.2541E-04      7.2542E-04
+                                     7.2543E-04      7.2543E-04      7.2543E-04      7.2542E-04      7.2542E-04
+
+                   -13-              6.9712E-04      7.2532E-04      7.2575E-04      7.2579E-04      7.2581E-04
+                                     7.2582E-04      7.2581E-04      7.2581E-04      7.2581E-04      7.2580E-04
+
+                   -14-              6.9754E-04      7.2577E-04      7.2620E-04      7.2624E-04      7.2626E-04
+                                     7.2627E-04      7.2627E-04      7.2627E-04      7.2626E-04      7.2626E-04
+
+                   -15-              6.9808E-04      7.2633E-04      7.2677E-04      7.2680E-04      7.2683E-04
+                                     7.2683E-04      7.2683E-04      7.2683E-04      7.2683E-04      7.2682E-04
+
+                   -16-              6.9866E-04      7.2693E-04      7.2737E-04      7.2741E-04      7.2743E-04
+                                     7.2743E-04      7.2743E-04      7.2743E-04      7.2743E-04      7.2742E-04
+
+                   -17-              6.9938E-04      7.2768E-04      7.2812E-04      7.2815E-04      7.2818E-04
+                                     7.2818E-04      7.2818E-04      7.2818E-04      7.2818E-04      7.2817E-04
+
+                   -18-              7.0013E-04      7.2847E-04      7.2891E-04      7.2894E-04      7.2896E-04
+                                     7.2897E-04      7.2897E-04      7.2897E-04      7.2897E-04      7.2896E-04
+
+                   -19-              7.0105E-04      7.2943E-04      7.2987E-04      7.2990E-04      7.2993E-04
+                                     7.2993E-04      7.2993E-04      7.2993E-04      7.2993E-04      7.2992E-04
+
+                   -20-              7.0202E-04      7.3044E-04      7.3088E-04      7.3091E-04      7.3094E-04
+                                     7.3094E-04      7.3094E-04      7.3094E-04      7.3094E-04      7.3093E-04
+
+                   -21-              7.0319E-04      7.3166E-04      7.3210E-04      7.3214E-04      7.3216E-04
+                                     7.3216E-04      7.3216E-04      7.3216E-04      7.3216E-04      7.3215E-04
+
+                   -22-              7.0442E-04      7.3295E-04      7.3339E-04      7.3342E-04      7.3345E-04
+                                     7.3345E-04      7.3345E-04      7.3345E-04      7.3345E-04      7.3344E-04
+
+                   -24-              7.0591E-04      7.3450E-04      7.3495E-04      7.3498E-04      7.3500E-04
+                                     7.3500E-04      7.3500E-04      7.3500E-04      7.3500E-04      7.3499E-04
+
+                   -25-              7.0748E-04      7.3614E-04      7.3659E-04      7.3662E-04      7.3664E-04
+                                     7.3665E-04      7.3665E-04      7.3665E-04      7.3664E-04      7.3663E-04
+
+                   -26-              7.0938E-04      7.3811E-04      7.3858E-04      7.3860E-04      7.3862E-04
+                                     7.3863E-04      7.3862E-04      7.3862E-04      7.3862E-04      7.3861E-04
+
+                   -27-              7.1139E-04      7.4021E-04      7.4068E-04      7.4070E-04      7.4072E-04
+                                     7.4072E-04      7.4072E-04      7.4072E-04      7.4072E-04      7.4071E-04
+
+                   -28-              7.1383E-04      7.4274E-04      7.4321E-04      7.4323E-04      7.4325E-04
+                                     7.4325E-04      7.4325E-04      7.4325E-04      7.4325E-04      7.4324E-04
+
+                   -29-              7.1640E-04      7.4543E-04      7.4590E-04      7.4592E-04      7.4594E-04
+                                     7.4595E-04      7.4595E-04      7.4594E-04      7.4594E-04      7.4593E-04
+
+                   -30-              7.1953E-04      7.4867E-04      7.4915E-04      7.4917E-04      7.4919E-04
+                                     7.4920E-04      7.4920E-04      7.4920E-04      7.4920E-04      7.4919E-04
+
+                   -31-              7.2285E-04      7.5215E-04      7.5263E-04      7.5265E-04      7.5267E-04
+                                     7.5267E-04      7.5267E-04      7.5267E-04      7.5266E-04      7.5265E-04
+
+                   -32-              7.2689E-04      7.5633E-04      7.5683E-04      7.5684E-04      7.5686E-04
+                                     7.5687E-04      7.5687E-04      7.5687E-04      7.5687E-04      7.5686E-04
+
+                   -33-              7.3120E-04      7.6083E-04      7.6133E-04      7.6134E-04      7.6136E-04
+                                     7.6136E-04      7.6136E-04      7.6135E-04      7.6135E-04      7.6133E-04
+
+                   -35-              7.3640E-04      7.6623E-04      7.6674E-04      7.6676E-04      7.6677E-04
+                                     7.6678E-04      7.6678E-04      7.6678E-04      7.6678E-04      7.6678E-04
+
+                   -36-              7.4200E-04      7.7207E-04      7.7258E-04      7.7259E-04      7.7259E-04
+                                     7.7259E-04      7.7259E-04      7.7258E-04      7.7257E-04      7.7256E-04
+
+                   -37-              7.4869E-04      7.7902E-04      7.7953E-04      7.7956E-04      7.7957E-04
+                                     7.7958E-04      7.7959E-04      7.7959E-04      7.7959E-04      7.7958E-04
+
+                   -38-              7.5594E-04      7.8658E-04      7.8710E-04      7.8711E-04      7.8711E-04
+                                     7.8710E-04      7.8709E-04      7.8708E-04      7.8708E-04      7.8707E-04
+
+                   -39-              7.6441E-04      7.9535E-04      7.9588E-04      7.9591E-04      7.9592E-04
+                                     7.9593E-04      7.9594E-04      7.9594E-04      7.9594E-04      7.9593E-04
+
+                   -40-              7.7362E-04      8.0494E-04      8.0546E-04      8.0545E-04      8.0543E-04
+                                     8.0541E-04      8.0541E-04      8.0541E-04      8.0542E-04      8.0543E-04
+
+                   -41-              7.8369E-04      8.1544E-04      8.1600E-04      8.1605E-04      8.1609E-04
+                                     8.1611E-04      8.1610E-04      8.1609E-04      8.1607E-04      8.1605E-04
+
+                   -42-              7.9533E-04      8.2762E-04      8.2819E-04      8.2819E-04      8.2821E-04
+                                     8.2827E-04      8.2834E-04      8.2838E-04      8.2841E-04      8.2840E-04
+
+                   -43-              8.0456E-04      8.3688E-04      8.3740E-04      8.3742E-04      8.3737E-04
+                                     8.3730E-04      8.3724E-04      8.3721E-04      8.3721E-04      8.3722E-04
+
+                   -44-              8.1695E-04      8.4965E-04      8.5106E-04      8.5133E-04      8.5120E-04
+                                     8.5099E-04      8.5079E-04      8.5061E-04      8.5046E-04      8.5031E-04
+
+                   -46-              8.0217E-04      8.3432E-04      8.3421E-04      8.3432E-04      8.3475E-04
+                                     8.3515E-04      8.3545E-04      8.3565E-04      8.3578E-04      8.3588E-04
+
+                   -47-              7.1152E-04      7.3993E-04      7.4160E-04      7.4088E-04      7.3964E-04
+                                     7.3864E-04      7.3800E-04      7.3760E-04      7.3735E-04      7.3714E-04
+
+
+
+     LABELS REFERENCED IN THE ABOVE TABLE
+
+      -13-     ASSEMBLY__PICKEDSET36-10_                                                       
+      -14-     ASSEMBLY__PICKEDSET36-11_                                                       
+      -15-     ASSEMBLY__PICKEDSET36-12_                                                       
+      -16-     ASSEMBLY__PICKEDSET36-13_                                                       
+      -17-     ASSEMBLY__PICKEDSET36-14_                                                       
+      -18-     ASSEMBLY__PICKEDSET36-15_                                                       
+      -19-     ASSEMBLY__PICKEDSET36-16_                                                       
+      -20-     ASSEMBLY__PICKEDSET36-17_                                                       
+      -21-     ASSEMBLY__PICKEDSET36-18_                                                       
+      -22-     ASSEMBLY__PICKEDSET36-19_                                                       
+      -23-     ASSEMBLY__PICKEDSET36-1_                                                        
+      -24-     ASSEMBLY__PICKEDSET36-20_                                                       
+      -25-     ASSEMBLY__PICKEDSET36-21_                                                       
+      -26-     ASSEMBLY__PICKEDSET36-22_                                                       
+      -27-     ASSEMBLY__PICKEDSET36-23_                                                       
+      -28-     ASSEMBLY__PICKEDSET36-24_                                                       
+      -29-     ASSEMBLY__PICKEDSET36-25_                                                       
+      -30-     ASSEMBLY__PICKEDSET36-26_                                                       
+      -31-     ASSEMBLY__PICKEDSET36-27_                                                       
+      -32-     ASSEMBLY__PICKEDSET36-28_                                                       
+      -33-     ASSEMBLY__PICKEDSET36-29_                                                       
+      -34-     ASSEMBLY__PICKEDSET36-2_                                                        
+      -35-     ASSEMBLY__PICKEDSET36-30_                                                       
+      -36-     ASSEMBLY__PICKEDSET36-31_                                                       
+      -37-     ASSEMBLY__PICKEDSET36-32_                                                       
+      -38-     ASSEMBLY__PICKEDSET36-33_                                                       
+      -39-     ASSEMBLY__PICKEDSET36-34_                                                       
+      -40-     ASSEMBLY__PICKEDSET36-35_                                                       
+      -41-     ASSEMBLY__PICKEDSET36-36_                                                       
+      -42-     ASSEMBLY__PICKEDSET36-37_                                                       
+      -43-     ASSEMBLY__PICKEDSET36-38_                                                       
+      -44-     ASSEMBLY__PICKEDSET36-39_                                                       
+      -45-     ASSEMBLY__PICKEDSET36-3_                                                        
+      -46-     ASSEMBLY__PICKEDSET36-40_                                                       
+      -47-     ASSEMBLY__PICKEDSET36-41_                                                       
+      -48-     ASSEMBLY__PICKEDSET36-4_                                                        
+      -49-     ASSEMBLY__PICKEDSET36-5_                                                        
+      -50-     ASSEMBLY__PICKEDSET36-6_                                                        
+      -51-     ASSEMBLY__PICKEDSET36-7_                                                        
+      -52-     ASSEMBLY__PICKEDSET36-8_                                                        
+      -53-     ASSEMBLY__PICKEDSET36-9_                                                        
+
+
+
+                              K   F A C T O R       E S T I M A T E S
+
+   CRACK        CRACKFRONT          C O N T O U R S
+   NAME         NODE SET
+                                     1               2               3               4               5
+                                     6               7               8               9              10
+
+
+   KI_CRACK
+                 -23-       K1:      1.2267E+04      1.2680E+04      1.2684E+04      1.2685E+04      1.2685E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7540E-04      7.2155E-04      7.2207E-04      7.2212E-04      7.2213E-04
+
+
+                            K1:      1.2685E+04      1.2685E+04      1.2685E+04      1.2685E+04      1.2685E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2213E-04      7.2214E-04      7.2213E-04      7.2213E-04      7.2212E-04
+
+
+                 -34-       K1:      1.2282E+04      1.2698E+04      1.2702E+04      1.2702E+04      1.2702E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7699E-04      7.2360E-04      7.2408E-04      7.2414E-04      7.2415E-04
+
+
+                            K1:      1.2702E+04      1.2702E+04      1.2702E+04      1.2702E+04      1.2702E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2415E-04      7.2415E-04      7.2415E-04      7.2415E-04      7.2415E-04
+
+
+                 -45-       K1:      1.2290E+04      1.2706E+04      1.2710E+04      1.2710E+04      1.2711E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7786E-04      7.2458E-04      7.2501E-04      7.2506E-04      7.2507E-04
+
+
+                            K1:      1.2711E+04      1.2711E+04      1.2711E+04      1.2711E+04      1.2710E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2507E-04      7.2507E-04      7.2507E-04      7.2507E-04      7.2506E-04
+
+
+                 -48-       K1:      1.2289E+04      1.2706E+04      1.2709E+04      1.2710E+04      1.2710E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7777E-04      7.2453E-04      7.2493E-04      7.2499E-04      7.2500E-04
+
+
+                            K1:      1.2710E+04      1.2710E+04      1.2710E+04      1.2710E+04      1.2710E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2500E-04      7.2500E-04      7.2500E-04      7.2500E-04      7.2499E-04
+
+
+                 -49-       K1:      1.2292E+04      1.2710E+04      1.2714E+04      1.2714E+04      1.2714E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7814E-04      7.2502E-04      7.2541E-04      7.2547E-04      7.2548E-04
+
+
+                            K1:      1.2714E+04      1.2714E+04      1.2714E+04      1.2714E+04      1.2714E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2548E-04      7.2548E-04      7.2548E-04      7.2548E-04      7.2547E-04
+
+
+                 -50-       K1:      1.2293E+04      1.2711E+04      1.2714E+04      1.2714E+04      1.2715E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7821E-04      7.2509E-04      7.2546E-04      7.2552E-04      7.2553E-04
+
+
+                            K1:      1.2715E+04      1.2715E+04      1.2715E+04      1.2715E+04      1.2715E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2554E-04      7.2554E-04      7.2553E-04      7.2553E-04      7.2553E-04
+
+
+                 -51-       K1:      1.2296E+04      1.2714E+04      1.2717E+04      1.2717E+04      1.2718E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7851E-04      7.2544E-04      7.2579E-04      7.2585E-04      7.2587E-04
+
+
+                            K1:      1.2718E+04      1.2718E+04      1.2718E+04      1.2718E+04      1.2717E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2587E-04      7.2587E-04      7.2587E-04      7.2587E-04      7.2586E-04
+
+
+                 -52-       K1:      1.2298E+04      1.2716E+04      1.2719E+04      1.2719E+04      1.2719E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7872E-04      7.2566E-04      7.2601E-04      7.2607E-04      7.2609E-04
+
+
+                            K1:      1.2719E+04      1.2719E+04      1.2719E+04      1.2719E+04      1.2719E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2609E-04      7.2609E-04      7.2609E-04      7.2609E-04      7.2608E-04
+
+
+                 -53-       K1:      1.2301E+04      1.2719E+04      1.2722E+04      1.2722E+04      1.2723E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7905E-04      7.2603E-04      7.2637E-04      7.2643E-04      7.2645E-04
+
+
+                            K1:      1.2723E+04      1.2723E+04      1.2723E+04      1.2723E+04      1.2723E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2645E-04      7.2645E-04      7.2645E-04      7.2645E-04      7.2644E-04
+
+
+                 -13-       K1:      1.2304E+04      1.2722E+04      1.2725E+04      1.2726E+04      1.2726E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7943E-04      7.2643E-04      7.2678E-04      7.2682E-04      7.2684E-04
+
+
+                            K1:      1.2726E+04      1.2726E+04      1.2726E+04      1.2726E+04      1.2726E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2685E-04      7.2685E-04      7.2685E-04      7.2685E-04      7.2684E-04
+
+
+                 -14-       K1:      1.2308E+04      1.2726E+04      1.2730E+04      1.2730E+04      1.2730E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7985E-04      7.2689E-04      7.2724E-04      7.2728E-04      7.2730E-04
+
+
+                            K1:      1.2730E+04      1.2730E+04      1.2730E+04      1.2730E+04      1.2730E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2731E-04      7.2731E-04      7.2731E-04      7.2730E-04      7.2730E-04
+
+
+                 -15-       K1:      1.2313E+04      1.2731E+04      1.2735E+04      1.2735E+04      1.2735E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8039E-04      7.2746E-04      7.2781E-04      7.2785E-04      7.2788E-04
+
+
+                            K1:      1.2735E+04      1.2735E+04      1.2735E+04      1.2735E+04      1.2735E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2788E-04      7.2788E-04      7.2788E-04      7.2788E-04      7.2787E-04
+
+
+                 -16-       K1:      1.2318E+04      1.2737E+04      1.2740E+04      1.2740E+04      1.2740E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8095E-04      7.2807E-04      7.2842E-04      7.2846E-04      7.2848E-04
+
+
+                            K1:      1.2740E+04      1.2740E+04      1.2740E+04      1.2740E+04      1.2740E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2849E-04      7.2849E-04      7.2849E-04      7.2849E-04      7.2848E-04
+
+
+                 -17-       K1:      1.2324E+04      1.2743E+04      1.2746E+04      1.2747E+04      1.2747E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8166E-04      7.2882E-04      7.2917E-04      7.2921E-04      7.2924E-04
+
+
+                            K1:      1.2747E+04      1.2747E+04      1.2747E+04      1.2747E+04      1.2747E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2924E-04      7.2924E-04      7.2924E-04      7.2924E-04      7.2924E-04
+
+
+                 -18-       K1:      1.2331E+04      1.2750E+04      1.2753E+04      1.2754E+04      1.2754E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8240E-04      7.2961E-04      7.2997E-04      7.3000E-04      7.3003E-04
+
+
+                            K1:      1.2754E+04      1.2754E+04      1.2754E+04      1.2754E+04      1.2754E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3003E-04      7.3003E-04      7.3003E-04      7.3003E-04      7.3003E-04
+
+
+                 -19-       K1:      1.2339E+04      1.2759E+04      1.2762E+04      1.2762E+04      1.2762E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8330E-04      7.3058E-04      7.3094E-04      7.3097E-04      7.3100E-04
+
+
+                            K1:      1.2762E+04      1.2762E+04      1.2762E+04      1.2762E+04      1.2762E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3100E-04      7.3100E-04      7.3100E-04      7.3100E-04      7.3100E-04
+
+
+                 -20-       K1:      1.2348E+04      1.2768E+04      1.2771E+04      1.2771E+04      1.2771E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8425E-04      7.3160E-04      7.3196E-04      7.3199E-04      7.3202E-04
+
+
+                            K1:      1.2771E+04      1.2771E+04      1.2771E+04      1.2771E+04      1.2771E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3202E-04      7.3202E-04      7.3202E-04      7.3202E-04      7.3201E-04
+
+
+                 -21-       K1:      1.2358E+04      1.2778E+04      1.2781E+04      1.2782E+04      1.2782E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8540E-04      7.3282E-04      7.3318E-04      7.3322E-04      7.3324E-04
+
+
+                            K1:      1.2782E+04      1.2782E+04      1.2782E+04      1.2782E+04      1.2782E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3325E-04      7.3325E-04      7.3325E-04      7.3325E-04      7.3324E-04
+
+
+                 -22-       K1:      1.2369E+04      1.2790E+04      1.2793E+04      1.2793E+04      1.2793E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8660E-04      7.3412E-04      7.3448E-04      7.3452E-04      7.3454E-04
+
+
+                            K1:      1.2793E+04      1.2793E+04      1.2793E+04      1.2793E+04      1.2793E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3454E-04      7.3454E-04      7.3454E-04      7.3454E-04      7.3454E-04
+
+
+                 -24-       K1:      1.2382E+04      1.2803E+04      1.2806E+04      1.2807E+04      1.2807E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8806E-04      7.3567E-04      7.3604E-04      7.3607E-04      7.3610E-04
+
+
+                            K1:      1.2807E+04      1.2807E+04      1.2807E+04      1.2807E+04      1.2807E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3610E-04      7.3610E-04      7.3610E-04      7.3610E-04      7.3610E-04
+
+
+                 -25-       K1:      1.2396E+04      1.2817E+04      1.2821E+04      1.2821E+04      1.2821E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.8959E-04      7.3732E-04      7.3769E-04      7.3772E-04      7.3775E-04
+
+
+                            K1:      1.2821E+04      1.2821E+04      1.2821E+04      1.2821E+04      1.2821E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3775E-04      7.3775E-04      7.3775E-04      7.3775E-04      7.3775E-04
+
+
+                 -26-       K1:      1.2412E+04      1.2835E+04      1.2838E+04      1.2838E+04      1.2838E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.9145E-04      7.3930E-04      7.3968E-04      7.3971E-04      7.3973E-04
+
+
+                            K1:      1.2838E+04      1.2838E+04      1.2838E+04      1.2838E+04      1.2838E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3974E-04      7.3973E-04      7.3973E-04      7.3973E-04      7.3973E-04
+
+
+                 -27-       K1:      1.2430E+04      1.2853E+04      1.2856E+04      1.2856E+04      1.2857E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.9341E-04      7.4141E-04      7.4179E-04      7.4181E-04      7.4184E-04
+
+
+                            K1:      1.2857E+04      1.2857E+04      1.2857E+04      1.2857E+04      1.2857E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.4184E-04      7.4184E-04      7.4184E-04      7.4184E-04      7.4184E-04
+
+
+                 -28-       K1:      1.2451E+04      1.2875E+04      1.2878E+04      1.2878E+04      1.2879E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.9578E-04      7.4394E-04      7.4433E-04      7.4435E-04      7.4437E-04
+
+
+                            K1:      1.2879E+04      1.2879E+04      1.2879E+04      1.2879E+04      1.2879E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.4438E-04      7.4438E-04      7.4438E-04      7.4437E-04      7.4437E-04
+
+
+                 -29-       K1:      1.2474E+04      1.2898E+04      1.2902E+04      1.2902E+04      1.2902E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.9830E-04      7.4664E-04      7.4703E-04      7.4705E-04      7.4707E-04
+
+
+                            K1:      1.2902E+04      1.2902E+04      1.2902E+04      1.2902E+04      1.2902E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.4708E-04      7.4708E-04      7.4708E-04      7.4708E-04      7.4707E-04
+
+
+                 -30-       K1:      1.2501E+04      1.2926E+04      1.2930E+04      1.2930E+04      1.2930E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.0134E-04      7.4989E-04      7.5028E-04      7.5031E-04      7.5032E-04
+
+
+                            K1:      1.2930E+04      1.2930E+04      1.2930E+04      1.2930E+04      1.2930E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.5033E-04      7.5033E-04      7.5033E-04      7.5033E-04      7.5032E-04
+
+
+                 -31-       K1:      1.2530E+04      1.2956E+04      1.2960E+04      1.2960E+04      1.2960E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.0459E-04      7.5337E-04      7.5377E-04      7.5379E-04      7.5381E-04
+
+
+                            K1:      1.2960E+04      1.2960E+04      1.2960E+04      1.2960E+04      1.2960E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.5382E-04      7.5382E-04      7.5382E-04      7.5381E-04      7.5381E-04
+
+
+                 -32-       K1:      1.2565E+04      1.2992E+04      1.2996E+04      1.2996E+04      1.2996E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.0851E-04      7.5756E-04      7.5796E-04      7.5798E-04      7.5800E-04
+
+
+                            K1:      1.2996E+04      1.2996E+04      1.2996E+04      1.2996E+04      1.2996E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.5800E-04      7.5800E-04      7.5800E-04      7.5800E-04      7.5800E-04
+
+
+                 -33-       K1:      1.2602E+04      1.3031E+04      1.3034E+04      1.3034E+04      1.3035E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.1272E-04      7.6206E-04      7.6248E-04      7.6249E-04      7.6251E-04
+
+
+                            K1:      1.3035E+04      1.3035E+04      1.3035E+04      1.3035E+04      1.3035E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.6252E-04      7.6252E-04      7.6252E-04      7.6252E-04      7.6251E-04
+
+
+                 -35-       K1:      1.2646E+04      1.3077E+04      1.3080E+04      1.3081E+04      1.3081E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.1778E-04      7.6746E-04      7.6788E-04      7.6790E-04      7.6791E-04
+
+
+                            K1:      1.3081E+04      1.3081E+04      1.3081E+04      1.3081E+04      1.3081E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.6792E-04      7.6792E-04      7.6792E-04      7.6792E-04      7.6791E-04
+
+
+                 -36-       K1:      1.2694E+04      1.3127E+04      1.3130E+04      1.3130E+04      1.3130E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2324E-04      7.7331E-04      7.7374E-04      7.7375E-04      7.7376E-04
+
+
+                            K1:      1.3130E+04      1.3130E+04      1.3130E+04      1.3130E+04      1.3130E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.7377E-04      7.7377E-04      7.7377E-04      7.7377E-04      7.7377E-04
+
+
+                 -37-       K1:      1.2751E+04      1.3185E+04      1.3189E+04      1.3189E+04      1.3189E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2973E-04      7.8024E-04      7.8067E-04      7.8069E-04      7.8070E-04
+
+
+                            K1:      1.3189E+04      1.3189E+04      1.3189E+04      1.3189E+04      1.3189E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.8071E-04      7.8071E-04      7.8071E-04      7.8071E-04      7.8070E-04
+
+
+                 -38-       K1:      1.2813E+04      1.3249E+04      1.3253E+04      1.3253E+04      1.3253E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.3680E-04      7.8782E-04      7.8826E-04      7.8828E-04      7.8829E-04
+
+
+                            K1:      1.3253E+04      1.3253E+04      1.3253E+04      1.3253E+04      1.3253E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.8830E-04      7.8830E-04      7.8830E-04      7.8830E-04      7.8829E-04
+
+
+                 -39-       K1:      1.2884E+04      1.3322E+04      1.3326E+04      1.3326E+04      1.3326E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.4498E-04      7.9656E-04      7.9699E-04      7.9701E-04      7.9702E-04
+
+
+                            K1:      1.3326E+04      1.3326E+04      1.3326E+04      1.3326E+04      1.3326E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.9702E-04      7.9702E-04      7.9702E-04      7.9702E-04      7.9702E-04
+
+
+                 -40-       K1:      1.2961E+04      1.3403E+04      1.3406E+04      1.3406E+04      1.3406E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.5395E-04      8.0617E-04      8.0662E-04      8.0663E-04      8.0663E-04
+
+
+                            K1:      1.3406E+04      1.3406E+04      1.3406E+04      1.3406E+04      1.3406E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.0664E-04      8.0664E-04      8.0664E-04      8.0664E-04      8.0664E-04
+
+
+                 -41-       K1:      1.3045E+04      1.3489E+04      1.3492E+04      1.3493E+04      1.3493E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.6373E-04      8.1658E-04      8.1703E-04      8.1706E-04      8.1708E-04
+
+
+                            K1:      1.3493E+04      1.3493E+04      1.3493E+04      1.3493E+04      1.3493E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.1709E-04      8.1709E-04      8.1709E-04      8.1709E-04      8.1708E-04
+
+
+                 -42-       K1:      1.3142E+04      1.3589E+04      1.3594E+04      1.3594E+04      1.3594E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.7517E-04      8.2879E-04      8.2932E-04      8.2938E-04      8.2941E-04
+
+
+                            K1:      1.3594E+04      1.3594E+04      1.3594E+04      1.3594E+04      1.3594E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.2942E-04      8.2942E-04      8.2941E-04      8.2941E-04      8.2940E-04
+
+
+                 -43-       K1:      1.3212E+04      1.3663E+04      1.3666E+04      1.3666E+04      1.3665E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.8346E-04      8.3777E-04      8.3815E-04      8.3813E-04      8.3810E-04
+
+
+                            K1:      1.3665E+04      1.3665E+04      1.3665E+04      1.3666E+04      1.3666E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.3810E-04      8.3811E-04      8.3811E-04      8.3812E-04      8.3812E-04
+
+
+                 -44-       K1:      1.3323E+04      1.3765E+04      1.3767E+04      1.3768E+04      1.3768E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.9661E-04      8.5039E-04      8.5066E-04      8.5068E-04      8.5070E-04
+
+
+                            K1:      1.3768E+04      1.3768E+04      1.3768E+04      1.3768E+04      1.3768E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.5073E-04      8.5074E-04      8.5074E-04      8.5074E-04      8.5075E-04
+
+
+                 -46-       K1:      1.3180E+04      1.3638E+04      1.3644E+04      1.3645E+04      1.3645E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.7958E-04      8.3479E-04      8.3551E-04      8.3560E-04      8.3563E-04
+
+
+                            K1:      1.3645E+04      1.3645E+04      1.3645E+04      1.3645E+04      1.3645E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   8.3563E-04      8.3562E-04      8.3560E-04      8.3559E-04      8.3558E-04
+
+
+                 -47-       K1:      1.2284E+04      1.2682E+04      1.2680E+04      1.2680E+04      1.2679E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   6.7718E-04      7.2176E-04      7.2162E-04      7.2154E-04      7.2152E-04
+
+
+                            K1:      1.2680E+04      1.2680E+04      1.2680E+04      1.2680E+04      1.2680E+04
+                            K2:       0.000           0.000           0.000           0.000           0.000    
+                            K3:       0.000           0.000           0.000           0.000           0.000    
+            MERR  DIRECTION (DEG):    0.000           0.000           0.000           0.000           0.000    
+                        J from Ks:   7.2154E-04      7.2156E-04      7.2158E-04      7.2160E-04      7.2162E-04
+
+
+
+
+     LABELS REFERENCED IN THE ABOVE TABLE
+
+      -13-     ASSEMBLY__PICKEDSET36-10_                                                       
+      -14-     ASSEMBLY__PICKEDSET36-11_                                                       
+      -15-     ASSEMBLY__PICKEDSET36-12_                                                       
+      -16-     ASSEMBLY__PICKEDSET36-13_                                                       
+      -17-     ASSEMBLY__PICKEDSET36-14_                                                       
+      -18-     ASSEMBLY__PICKEDSET36-15_                                                       
+      -19-     ASSEMBLY__PICKEDSET36-16_                                                       
+      -20-     ASSEMBLY__PICKEDSET36-17_                                                       
+      -21-     ASSEMBLY__PICKEDSET36-18_                                                       
+      -22-     ASSEMBLY__PICKEDSET36-19_                                                       
+      -23-     ASSEMBLY__PICKEDSET36-1_                                                        
+      -24-     ASSEMBLY__PICKEDSET36-20_                                                       
+      -25-     ASSEMBLY__PICKEDSET36-21_                                                       
+      -26-     ASSEMBLY__PICKEDSET36-22_                                                       
+      -27-     ASSEMBLY__PICKEDSET36-23_                                                       
+      -28-     ASSEMBLY__PICKEDSET36-24_                                                       
+      -29-     ASSEMBLY__PICKEDSET36-25_                                                       
+      -30-     ASSEMBLY__PICKEDSET36-26_                                                       
+      -31-     ASSEMBLY__PICKEDSET36-27_                                                       
+      -32-     ASSEMBLY__PICKEDSET36-28_                                                       
+      -33-     ASSEMBLY__PICKEDSET36-29_                                                       
+      -34-     ASSEMBLY__PICKEDSET36-2_                                                        
+      -35-     ASSEMBLY__PICKEDSET36-30_                                                       
+      -36-     ASSEMBLY__PICKEDSET36-31_                                                       
+      -37-     ASSEMBLY__PICKEDSET36-32_                                                       
+      -38-     ASSEMBLY__PICKEDSET36-33_                                                       
+      -39-     ASSEMBLY__PICKEDSET36-34_                                                       
+      -40-     ASSEMBLY__PICKEDSET36-35_                                                       
+      -41-     ASSEMBLY__PICKEDSET36-36_                                                       
+      -42-     ASSEMBLY__PICKEDSET36-37_                                                       
+      -43-     ASSEMBLY__PICKEDSET36-38_                                                       
+      -44-     ASSEMBLY__PICKEDSET36-39_                                                       
+      -45-     ASSEMBLY__PICKEDSET36-3_                                                        
+      -46-     ASSEMBLY__PICKEDSET36-40_                                                       
+      -47-     ASSEMBLY__PICKEDSET36-41_                                                       
+      -48-     ASSEMBLY__PICKEDSET36-4_                                                        
+      -49-     ASSEMBLY__PICKEDSET36-5_                                                        
+      -50-     ASSEMBLY__PICKEDSET36-6_                                                        
+      -51-     ASSEMBLY__PICKEDSET36-7_                                                        
+      -52-     ASSEMBLY__PICKEDSET36-8_                                                        
+      -53-     ASSEMBLY__PICKEDSET36-9_                                                        
+
+
+          THE ANALYSIS HAS BEEN COMPLETED
+
+
+
+                              ANALYSIS COMPLETE
+                              WITH      2 WARNING MESSAGES ON THE DAT FILE
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =   184.80    
+       SYSTEM TIME (SEC)    =   4.7000    
+       TOTAL CPU TIME (SEC) =   189.50    
+       WALLCLOCK TIME (SEC) =         63

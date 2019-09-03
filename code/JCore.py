@@ -1,3 +1,17 @@
+from abaqusConstants import *
+from odbAccess import *
+from textRepr import *
+from shutil import copyfile
+from os import getcwd, path
+import numpy as np
+import pprint
+import time
+import sys
+import math
+from Utilities import *
+from Integration import *
+from C3D20 import *
+
 def GetCrackFrontNodes(allNodes,firstCrackNodeLabel,q):
 
 	#reconstruct crack node front going towards 0 in z
@@ -13,20 +27,33 @@ def GetCrackFrontNodes(allNodes,firstCrackNodeLabel,q):
 	
 	CFnSet=[]
 	CFPosz=[]
+	CFPosx=[]
+	CFPosy=[]
+
 	for n in allNodes: 
 		if n.coordinates[cOnAxis[0]]==posAxis[0] and n.coordinates[cOnAxis[1]]==posAxis[1]:
 			CFnSet.append(n.label)
 			CFPosz.append(n.coordinates[axisDir])
+			CFPosx.append(n.coordinates[cOnAxis[0]])
+			CFPosy.append(n.coordinates[cOnAxis[1]])
 			
 	CFnSet,ind=np.unique(np.array(CFnSet), return_index=True)
 	CFPosz=np.array(CFPosz)
+	CFPosx=np.array(CFPosx)
+	CFPosy=np.array(CFPosy)
+	CFPosx=CFPosx[ind]
+	CFPosy=CFPosy[ind]
 	CFPosz=CFPosz[ind]
 	ind=np.argsort(CFPosz)
 	CFnSet=CFnSet[ind]
 	CFnSet=CFnSet[::-1]
+	CFPosx=CFPosx[ind]
+	CFPosx=CFPosx[::-1]
+	CFPosy=CFPosy[ind]
+	CFPosy=CFPosy[::-1]
 	CFPosz=CFPosz[ind]
 	CFPosz=CFPosz[::-1]
-	rPoszRelTol=(CFPosz[0]-CFPosz[1])/8.0
+	rPoszRelTol=(CFPosz[0]-CFPosz[1])/500.0
 
 
 	#nTip=allNodes[nodeLabelTip-1]
@@ -54,11 +81,23 @@ def GetCrackFrontNodes(allNodes,firstCrackNodeLabel,q):
 	#	#print allNodes[labels[i]]
 	#	position[i]=allNodes[labels[i]-1].coordinates[crackFrontAxis]
 	
-	return CFnSet,CFPosz,cOnAxis[0],cOnAxis[1]
+	return CFnSet,CFPosx,CFPosy,CFPosz,cOnAxis[0],cOnAxis[1]
 	
-def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,partInstance):
+def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance):
+	#Get components of odb
+	root=odb.rootAssembly
+	#Get the elements
+	part=root.instances[partInstance]
+	elements=part.elements
+
+	#Get nodes
 	allNodes = root.instances[partInstance].nodes
-	labels,position,pos1,pos2 = GetCrackFrontNodes(allNodes,nodeLabelTip,2)
+	labels,CFPosx,CFPosy,position,pos1,pos2 = GetCrackFrontNodes(allNodes,nodeLabelTip,crackFrontAxis)
+	
+	#debug labels
+	#for i in range(0,len(labels),1):
+	#	print labels[i],position[i],CFPosx[i],CFPosy[i]
+	#raise	
 	
 	#sid=np.argsort(position) 
 	#position=position[sid[::-1]]
@@ -76,6 +115,10 @@ def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,
 
 	sets = {}
 	nSlices = nNodes 
+	tUnion=0
+	tGetEl=0
+	
+	t0=time.time()
 	#compute nContours + 1 due to how node sets are defined
 	for contour in range(0,nContours+1,1):
 		if contour==0:
@@ -107,14 +150,17 @@ def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,
 				ePrev=sets[linIndprev]
 
 				#get all elements attached to previous sets
+				tlast=time.time()
 				for e in ePrev:
 					ec=elemNbr[e]
 					for ee in ec:
-						if not any(x==ee for x in sets[linInd]):
-							sets[linInd].append(ee)
+						#if not any(x==ee for x in sets[linInd]):
+						sets[linInd].append(ee)
 				
+				tGetEl=tGetEl+time.time()-tlast
 				#sort element labels
 				tmp=np.array(sets[linInd])
+				tmp=np.unique(tmp)
 				sid=np.argsort(tmp)
 				sets[linInd]=list(tmp[sid])
 				#print sets[linInd]
@@ -126,11 +172,11 @@ def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,
 			tmpendm3=np.array(sets[contour*nSlices+nSlices-4]) #18
 			tmpendm4=np.array(sets[contour*nSlices+nSlices-5]) #17
 			tmpendm5=np.array(sets[contour*nSlices+nSlices-6]) #16
-
+			tlast=time.time()
 			for slice in range(0,nSlices,1):#slices
 				#get the linear index for the sets
 				linInd=contour*nSlices+slice	
-				name='IntV-contour-' + str(contour) +'-slice-'+str(slice)
+				name=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 				print name
 				if slice==(nSlices-3): 
 					tmp1=tmpendm3
@@ -152,7 +198,8 @@ def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,
 					tmp2=np.array(sets[linInd+3])
 					tmp1=tmp1[~np.in1d(tmp1,tmp2)]
 					sets[linInd]=list(tmp1)
-	
+			tUnion=tUnion+time.time()-tlast
+	t1=time.time()
 	#nodeSets: setq1, setq0p5, setq0, setSlice
 	for contour in range(0,nContours,1):
 		for slice in range(0,nSlices,1):
@@ -219,44 +266,40 @@ def BuildElementAndNodeSets(nContours,nodeLabelTip,crackFrontAxis,elements,root,
 			nsetQ1=tuple(nsetQ1)
 			nsetSlice=tuple(nsetSlice)
 
-			front='Test1'
-			setName=front+'-contour-' + str(contour+2) +'-slice-'+str(slice)+'-Q0'
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0'
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ0),)) 
-			setName=front+'-contour-' + str(contour+2) +'-slice-'+str(slice)+'-Q0p5'
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0p5'
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ0p5),)) 
-			setName=front+'-contour-' + str(contour+2) +'-slice-'+str(slice)+'-Q1'
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q1'
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ1),)) 
-			setName=front+'-contour-' + str(contour+2) +'-slice-'+str(slice)
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetSlice),)) 
+	
+	t2=time.time()
 	#write sets to odb 
 	for contour in range(0,nContours,1):
 		for slice in range(0,nSlices,1):#slices	
 			linInd=contour*nSlices+slice	
-			setName=front+'-contour-' + str(contour+2) +'-slice-'+str(slice)
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			
 			#convert element list to tuple 
 			newSetElements=tuple(sets[linInd])
 			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,newSetElements),)) 
-			
-	odb.save()		
+	
+	t3=time.time()
+	
+	print "time report"
+	print '++++++++++++'
+	print 'time in first loop',t1-t0
+	print 'time in first loop get El',tGetEl
+	print 'time in first loop get union',tUnion
+	print 'time in second loop',t2-t1
+	print 'time in third loop',t3-t2
+	print '++++++++++++'
+	print '++++++++++++'	
 
-	if setType=='element':
-		try: 
-			elemset = root.elementSets[setName]
-			region = " in the element set : " + setName;
-		except KeyError: 
-			print 'An assembly level elSet named %s does not exist' % (setName)
-			odb.close()
-			raise	
-	if setType=='node':		
-		try: 
-			nodeset = root.nodeSets[setName]
-			region = " in the element set : " + setName;
-		except KeyError: 
-			print 'An assembly level nodeSet named %s does not exist' % (setName)
-			odb.close()
-			raise		
-
+	return odb
+	
 def GetStress(root,frame,elSetName):
 	#returns stress tensor for all elements in set elSet stress is accessed by the dictionary element label
 	#array locations follow [element x integration point x data ] where data is in tensor form
@@ -373,10 +416,9 @@ def GetW(S,EE,nEl,nInt):
 	dataElementNodal = np.transpose(dataElementNodal)
 	return [dataElementNodal,connectivityMat]	
 
-def GetdudX(root,frame,partInstance, nodeSetName,elSetName): 
+def GetdudX(root,frame,allNodes,nodeSetName,elSetName): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
 	nodes=root.nodeSets[nodeSetName].nodes[0]
-	allNodes=root.instances[partInstance].nodes
 	elements=root.elementSets[elSetName].elements[0]
 	
 	elLabel = [el.label for el in elements]
@@ -399,9 +441,9 @@ def GetdudX(root,frame,partInstance, nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,1,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,1,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,1,elements)
 	
 	#ENCoord1=ENCoord1+ENU1
 	#ENCoord2=ENCoord2+ENU2
@@ -457,7 +499,7 @@ def GetdudX(root,frame,partInstance, nodeSetName,elSetName):
 			
 	return 	dudx, detJ, elLabel
 
-def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
+def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,root,allNodes,elSetName,isSymm):
 	
 	nodesQ0=root.nodeSets[nSetQ0].nodes[0] #Outside nodes
 	nodesSlice=root.nodeSets[nSetSlice].nodes[0]
@@ -506,10 +548,14 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
 	
 	if CFPosz[-1]==0 and len(CFnSet)==3:
 		L=[0.0,0.5,1.0]
+		PoszOut=0
 	elif len(CFnSet)==3:
 		L=[1.0,0.5,0.0]
+		PoszOut=CFPosz[0]
 	else: 
 		L=[0.0,0.5,1.0,0.5,0.0]
+		PoszOut=CFPosz[2]
+
 		
 	intLcL=GetTrapIntLc(CFPosz,L) #make this subsample q 
 		
@@ -555,7 +601,10 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
 		mb=[]
 		for i in range(0,len(xb)-1,1): 
 			#print i,yb[i],yb[i+1],xb[i],xb[i+1]
-			mb.append((yb[i]-yb[i+1])/(xb[i]-xb[i+1]))
+			if xb[i]==xb[i+1]:
+				mb.append(np.nan)
+			else:
+				mb.append((yb[i]-yb[i+1])/(xb[i]-xb[i+1]))
 		
 		#loop over nodes that can be set 0<x<=1
 		xn=[]
@@ -591,7 +640,11 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
 						ind=j-1
 						if xn[i] !=0:
 							mn=yn[i]/xn[i]
-							xQ0=-mb[ind]/(mn-mb[ind])*xb[ind]+yb[ind]/(mn-mb[ind])
+							if np.isnan(mb[ind]):
+								#print ind,yb[ind],yb[ind+1],xb[ind],xb[ind+1]
+								xQ0=xb[ind]
+							else:
+								xQ0=-mb[ind]/(mn-mb[ind])*xb[ind]+yb[ind]/(mn-mb[ind])
 							yQ0=mn*xQ0
 							rQ0=sqrt(xQ0*xQ0+yQ0*yQ0)
 						else:
@@ -603,15 +656,15 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
 						
 	#map everything back to dataElementNodal
 	dataElementNodal=np.zeros((lenConnectivty),dtype='float64')
-	fobj = open('debug_q.txt', 'w')
+	#fobj = open('debug_q.txt', 'w')
 	for i in range(0,lenConnectivty): 
-		id=connectivity[i][0]
-		crd=allNodes[id-1].coordinates
-		label=allNodes[id-1].label
-		fobj.write('%d,%f,%f,%f,%f\n' % (label,crd[0],crd[1],crd[2],conn[id]))
+		#id=connectivity[i][0]
+		#crd=allNodes[id-1].coordinates
+		#label=allNodes[id-1].label
+		#fobj.write('%d,%f,%f,%f,%f\n' % (label,crd[0],crd[1],crd[2],conn[id]))
 		dataElementNodal[i]=conn[connectivity[i][0]]
 		
-	fobj.close()
+	#fobj.close()
 	if any(x==-1 for x in conn):
 		print '=================' 
 		print 'not all of the q could be set appriately!! You must fix before J can be calculated'
@@ -626,7 +679,7 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,allNodes,elSetName,isSymm):
 	#print dataElementNodal
 	
 	#print dataElementNodal
-	return dataElementNodal,intLcL
+	return dataElementNodal,intLcL,PoszOut
 	
 def Getq(nSetQ0,nSetQ0p5,nSetQ1,allNodes,AxisPosition1,AxisPosition2,AxisPosition3,elSetName):
 	
@@ -754,10 +807,9 @@ def GetLamdaq(nSetP,elSetName):
 	#print dataElementNodal
 	return dataElementNodal	
 	
-def GetdqdX(root,frame,partInstance,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nodeSetName,elSetName,isSymm): 
+def GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nodeSetName,elSetName,isSymm): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
 	nodes=root.nodeSets[nodeSetName].nodes[0]
-	allNodes=root.instances[partInstance].nodes
 	elements=root.elementSets[elSetName].elements[0]
 	elLabel=[el.label for el in elements]
 	
@@ -793,7 +845,7 @@ def GetdqdX(root,frame,partInstance,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,n
 	#AxisPosition3=allNodes[520-1].coordinates[2]
 	#ENQ2=Getq(nSetQ0,nSetQ0p5,nSetQ1,allNodes,AxisPosition1,AxisPosition2,AxisPosition3,elSetName)
 	#ENQ2=GetLamdaq(nSetP,elSetName)
-	ENQ2,intLcL=GetqLinear(nSetQ0,nodeSetName,firstCrackNodeLabel,allNodes,elSetName,isSymm)
+	ENQ2,intLcL,posz=GetqLinear(nSetQ0,nodeSetName,firstCrackNodeLabel,root,allNodes,elSetName,isSymm)
 	#for i in range(0,nElements):
 	#	print 'El#',elLabel[i],ENQ2[:,i]
 	
@@ -844,12 +896,11 @@ def GetdqdX(root,frame,partInstance,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,n
 			tmp=np.transpose(tmp)
 			dqdx[el,p,:]=np.dot(tmp,ENQ2[:,el])	
 			
-	return 	dqdx,intLcL,elLabel
+	return 	dqdx,intLcL,posz,elLabel
 
-def GetdetJac(root,frame,partInstance, nodeSetName,elSetName): 
+def GetdetJac(root,frame,allNodes,nodeSetName,elSetName): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
 	nodes=root.nodeSets[nodeSetName].nodes[0]
-	allNodes=root.instances[partInstance].nodes
 	elements=root.elementSets[elSetName].elements[0]
 	
 	elLabel = [el.label for el in elements]
@@ -872,9 +923,9 @@ def GetdetJac(root,frame,partInstance, nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,1,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,1,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,1,elements)
 	
 	#Use to get the mapping to current element volume
 	#ENCoord1=ENCoord1+ENU1
@@ -955,93 +1006,131 @@ def GetTrapIntLc(CFPosz,L):
 		val+=abs(CFPosz[i+1]-CFPosz[i])*(L[i]+L[i+1])/2
 	return val
 
-def CalculateVolumeJIntegral(nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nSetSlice,elSetSlice,frame,root,partInstance,isSymm): 
+def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
 	#inputs:
+	#an odb with node sets and element made by BuildElementAndNodeSets
 	#nodeSet names for q0,q0.5,q1,allNodes in slice/contour
 	#elementSet name for slice/contour
-	#frame for computation, must include SENER,U,S
+	#frame for computation, must include U,S, and EE (the mechanical strains
 	#
 	#output: 
-	# Jbar - energy release rate unit virtual extension in crack length
+	# J(s) - energy release rate along the crack front
 	
-	#Check that the necessary field variables exist at the appropriate locations
-	CheckFieldExists(frame,'U','NODAL')
-	#CheckFieldExists(frame,'SENER','INTEGRATION_POINT') #strain energy density 
-	CheckFieldExists(frame,'S','INTEGRATION_POINT')
-	
-	#Check that node and element sets exist	(ensures only that they exist)
-	CheckSetExists(root,nSetQ0,'node')
-	CheckSetExists(root,nSetQ0p5,'node')
-	CheckSetExists(root,nSetQ1,'node')
-	CheckSetExists(root,nSetSlice,'node')
-	CheckSetExists(root,elSetSlice,'element')
+	#Get components of odb
+	root=odb.rootAssembly
+	#Get elements
+	part=root.instances[partInstance]
+	elements=part.elements
 
-	#Get for each element and at each integration points: sij, du/dX, W, dQ/dX, det(jacobian), wp
-	#data arrays are stored per element per integration point
+	#Get nodes
+	allNodes = root.instances[partInstance].nodes 
 	
-	#GetIntegralofShapeP(root,nSetQ1)
-	
-	#Stress Sij 
-	S,SElLabels,nEl,nInt = GetStress(root,frame,elSetSlice)
+	#Get the frames in the step 
+	steps=odb.steps
 
-	#Get strain EEij 
-	EE,EEElLabels,nEl,nInt = GetStrain(root,frame,elSetSlice)
+	# Get the step keys
+	allSteps = steps.keys()
+
+	# Get current step object and the number of increments (frameLen) in step
+	step = steps[allSteps[stepNumber]]
+
+	# Get frames in step
+	frames=step.frames
+
+	#Initialize J data container 
+	JAll=np.zeros((len(slices)),dtype='float64')
 	
-	#Mechanical strain energy density, W=U (stored by Abaqus in SENER and computed for linear elasticity with no thermal contribution as U=1/2*SijEEij)
-	W = GetW(S,EE,nEl,nInt) 
-	
-	#du/dX where X is the reference coordinates and u is displacement in the current frame. 
-	#The Jacobian is also computed when calculating the derivatives and is returned here
-	dudX, detJac,dudXElLabels = GetdudX(root,frame,partInstance,nSetSlice,elSetSlice)
-	
-	#dqdX a weighting term defined as a pyramid function as in Abaqus
-	dqdX,intLcL,dudXElLabels=GetdqdX(root,frame,partInstance,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nSetSlice,elSetSlice,isSymm)
-	
-	detJac=GetdetJac(root,frame,partInstance,nSetSlice,elSetSlice)
-	
-	#get Gauss integrations weights
-	_,wp = Gauss_Guad_3d(3)
-	wp = np.reshape(wp,(-1))
-	
-	#Tasks for troubleshooting: 
-	#0 validate array dimensions being used for Jbar #Seems good
-	#1 validate wp by integrating a known quantity #good based on volume integral 
-	#2 validate dudX with new routines #good based on F calculation
-	#3 validate the jacobian calculations #good based off volume integral also note that the volume change is small and whether it is current frame or not, Jac is good!
-	#4 validate data mapping
-	#	Validate stress mapping #Coord reconstruction of
-	## Perform point integration proceedure
+	#loop over frames
+	for frameId in frameNumbers:
+		#Get the frame and time
+		frame = frames[frameId]
+		TTAU = frame.frameValue
+		
+		#Check that the necessary field variables exist at the appropriate locations
+		CheckFieldExists(frame,'U','NODAL') #displacements
+		CheckFieldExists(frame,'EE','INTEGRATION_POINT') #mechanical strain 
+		CheckFieldExists(frame,'S','INTEGRATION_POINT') #stress 
 	
 	
-	# get total integration volume
-	V=np.zeros((nEl,nInt),dtype='float64')
-	Vel=np.zeros((nEl),dtype='float64')
-	for el in range(0,nEl,1):
-		for p in range(0,nInt,1):
-			V[el,p]=detJac[el,p]*wp[p]
-		Vel[el]=np.sum(V[el,:])
-	Vtot=np.sum(Vel)
-	Vr=V/Vtot
-	#perform quadrature
-	Jbar=0
-	
-	krd2=np.zeros((3),dtype='float64')
-	krd2[1]=1
-	for el in range(0,nEl,1):
-		#print Vel[el]
-		for p in range(0,nInt,1):
-			#print np.dot(S[el,p,:,:],dudX[el,p,:,1])
-			#print S[el,p,:,:]
-			#print dudX[el,p,:,1]
-			#raise
-			#print detJac[el,p]*wp[p]
-			#print dqdX[el,p,:]
-			#dqdX[el,p,:]=-dqdX[el,p,2]
-			#print np.dot(S[el,p,:,:],dudX[el,p,:,1])
-			#print W[el,p]*krd2
-			Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),dqdX[el,p,:])*detJac[el,p]*wp[p]
-	
-	if isSymm: 
-		Jbar=2*Jbar
-	print Jbar/intLcL
-	
+		#open file to write Js to
+		fname='Js-at-time-'+str(TTAU)+'.txt'
+		fobj = open(fname, 'w')
+		#write empty header
+		fobj.write('%f' % (float('nan')))
+			
+		#loop over each contour level to be computed 
+		for contourId in contours:	
+			sliceCnt=0
+			print 'Processing Contour: ', contourId
+			for sliceId in slices:
+				print 'slice #:',sliceId
+				##build the node set and element set names 
+				##========================================
+				nSetSlice=SetPrefix+'-contour-'+str(contourId)+'-slice-'+str(sliceId)
+				nSetQ0=nSetSlice+'-Q0'
+				nSetQ0p5=nSetSlice+'-Q0p5'
+				nSetQ1=nSetSlice+'-Q1'
+				elSetSlice=nSetSlice
+				
+				#Check that node and element sets exist	(ensures only that they exist, not that they are valid..)
+				CheckSetExists(root,nSetQ0,'node')
+				CheckSetExists(root,nSetQ0p5,'node')
+				CheckSetExists(root,nSetQ1,'node')
+				CheckSetExists(root,nSetSlice,'node')
+				CheckSetExists(root,elSetSlice,'element')
+
+				##Get for each element and at each integration points: sij, du/dX, W, dQ/dX, det(jacobian), wp
+				##=============================================================================================
+				#Note: data arrays are stored per element per integration point
+				#Stress Sij 
+				S,SElLabels,nEl,nInt = GetStress(root,frame,elSetSlice)
+
+				#Get strain EEij 
+				EE,EEElLabels,nEl,nInt = GetStrain(root,frame,elSetSlice)
+				
+				#Mechanical strain energy density, W=U (stored by Abaqus in SENER and computed for linear elasticity as U=1/2*SijEEij)
+				W = GetW(S,EE,nEl,nInt) 
+				
+				#Get du/dX, where X is the reference coordinates and u is displacement in the current frame. 
+				#The Jacobian is also computed when calculating the derivatives and is returned here
+				dudX,detJac,dudXElLabels = GetdudX(root,frame,allNodes,nSetSlice,elSetSlice)
+				
+				#Get dqdX, a weighting term defined as a pyramid function similar to what Abaqus uses
+				dqdX,intLcL,slicePos,dudXElLabels=GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,nodeLabelTip,nSetSlice,elSetSlice,isSymm)
+				
+				#print positions of each Js value as header
+				if contourId==contours[0]:
+					fobj.write(',%f' % (slicePos))
+				
+				#Get the Jacobian for integration
+				detJac=GetdetJac(root,frame,allNodes,nSetSlice,elSetSlice)
+				
+				#Get Gauss integrations weights
+				_,wp = Gauss_Guad_3d(3)
+				wp = np.reshape(wp,(-1))
+				
+				##Perform quadrature
+				##====================
+				Jbar=0
+				krd2=np.zeros((3),dtype='float64')
+				krd2[1]=1
+				for el in range(0,nEl,1):
+					for p in range(0,nInt,1):
+						Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),dqdX[el,p,:])*detJac[el,p]*wp[p]
+				
+				if isSymm: 
+					JAll[sliceCnt]=2*Jbar/intLcL
+				else: 
+					JAll[sliceCnt]=Jbar/intLcL
+					
+				sliceCnt+=1
+			fobj.close()
+			fobj = open(fname, 'a+')
+			#print processed contour values to file
+			fobj.write('\n%d' % (contourId))	
+			for i in range(0,len(slices),1):
+				fobj.write(',%f' % (JAll[i]))
+				
+		fobj.close()
+
+				
