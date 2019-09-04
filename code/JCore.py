@@ -441,9 +441,9 @@ def GetdudX(root,frame,allNodes,nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,1,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,1,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,1,elements)
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
 	
 	#ENCoord1=ENCoord1+ENU1
 	#ENCoord2=ENCoord2+ENU2
@@ -680,7 +680,128 @@ def GetqLinear(nSetQ0,nSetSlice,firstCrackNodeLabel,root,allNodes,elSetName,isSy
 	
 	#print dataElementNodal
 	return dataElementNodal,intLcL,PoszOut
+
+def GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,firstCrackNodeLabel,root,allNodes,elSetName,isSymm):
 	
+	nodesQ0=root.nodeSets[nSetQ0].nodes[0] #Outside nodes
+	nodesQ1=root.nodeSets[nSetQ1].nodes[0] #Inside nodes
+	nodesQ0p5=root.nodeSets[nSetQ0p5].nodes[0] #In between nodes
+	nodesSlice=root.nodeSets[nSetSlice].nodes[0]
+	elements=root.elementSets[elSetName].elements[0]
+	
+	#build the element node connectivity since we want Q defined at 
+	#element nodal locations for compute the gradient
+	connectivityMat=np.zeros((len(elements), len(elements[0].connectivity)))
+	cnt=0
+	for el in elements:
+		connectivityMat[cnt,:]=el.connectivity
+		cnt+=1
+	
+	#reshape connectivity to linear array
+	connectivityMat = connectivityMat.astype(int)
+	connectivity=np.reshape(connectivityMat,(-1,1))
+	lenConnectivty=len(connectivity)
+	
+	#convert connectivity to a dictionary so node labels can be used to index position
+	conn={}
+	for n in connectivity: 
+		conn[n[0]]=-1
+	
+	#reconstruct crack node front going towards 0 in z
+	nFirstCrack=allNodes[firstCrackNodeLabel-1]
+	posAxis=[]
+	posAxis.append(nFirstCrack.coordinates[0])
+	posAxis.append(nFirstCrack.coordinates[1])
+	
+	CFnSet=[]
+	CFPosz=[]
+	for n in nodesSlice: 
+		if n.coordinates[0]==posAxis[0] and n.coordinates[1]==posAxis[1]:
+			CFnSet.append(n.label)
+			CFPosz.append(n.coordinates[2])
+			
+	CFnSet,ind=np.unique(np.array(CFnSet), return_index=True)
+	CFPosz=np.array(CFPosz)
+	CFPosz=CFPosz[ind]
+	ind=np.argsort(CFPosz)
+	CFnSet=CFnSet[ind]
+	CFnSet=CFnSet[::-1]
+	CFPosz=CFPosz[ind]
+	CFPosz=CFPosz[::-1]
+	rPoszRelTol=(CFPosz[0]-CFPosz[1])/8.0
+	
+	if CFPosz[-1]==0 and len(CFnSet)==3:
+		L=[0.0,0.5,1.0]
+		PoszOut=0
+	elif len(CFnSet)==3:
+		L=[1.0,0.5,0.0]
+		PoszOut=CFPosz[0]
+	else: 
+		L=[0.0,0.5,1.0,0.5,0.0]
+		PoszOut=CFPosz[2]
+
+		
+	intLcL=GetTrapIntLc(CFPosz,L) #make this subsample q 
+		
+	for p in range(0,len(CFPosz)):
+		#Initialize lists for boundary nodes
+		labelq0=[]
+		for i in range(0,len(nodesQ0),1):
+			n=nodesQ0[i]
+			if isclose(n.coordinates[2],CFPosz[p],rPoszRelTol) and not any(lab==n.label for lab in labelq0):
+				labelq0.append(n.label)
+				
+		for i in range(0,len(labelq0),1):
+				conn[labelq0[i]]=np.array(0.0)
+				
+		#Initialize lists for inbetween nodes 
+		labelq0p5=[]
+		for i in range(0,len(nodesQ0p5),1):
+			n=nodesQ0p5[i]
+			if isclose(n.coordinates[2],CFPosz[p],rPoszRelTol) and not any(lab==n.label for lab in labelq0p5):
+				labelq0p5.append(n.label)
+		
+		for i in range(0,len(labelq0p5),1):
+				conn[labelq0p5[i]]=np.array(0.5*L[p])
+		
+		#Initialize lists for inner nodes
+		labelq1=[]
+		for i in range(0,len(nodesQ1),1):
+			n=nodesQ1[i]
+			if isclose(n.coordinates[2],CFPosz[p],rPoszRelTol) and not any(lab==n.label for lab in labelq1):
+				labelq1.append(n.label)
+				
+		for i in range(0,len(labelq1),1):
+				conn[labelq1[i]]=np.array(1.0*L[p])	
+								
+	#map everything back to dataElementNodal
+	dataElementNodal=np.zeros((lenConnectivty),dtype='float64')
+	#fobj = open('debug_q.txt', 'w')
+	for i in range(0,lenConnectivty): 
+		#id=connectivity[i][0]
+		#crd=allNodes[id-1].coordinates
+		#label=allNodes[id-1].label
+		#fobj.write('%d,%f,%f,%f,%f\n' % (label,crd[0],crd[1],crd[2],conn[id]))
+		dataElementNodal[i]=conn[connectivity[i][0]]
+		
+	#fobj.close()
+	if any(x==-1 for x in conn):
+		print '=================' 
+		print 'not all of the q could be set appriately!! You must fix before J can be calculated'
+		print '=================' 
+		raise
+		
+		
+	#Remove dimensions of size 1, reshape to #nodes/element * #element array
+	dataElementNodal = np.squeeze(dataElementNodal)
+	dataElementNodal = np.reshape(dataElementNodal,(len(elements),-1))
+	dataElementNodal = np.transpose(dataElementNodal)
+	
+	#print dataElementNodal
+	
+	#print dataElementNodal
+	return dataElementNodal,intLcL,PoszOut
+		
 def Getq(nSetQ0,nSetQ0p5,nSetQ1,allNodes,AxisPosition1,AxisPosition2,AxisPosition3,elSetName):
 	
 	nodesQ0=root.nodeSets[nSetQ0].nodes[0]
@@ -845,7 +966,9 @@ def GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nodeS
 	#AxisPosition3=allNodes[520-1].coordinates[2]
 	#ENQ2=Getq(nSetQ0,nSetQ0p5,nSetQ1,allNodes,AxisPosition1,AxisPosition2,AxisPosition3,elSetName)
 	#ENQ2=GetLamdaq(nSetP,elSetName)
-	ENQ2,intLcL,posz=GetqLinear(nSetQ0,nodeSetName,firstCrackNodeLabel,root,allNodes,elSetName,isSymm)
+	
+	#ENQ2,intLcL,posz=GetqLinear(nSetQ0,nodeSetName,firstCrackNodeLabel,root,allNodes,elSetName,isSymm) #is good
+	ENQ2,intLcL,posz=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nodeSetName,firstCrackNodeLabel,root,allNodes,elSetName,isSymm)
 	#for i in range(0,nElements):
 	#	print 'El#',elLabel[i],ENQ2[:,i]
 	
@@ -923,9 +1046,9 @@ def GetdetJac(root,frame,allNodes,nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,1,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,1,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,1,elements)
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
 	
 	#Use to get the mapping to current element volume
 	#ENCoord1=ENCoord1+ENU1

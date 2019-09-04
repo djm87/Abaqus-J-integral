@@ -27,7 +27,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="ThroughThicknessCrackInInfinitePlaneNoSymm"
+odbName="ThroughThicknessCrackInInfinitePlane"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -40,9 +40,12 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=True 
+copyOdb=False 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
+
+#Save odb
+saveOdb=False
 
 #Set the part instance to perform calculations on
 partInstance = "PLATE-1"
@@ -52,22 +55,35 @@ partInstance = "PLATE-1"
 #The crack front axis
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
-qdir=1
 #Set the number of contour levels
-nContourLvls=13 
+nContourLvls=12 
 
 #Set the first node label at the crack tip 
-nodeLabelTip=26 
+nodeLabelTip=17 
 
 #model is symmetric about the crack tip (matters only for scaling J integral by 2)
-symm=False
+isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=True
+buildElSet=False
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-SetPrefix='test2'
+SetPrefix='test'
 
+#Should the J integral be computed
+computeJ=True
+
+#Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
+contours=range(12) #explicitly [0,1,2] for instance
+
+#Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
+frameNumbers=[-1]
+
+#Which slices should be evaluated (a list)
+slices=range(20)
+
+#Specify the step number (not a list, -1 is automatically the last step) 
+stepNumber=-1
 #******************************************************************************
 #Open ODB
 #******************************************************************************
@@ -84,24 +100,14 @@ else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
 
-steps=odb.steps
-
-# Get the step keys
-allSteps = steps.keys()
-
-# Get current step object and the number of increments (frameLen) in step
-step = steps[allSteps[-1]]
-
-# Get current data frame and time
-frames=step.frames
-lastFrame = frames[-1]
-
-#current time
-TTAU = lastFrame.frameValue
-
-
 if buildElSet:
-	BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
+	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
 
+if computeJ:
+	CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)
+	
+if saveOdb:
+	odb.save()
+	
 if closeAfterOdb:
 	odb.close()
