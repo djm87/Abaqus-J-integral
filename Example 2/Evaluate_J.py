@@ -19,7 +19,6 @@ try:
 except KeyError:
 	print 'No modules to remove'
 
-
 from Utilities import *
 from JCore import *
 
@@ -30,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="ThroughThicknessCrackInInfinitePlane"
+odbName="CT-3D-Fine-mesh"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -43,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=False 
+copyOdb=True 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -51,7 +50,7 @@ copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 saveOdb=False
 
 #Set the part instance to perform calculations on
-partInstance = "PLATE-1"
+partInstance = "SPECIMEN-1"
 
 
 ##The following are specific to the J integral 
@@ -59,37 +58,43 @@ partInstance = "PLATE-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=12 
+nContourLvls=12#38 
 
 #Set the first node label at the crack tip 
-nodeLabelTip=17 
+nodeLabelTip=32 
+
+#Set the beginning and ending elSet range for the material sections
+sectionElSetRange=range(2,4,1) #e.g. range(2,4,1)=[2,3]
 
 #model is symmetric about the crack tip (matters only for scaling J integral by 2)
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=False
+buildElSet=True
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-SetPrefix='test'
+SetPrefix='test-contour'
 
 #Should the J integral be computed
-computeJ=True
+computeJ=False
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(12) #explicitly [0,1,2] for instance
+contours=[6]#range(12) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
 frameNumbers=[-1]
 
 #Which slices should be evaluated (a list)
-slices=range(20)
+slices=[0]#range(9)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
+
+
 #******************************************************************************
 #Open ODB
 #******************************************************************************
+
 if closeBeforeOdb:
 	if copyOdb:
 		Ensure_ODB_Is_Closed(copyodbPath,session)
@@ -102,8 +107,9 @@ if copyOdb:
 else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
+
 if buildElSet:
-	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
+	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance) #Move elements inside
 
 if computeJ:
 	CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)

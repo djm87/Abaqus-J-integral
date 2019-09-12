@@ -82,8 +82,19 @@ def GetCrackFrontNodes(allNodes,firstCrackNodeLabel,q):
 	#	position[i]=allNodes[labels[i]-1].coordinates[crackFrontAxis]
 	
 	return CFnSet,CFPosx,CFPosy,CFPosz,cOnAxis[0],cOnAxis[1]
+
+def GetElMaterial(part,elements,sectionElSetRange):
+	#sectionElSetRange is assumed to have alternating materials
+	#since we are dealing with layered materials just use boolean
+	elMaterial=np.zeros((len(elements)), dtype=bool)
+	for i in range(0,len(sectionElSetRange),2):
+		elSection=part.elementSets['SET-'+str(sectionElSetRange[i])].elements
+		for e in elSection: 
+			elMaterial[e.label-1]=True
 	
-def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance):
+	return elMaterial
+	
+def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance):
 	#Get components of odb
 	root=odb.rootAssembly
 	#Get the elements
@@ -113,13 +124,19 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,odb,
 
 	elemConn, elemNbr = GetElementConnectivities(elements)
 
+	#Due to some bug in Abaqus, section information is incorrect at the element level. I did not 
+	#find the reason for this, but I spent a better part of a day trying to get it directly and gave up.
+	#For this reason the user needs to specify a starting and ending sequency for section elsets. 
+	#The sets are then used to get the material information assuming alternative materials which each sussecessive set
+	elMaterial = GetElMaterial(part,elements,sectionElSetRange)
+
 	sets = {}
 	nSlices = nNodes 
 	tUnion=0
 	tGetEl=0
 	
 	t0=time.time()
-	#compute nContours + 1 due to how node sets are defined
+	#compute nContours + 1 due to how node sets are defined and for interfaces to be appropriately captured
 	for contour in range(0,nContours+1,1):
 		if contour==0:
 			for slice in range(0,nSlices,1):#slices
@@ -220,7 +237,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,odb,
 									
 				nsetQ0 = () 
 				for e in elOutsideset:
-					#get nodes in each element in elInsideset
+					#get nodes in each element in elOutsideset
 					nsetQ0 = nsetQ0 + elements[e-1].connectivity					
 			else: 
 				elset = np.array(sets[linInd])
@@ -274,7 +291,60 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,odb,
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ1),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetSlice),)) 
-	
+			
+			#Build the interface sets for surface integration
+			elset = np.array(sets[linInd])
+
+			elsetInterfaceTop = []
+			elsetInterfaceBottom = []
+			nsetInterface = []
+			for e in elset:
+				ec=elemNbr[e]
+				ec=np.array([x - 1 for x in ec]) #due to list comprehension issues..
+				potentialInterface=elMaterial[ec]!=elMaterial[e-1]
+
+				if np.any(potentialInterface):
+					ec=ec[potentialInterface]
+					eNodes=np.array(elements[e-1].connectivity)
+
+					for ee in ec:
+						eeNodes=np.array(elements[ee].connectivity)
+						nodes2Append=eeNodes[np.in1d(eeNodes,eNodes)]
+						
+						if len(nodes2Append)>3: #i.e. if it is a face relationship
+
+							for toappend in nodes2Append:
+								nsetInterface.append(toappend)
+								
+							posee=0
+							for n in eeNodes: 
+								posee+=allNodes[n-1].coordinates[1]
+							pose=0
+							for n in eNodes: 
+								pose+=allNodes[n-1].coordinates[1]
+								
+							if posee>pose:
+								elsetInterfaceTop.append(ee+1)
+								elsetInterfaceBottom.append(e)
+							else:
+								elsetInterfaceTop.append(e)
+								elsetInterfaceBottom.append(ee+1)
+			
+			#Ensure unique
+			nsetInterface=np.unique(np.array(nsetInterface))
+			elsetInterfaceTop,ind=np.unique(np.array(elsetInterfaceTop), return_index=True)
+			elsetInterfaceBottom=np.array(elsetInterfaceBottom)
+			elsetInterfaceBottom=elsetInterfaceBottom[ind]
+			
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice) + '-interface'
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetInterface),)) 		
+			
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-interfaceTop'
+			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,tuple(elsetInterfaceTop)),)) 	
+
+			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-interfaceBottom'
+			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,tuple(elsetInterfaceBottom)),)) 	
+			
 	t2=time.time()
 	#write sets to odb 
 	for contour in range(0,nContours,1):
@@ -416,7 +486,7 @@ def GetW(S,EE,nEl,nInt):
 	dataElementNodal = np.transpose(dataElementNodal)
 	return [dataElementNodal,connectivityMat]	
 
-def GetdudX(root,frame,allNodes,nodeSetName,elSetName): 
+def GetdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
 	nodes=root.nodeSets[nodeSetName].nodes[0]
 	elements=root.elementSets[elSetName].elements[0]
@@ -441,9 +511,16 @@ def GetdudX(root,frame,allNodes,nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
+	keys=root.instances.keys()
+	cnt=0
+	for key in keys:
+		if key==partInstance:
+			instanceNumber=cnt
+		cnt+=1
+		
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,instanceNumber,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,instanceNumber,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,instanceNumber,elements)
 	
 	#ENCoord1=ENCoord1+ENU1
 	#ENCoord2=ENCoord2+ENU2
@@ -1021,7 +1098,7 @@ def GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,firstCrackNodeLabel,nodeS
 			
 	return 	dqdx,intLcL,posz,elLabel
 
-def GetdetJac(root,frame,allNodes,nodeSetName,elSetName): 
+def GetdetJac(root,partInstance,frame,allNodes,nodeSetName,elSetName): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
 	nodes=root.nodeSets[nodeSetName].nodes[0]
 	elements=root.elementSets[elSetName].elements[0]
@@ -1046,9 +1123,16 @@ def GetdetJac(root,frame,allNodes,nodeSetName,elSetName):
 	SFU2=field.getScalarField(componentLabel='U2') 
 	SFU3=field.getScalarField(componentLabel='U3') 
 	
-	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,0,elements)
-	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,0,elements)
-	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,0,elements)
+	keys=root.instances.keys()
+	cnt=0
+	for key in keys:
+		if key==partInstance:
+			instanceNumber=cnt
+		cnt+=1
+		
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,instanceNumber,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,instanceNumber,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,instanceNumber,elements)
 	
 	#Use to get the mapping to current element volume
 	#ENCoord1=ENCoord1+ENU1
@@ -1216,7 +1300,7 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				
 				#Get du/dX, where X is the reference coordinates and u is displacement in the current frame. 
 				#The Jacobian is also computed when calculating the derivatives and is returned here
-				dudX,detJac,dudXElLabels = GetdudX(root,frame,allNodes,nSetSlice,elSetSlice)
+				dudX,detJac,dudXElLabels = GetdudX(root,partInstance,frame,allNodes,nSetSlice,elSetSlice)
 				
 				#Get dqdX, a weighting term defined as a pyramid function similar to what Abaqus uses
 				dqdX,intLcL,slicePos,dudXElLabels=GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,nodeLabelTip,nSetSlice,elSetSlice,isSymm)
@@ -1226,7 +1310,7 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 					fobj.write(',%f' % (slicePos))
 				
 				#Get the Jacobian for integration
-				detJac=GetdetJac(root,frame,allNodes,nSetSlice,elSetSlice)
+				detJac=GetdetJac(root,partInstance,frame,allNodes,nSetSlice,elSetSlice)
 				
 				#Get Gauss integrations weights
 				_,wp = Gauss_Guad_3d(3)

@@ -14,6 +14,8 @@ sys.path.insert(1, 'E:\Dropbox\Research\Source\Abaqus-J-integral\code')
 try:
 	del sys.modules['Utilities']
 	del sys.modules['JCore']
+	del sys.modules['C3D20']
+	del sys.modules['Integration']
 except KeyError:
 	print 'No modules to remove'
 
@@ -27,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="J-Indenter_Quarter_homo"
+odbName="J-Indenter_Quarter"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -99,7 +101,11 @@ if copyOdb:
 else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
-
+root=odb.rootAssembly
+#Get the elements
+part=root.instances[partInstance]
+elements=part.elements
+raise
 if buildElSet:
 	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
 
