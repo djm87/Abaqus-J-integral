@@ -1683,7 +1683,7 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					krd2[1]=1
 					for el in range(0,nEls,1):
 						for p in range(0,9,1):
-							Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),z)*q[el,p,1]*detJac[el,p]*wp[p]
+							Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),z)*detJac[el,p]*wp[p]
 					
 					print Jbar
 					if isSymm: 

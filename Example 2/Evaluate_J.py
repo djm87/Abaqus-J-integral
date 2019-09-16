@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=46#38 
+nContourLvls=8#38 
 
 #Set the first node label at the crack tip 
 nodeLabelTip=32 
@@ -82,13 +82,13 @@ computeJ=True
 computeJInterface=True
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=[0,4,10,29,45]#range(28) #explicitly [0,1,2] for instance
+contours=[4,7]#range(28) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
-frameNumbers=[2]
+frameNumbers=[-1]
 
 #Which slices should be evaluated (a list)
-slices=[0,3]#range(9)
+slices=[0]#range(9)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
