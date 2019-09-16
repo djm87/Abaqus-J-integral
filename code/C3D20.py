@@ -83,6 +83,26 @@ def C3D20_Shape_Derivatives(r,Bi):
 			dhdr[node,2] = -1./2.*r[2]*(1.+Bi[node][0]*r[0])*(1.+Bi[node][1]*r[1])	
 			
 	return dhdr	
+
+def C3D20_GetElementSurface(nOnSurf):
+	#returns the element surface number based off boolean array passed in
+	#surf is a nelement numpy array 
+	if np.all(nOnSurf[np.array([0,1,4,5,16,17,8,12])]):
+		surf=3
+	elif np.all(nOnSurf[np.array([4,12,5,13,6,14,7,15])]):
+		surf=2
+	elif np.all(nOnSurf[np.array([0,8,1,9,2,10,3,11])]):
+		surf=1
+	elif np.all(nOnSurf[np.array([1,9,2,18,6,13,5,17])]):
+		surf=4
+	elif np.all(nOnSurf[np.array([2,18,6,14,7,19,3,10])]):
+		surf=5
+	elif np.all(nOnSurf[np.array([0,11,3,19,7,15,4,16])]):
+		surf=6		
+	else:
+		raise NameError('unhandled face number')
+		
+	return surf
 	
 def Reduce_Gauss_Data_to_C3D20_Shape(data,nElements):
 	#maps the integration point id to equivalent spatial nodal layout
@@ -184,7 +204,7 @@ def Convert_Gauss_to_Elemental_Nodal(scalarField,elements):
 	
 	return dataElNodal	
 
-def Coordinate_Nodal_to_Face_integration(nodes,component,faces,elements):
+def Convert_Coordinate_Nodal_to_Face_integration(nodes,component,faces,elements):
 	# Abaqus does not compute nodal values such as displacement for the 
 	# element nodal positions. Rebuilding the element nodal field data is needed 
 	# for the shape functions to be used
@@ -244,12 +264,47 @@ def Coordinate_Nodal_to_Face_integration(nodes,component,faces,elements):
 				dataElSurf[el,:]=dataElSurftmp[:,el]		
 	
 	return dataElSurf			
+
+def Convert_Q2_to_Face_integration(dataElNodal,facem,elsm,facep,elsp,elslice):
+
+	dataElSurf=np.zeros((len(elsm), 9,3),dtype='float64')
+	ellabelsm=np.array([v.label for v in elsm])
+	ellabelsp=np.array([v.label for v in elsp])
+	ellabelsslice=np.array([v.label for v in elslice])
+
+	for f in range(1,7,1):
+		#scale natural nodal coordinates due to shift in basis from nodal to Gauss points
+		points,_ =Gauss_Guad_Psuedo_2d(3,f)
+		
+		#Get the natural nodal coordinates for the element
+		Bi=C3D20_nodal_coordinates()
+		
+		#evaluate the shape functions for the points we want to interpolate/extrapolate data to 
+		h=np.zeros((len(points), 20),dtype='float64')
+		#print points
+		for i in range(0,len(points),1):
+			r = points[i,:]
+			tmp = C3D20_Shape(r,Bi)
+			tmp = np.squeeze(tmp)
+			h[i,:]=tmp
+			#print tmp
+		
+		#compute the interpolated values dataElSurftmp
+		dataElSurftmp = np.dot(h,dataElNodal) #produces a nPointxnEl array
+		cnt=0
+		for el in range(0,len(elsm),1):	
+			#This may be slow..
+			if facem[el]==f and np.in1d(ellabelsm[el],ellabelsslice):
+				dataElSurf[el,:,1]=np.reshape(dataElSurftmp[:,np.in1d(ellabelsslice,ellabelsm[el])],9)
+				
+			elif facep[el]==f and np.in1d(ellabelsp[el],ellabelsslice):
+				dataElSurf[el,:,1]=np.reshape(dataElSurftmp[:,np.in1d(ellabelsslice,ellabelsp[el])],9)	
+				
+	return dataElSurf	
 	
-def Convert_Gauss_to_Face_integration(scalarField,faces,elements):
+def Convert_Gauss_to_Face_integration(dataGauss,faces,elements):
 	#returns extrapolated values for  3x3 integration for each element on the face specified in faces. 
 	nElements=len(elements)
-	dataGauss = np.array(scalarField.bulkDataBlocks[0].data,dtype='float64')
-	dataGauss =  np.reshape(dataGauss,(nElements,-1)) #produces an nElxnInt array
 	dataGauss = np.transpose(dataGauss) #produces an nIntxnEl array
 	dataGauss=Reduce_Gauss_Data_to_C3D20_Shape(dataGauss,nElements) #reduce data to equivalent shape function positions
 	
@@ -350,8 +405,8 @@ def Coordinate_Nodal_to_Elemental_Nodal(nodes,component,elements):
 	dataElementNodal = np.transpose(dataElementNodal)
 	return [dataElementNodal,connectivityMat]
 		
-
-#The following functions were used in validating the various aspects of the functions above.		
+#The following functions were used in validating the various aspects of the functions above.
+#They aren't used for anything in in the J integral		
 def Compare_Nodal_to_Elemental_Nodal(dataNodal,dataElementNodalMat,connectivityMat):	
 	NodalNodeId=np.arange(1,len(dataNodal)+1,1)
 	

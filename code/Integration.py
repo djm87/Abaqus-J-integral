@@ -8,7 +8,7 @@ import pprint
 import time
 import sys
 from Utilities import *
-from C3D20 import *
+#from C3D20 import *
 
 def Gauss_Guad_1d(npoints):
 	#determines the integration points and weighting coefficients for 

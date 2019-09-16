@@ -453,38 +453,6 @@ def GetW(S,EE,nEl,nInt):
 				for j in range(0,3,1):
 					W[el,p]=W[el,p]+0.5*(S[el,p,i,j]*EE[el,p,i,j])
 	return W				
-	
-	# Abaqus does not compute nodal values such as displacement for the 
-	# element nodal positions. Rebuilding the element nodal field data is needed 
-	# for the shape functions to be used
-	
-	#The coordinates can be obtained from a Scalarfield when COORD are save; 
-	#however, the root assembly saves COORD with node definitions and we can reduce the odb size
-    #by not using COORD
-	
-	#Build the element connectivity matrix
-	connectivityMat=np.zeros((len(elements), 20))
-	cnt=0
-	for el in elements:
-		connectivityMat[cnt,:]=el.connectivity
-		cnt+=1
-	
-	#convert the connectivity to zero based index and reshape to linear array
-	connectivityMat = connectivityMat.astype(int)-1
-	connectivity=np.reshape(connectivityMat,(-1,1))
-	
-	#Get the element nodal values
-	#print connectivity
-	#print len(nodes)
-	dataElementNodal=np.zeros((len(connectivity)),dtype='float64')
-	for i in range(0,len(connectivity),1):
-		dataElementNodal[i] = nodes[connectivity[i][0]].coordinates[component]
-		
-	#Remove dimensions of size 1, reshape to #nodes/element * #element array
-	dataElementNodal = np.squeeze(dataElementNodal)
-	dataElementNodal = np.reshape(dataElementNodal,(len(elements),-1))
-	dataElementNodal = np.transpose(dataElementNodal)
-	return [dataElementNodal,connectivityMat]	
 
 def GetdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName): 
 	#Returns the spatial derivative of the scalarField with respect to global coordinates
@@ -1213,6 +1181,253 @@ def GetTrapIntLc(CFPosz,L):
 		val+=abs(CFPosz[i+1]-CFPosz[i])*(L[i]+L[i+1])/2
 	return val
 
+## Section for 2D integration
+def Get2DdetJac(root,frame,partInstance,surf,allNodes,elements): 
+	#Returns the spatial derivative of the scalarField with respect to global coordinates	
+	elLabel = [el.label for el in elements]
+	
+	nElements=len(elements)
+	nNodes=len(elements[0].connectivity)
+	nPoints=9
+	
+	#print 'get nodal coordinates in element nodal'
+	#Get the nodal coordinates and map to element nodal coordinates (same thing but data structure is different)
+	[ENCoord1,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,0,elements)	
+	[ENCoord2,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,1,elements)
+	[ENCoord3,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,2,elements)
+	
+	#print 'get displacements in element nodal'
+	#Get the nodal data and map to element nodal data.
+	#elSet = root.elementSets[elSetName]
+	field = frame.fieldOutputs['U'].getSubset(position=NODAL)
+	SFU1=field.getScalarField(componentLabel='U1') 
+	SFU2=field.getScalarField(componentLabel='U2') 
+	SFU3=field.getScalarField(componentLabel='U3') 
+	
+	keys=root.instances.keys()
+	cnt=0
+	for key in keys:
+		if key==partInstance:
+			instanceNumber=cnt
+		cnt+=1
+		
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,instanceNumber,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,instanceNumber,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,instanceNumber,elements)
+	
+	#Use to get the mapping to current element volume
+	#ENCoord1=ENCoord1+ENU1
+	#ENCoord2=ENCoord2+ENU2
+	#ENCoord3=ENCoord3+ENU3
+	
+
+	
+	#get the natural nodal coordinates for the element
+	Bi=C3D20_nodal_coordinates()
+	
+	detJ=np.zeros((nElements,nPoints),dtype='float64')
+
+	#Loop over possible faces
+	for f in range(1,7,1):	
+		#interpolates var between element nodal and integrations points
+		points,_=Gauss_Guad_Psuedo_2d(3,f)
+		#print points
+		
+		#evaluate the derivative of the shape functions for the points we want to interpolate/extrapolate data to 
+		dhdr=np.zeros((nPoints,nNodes,3),dtype='float64')#
+		
+
+		#For each integration point, get the derivative of the shape functions with respect to natural local coordinates
+		for i in range(0,nPoints,1):#
+			r = points[i,:]
+			tmp = C3D20_Shape_Derivatives(r,Bi) #20x3 array
+			#dhdr = np.squeeze(tmp)
+			dhdr[i,:,:]=tmp #nPointx20x3 array
+			
+		V1=np.zeros((nPoints,nElements, 3),dtype='float64')
+		V2=np.zeros((nPoints,nElements, 3),dtype='float64')
+
+		if f==1 or f==2:
+			#dr ds
+			V1[:,:,0]= np.dot(dhdr[:,:,0],ENCoord1) #dx/dr	#npoints x nelement array
+			V2[:,:,0]= np.dot(dhdr[:,:,1],ENCoord1) #dx/ds
+			V1[:,:,1]= np.dot(dhdr[:,:,0],ENCoord2) #dy/dr	
+			V2[:,:,1]= np.dot(dhdr[:,:,1],ENCoord2) #dy/ds
+			V1[:,:,2]= np.dot(dhdr[:,:,0],ENCoord3) #dz/dr
+			V2[:,:,2]= np.dot(dhdr[:,:,1],ENCoord3) #dz/ds
+		elif f==6 or f==4:
+			#ds dt
+			V1[:,:,0]= np.dot(dhdr[:,:,1],ENCoord1) #dx/ds
+			V2[:,:,0]= np.dot(dhdr[:,:,2],ENCoord1) #dx/dt
+			V1[:,:,1]= np.dot(dhdr[:,:,1],ENCoord2) #dy/ds
+			V2[:,:,1]= np.dot(dhdr[:,:,2],ENCoord2) #dy/dt
+			V1[:,:,2]= np.dot(dhdr[:,:,1],ENCoord3) #dz/ds
+			V2[:,:,2]= np.dot(dhdr[:,:,2],ENCoord3) #dz/dt
+		elif f==5 or f==3:
+			#dr dt
+			V1[:,:,0]= np.dot(dhdr[:,:,0],ENCoord1) #dx/dr	#npoints x nelement array
+			V2[:,:,0]= np.dot(dhdr[:,:,2],ENCoord1) #dx/dt
+			V1[:,:,1]= np.dot(dhdr[:,:,0],ENCoord2) #dy/dr	
+			V2[:,:,1]= np.dot(dhdr[:,:,2],ENCoord2) #dy/dt
+			V1[:,:,2]= np.dot(dhdr[:,:,0],ENCoord3) #dz/dr
+			V2[:,:,2]= np.dot(dhdr[:,:,2],ENCoord3) #dz/dt
+		else: 
+			raise NameError('unhandled face number')
+		
+		#Get the magnitude of the cross product representing the of the integration point on the face
+		tmp=np.cross(V1,V2)
+		for el in range(0,nElements,1):
+			for p in range(0,nPoints,1):
+				if surf[el]==f:
+					detJ[el,p]=np.linalg.norm(tmp[p,el])
+	
+
+	return 	detJ
+
+def Get2DdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName,surf): 
+	#Returns the spatial derivative of the scalarField with respect to global coordinates
+	nodes=root.nodeSets[nodeSetName].nodes[0]
+	elements=root.elementSets[elSetName].elements[0]
+	
+	elLabel = [el.label for el in elements]
+	
+	nElements=len(elements)
+	nNodes=len(elements[0].connectivity)
+	nPoints=9#GetNumIntegrationPoints(elements[0].type)
+	
+	#print 'get nodal coordinates in element nodal'
+	#Get the nodal coordinates and map to element nodal coordinates (same thing but data structure is different)
+	[ENCoord1,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,0,elements)	
+	[ENCoord2,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,1,elements)
+	[ENCoord3,ECM]=Coordinate_Nodal_to_Elemental_Nodal(allNodes,2,elements)
+	
+	#print 'get displacements in element nodal'
+	#Get the nodal data and map to element nodal data.
+	#elSet = root.elementSets[elSetName]
+	field = frame.fieldOutputs['U'].getSubset(position=NODAL)
+	SFU1=field.getScalarField(componentLabel='U1') 
+	SFU2=field.getScalarField(componentLabel='U2') 
+	SFU3=field.getScalarField(componentLabel='U3') 
+	
+	keys=root.instances.keys()
+	cnt=0
+	for key in keys:
+		if key==partInstance:
+			instanceNumber=cnt
+		cnt+=1
+		
+	[NU1,ENU1,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU1,instanceNumber,elements)
+	[NU2,ENU2,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU2,instanceNumber,elements)
+	[NU3,ENU3,ECM]=ScalarField_Nodal_to_Elemental_Nodal(SFU3,instanceNumber,elements)
+	
+	#ENCoord1=ENCoord1+ENU1
+	#ENCoord2=ENCoord2+ENU2
+	#ENCoord3=ENCoord3+ENU3
+	
+
+	
+	#get the natural nodal coordinates for the element
+	Bi=C3D20_nodal_coordinates()
+	
+	dudx=np.zeros((nElements,nPoints,3,3),dtype='float64')
+	#Loop over possible faces
+	for f in range(1,7,1):	
+		#interpolates var between element nodal and integrations points
+		points,_=Gauss_Guad_Psuedo_2d(3,f)
+		#print points
+		#print 'get dhdr'
+		#evaluate the derivative of the shape functions for the points we want to interpolate/extrapolate data to 
+		dhdr=np.zeros((nPoints,nNodes,3),dtype='float64')#
+		
+
+		#For each integration point, get the derivative of the shape functions with respect to natural local coordinates
+		for i in range(0,nPoints,1):#
+			r = points[i,:]
+			tmp = C3D20_Shape_Derivatives(r,Bi) #20x3 array
+			#dhdr = np.squeeze(tmp)
+			dhdr[i,:,:]=tmp #nPointx20x3 array
+		
+		#print 'get J'
+		##Build the Jacobian for each of the integration points n integration points x elements array
+		J=np.zeros((nPoints,nElements, 3,3),dtype='float64')
+		J[:,:,0,0]= np.dot(dhdr[:,:,0],ENCoord1)	#npoints x nelement array
+		J[:,:,0,1]= np.dot(dhdr[:,:,1],ENCoord1)
+		J[:,:,0,2]= np.dot(dhdr[:,:,2],ENCoord1)	
+		J[:,:,1,0]= np.dot(dhdr[:,:,0],ENCoord2)	
+		J[:,:,1,1]= np.dot(dhdr[:,:,1],ENCoord2)
+		J[:,:,1,2]= np.dot(dhdr[:,:,2],ENCoord2)
+		J[:,:,2,0]= np.dot(dhdr[:,:,0],ENCoord3)	
+		J[:,:,2,1]= np.dot(dhdr[:,:,1],ENCoord3)
+		J[:,:,2,2]= np.dot(dhdr[:,:,2],ENCoord3)
+		
+		detJ=np.zeros((nElements,nPoints),dtype='float64')
+		Jinvp=np.zeros((nPoints, 3,3),dtype='float64')
+		dudx=np.zeros((nElements,nPoints,3,3),dtype='float64')
+		I=np.eye(3);
+		
+		#Initialize dictionaries for saved element data
+		#print '=====start solution====='	
+		for el in range(0,nElements,1):
+			if surf[el]==f:
+				for p in range(0,nPoints,1): #p is looping over integration points in element elLabel[el]
+					detJ[el,p]=np.linalg.det(J[p,el,:,:])
+					Jinvp[p,:,:]=np.linalg.inv(J[p,el,:,:])	
+					tmp=np.dot(dhdr[p,:,:],Jinvp[p,:,:]) #nNodes x 3
+					tmp=np.transpose(tmp)
+					dudx[el,p,0,:]=np.dot(tmp,ENU1[:,el])
+					dudx[el,p,1,:]=np.dot(tmp,ENU2[:,el])
+					dudx[el,p,2,:]=np.dot(tmp,ENU3[:,el])
+				
+	return 	dudx,elLabel
+	
+def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
+	#This routine returns data for surface integration defined by nodes using the
+	#data at integration points in elements/elSet 
+	#Quantities returned: Stress,du/dX,W, and q
+	#number of elements and integration points
+	nElements=len(elements)
+	nInt2D=9 #2D
+	
+	#load node labels into array
+	nlabels=np.zeros((len(nodes)),dtype='int64')#
+	cnt=0
+	for n in nodes: 
+		nlabels[cnt]=n.label
+		cnt+=1
+	
+	#Get the face of each element where the surface is
+	surf=np.zeros((nElements),dtype='uint8')#may be useful so storing.. 
+	cnt=0
+	for el in elements:
+		#elem=elements[elem]
+		e     = el.label
+		nconn = np.array(el.connectivity) #list of node labels
+		
+		#get nodes of element on the surface 
+		nOnSurf= nOnSurf=np.array([item in nlabels for item in nconn])
+		surf[cnt]=C3D20_GetElementSurface(nOnSurf)
+		cnt+=1
+	
+	#Get stress and energy for the elements
+	S3D,_,_,_ = GetStress(root,frame,elSetName)
+	EE3D,_,nEl,nInt = GetStrain(root,frame,elSetName)
+	W3D = GetW(S3D,EE3D,nEl,nInt)
+
+	#Interpolate from gauss to surface positions
+	S = np.zeros((nElements,nInt2D,3,3),dtype='float64')
+	S[:,:,0,0] = Convert_Gauss_to_Face_integration(S3D[:,:,0,0],surf,elements)
+	S[:,:,1,1] = Convert_Gauss_to_Face_integration(S3D[:,:,1,1],surf,elements)
+	S[:,:,2,2] = Convert_Gauss_to_Face_integration(S3D[:,:,2,2],surf,elements)
+	S[:,:,0,1] = Convert_Gauss_to_Face_integration(S3D[:,:,0,1],surf,elements)
+	S[:,:,0,2] = Convert_Gauss_to_Face_integration(S3D[:,:,0,2],surf,elements)
+	S[:,:,1,2] = Convert_Gauss_to_Face_integration(S3D[:,:,1,2],surf,elements)
+	S[:,:,1,0] = S[:,:,0,1]
+	S[:,:,2,0] = S[:,:,0,2]
+	S[:,:,2,1] = S[:,:,1,2]
+	W = Convert_Gauss_to_Face_integration(W3D,surf,elements)
+
+	return S,W,surf
+
 def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
 	#inputs:
 	#an odb with node sets and element made by BuildElementAndNodeSets
@@ -1246,7 +1461,7 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 
 	#Initialize J data container 
 	JAll=np.zeros((len(slices)),dtype='float64')
-	
+
 	#loop over frames
 	for frameId in frameNumbers:
 		#Get the frame and time
@@ -1329,7 +1544,7 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 					JAll[sliceCnt]=2*Jbar/intLcL
 				else: 
 					JAll[sliceCnt]=Jbar/intLcL
-					
+
 				sliceCnt+=1
 			fobj.close()
 			fobj = open(fname, 'a+')
@@ -1340,4 +1555,153 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				
 		fobj.close()
 
+def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
+	#inputs:
+	#an odb with node sets and element made by BuildElementAndNodeSets
+	#frame for computation, must include U,S, and EE (the mechanical strains
+	#
+	#output: 
+	# J(s) - energy release rate along the crack front that is due to the interfaces
+	
+	#Get components of odb
+	root=odb.rootAssembly
+	#Get elements
+	part=root.instances[partInstance]
+	elements=part.elements
+
+	#Get nodes
+	allNodes = root.instances[partInstance].nodes 
+	
+	#Get the frames in the step 
+	steps=odb.steps
+
+	# Get the step keys
+	allSteps = steps.keys()
+
+	# Get current step object and the number of increments (frameLen) in step
+	step = steps[allSteps[stepNumber]]
+
+	# Get frames in step
+	frames=step.frames
+
+	#Initialize J data container 
+	JInt=np.zeros((len(slices)),dtype='float64')
+
+	#loop over frames
+	for frameId in frameNumbers:
+		#Get the frame and time
+		frame = frames[frameId]
+		TTAU = frame.frameValue
+		
+		#Check that the necessary field variables exist at the appropriate locations
+		CheckFieldExists(frame,'U','NODAL') #displacements
+		CheckFieldExists(frame,'EE','INTEGRATION_POINT') #mechanical strain 
+		CheckFieldExists(frame,'S','INTEGRATION_POINT') #stress 
+	
+	
+		#open file to write Js to
+		fname='Js-at-time-'+str(TTAU)+'Interface.txt'
+		fobj = open(fname, 'w')
+		#write empty header
+		fobj.write('%f' % (float('nan')))
+			
+		#loop over each contour level to be computed 
+		for contourId in contours:	
+			sliceCnt=0
+			print 'Processing Contour: ', contourId
+			for sliceId in slices:
+				print 'slice #:',sliceId
+				##build the node set and element set names 
+				##========================================
+				nSetSlice=SetPrefix+'-contour-'+str(contourId)+'-slice-'+str(sliceId)
+				nSetQ0=nSetSlice+'-Q0'
+				nSetQ0p5=nSetSlice+'-Q0p5'
+				nSetQ1=nSetSlice+'-Q1'
+				nSetInterface=nSetSlice+'-interface'
+				elSetSlice=nSetSlice
+				elSetInterfaceBottom=nSetSlice+'-interfaceBottom'
+				elSetInterfaceTop=nSetSlice+'-interfaceTop'
+
+				#Check that node and element sets exist	(ensures only that they exist, not that they are valid..)
+				CheckSetExists(root,nSetQ0,'node')
+				CheckSetExists(root,nSetQ0p5,'node')
+				CheckSetExists(root,nSetQ1,'node')
+				CheckSetExists(root,nSetInterface,'node')
+				CheckSetExists(root,nSetSlice,'node')
+				CheckSetExists(root,elSetSlice,'element')
+				CheckSetExists(root,elSetInterfaceBottom,'element')
+				CheckSetExists(root,elSetInterfaceTop,'element')
 				
+				if root.elementSets[elSetInterfaceBottom].elements!=None:
+					#Set the surface normal 
+					z=np.array([0,1,0])
+		
+					#Get quantities at integration points on the surface
+					nodes=root.nodeSets[nSetInterface].nodes[0]
+					
+					#At the bottom
+					elsm=root.elementSets[elSetInterfaceBottom].elements[0]
+					nEls=len(elsm)
+					elSet = root.elementSets[elSetInterfaceBottom]
+					Sm,Wm,surfm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
+					dudXm,_ = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
+					
+					#At the top
+					elsp=root.elementSets[elSetInterfaceTop].elements[0]
+					elSet = root.elementSets[elSetInterfaceTop]
+					Sp,Wp,surfp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
+					dudXp,_ = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfm)
+
+
+					#Average stress 
+					S=(Sp+Sm)/2.0
+					
+					#Take difmferences accross the interface
+					dudX=dudXp-dudXm
+					W=Wp-Wm
+					
+					#Get the area Jacobian
+					detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsm)
+					
+					#Get q 
+					enq23D,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
+					
+					elslice=root.elementSets[elSetSlice].elements[0]
+					q=Convert_Q2_to_Face_integration(enq23D,surfm,elsm,surfp,elsp,elslice)
+
+					#Get the Gauss weights (independent on the face so chose random face=1)
+					_,wp=Gauss_Guad_Psuedo_2d(3,1)
+					
+					#print positions of each Js value as header
+					if contourId==contours[0]:
+						fobj.write(',%f' % (slicePos))
+					
+					##Perform quadrature
+					##====================
+					Jbar=0
+					krd2=np.zeros((3),dtype='float64')
+					krd2[1]=1
+					for el in range(0,nEls,1):
+						for p in range(0,9,1):
+							Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),z)*q[el,p,1]*detJac[el,p]*wp[p]
+					
+					print Jbar
+					if isSymm: 
+						JInt[sliceCnt]=2*Jbar/intLcL
+					else: 
+						JInt[sliceCnt]=Jbar/intLcL
+				else: 
+					JInt[sliceCnt]=0.0
+					if contourId==contours[0]:
+						_,_,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
+						fobj.write(',%f' % (slicePos))
+					
+				sliceCnt+=1
+			fobj.close()
+			fobj = open(fname, 'a+')
+			#print processed contour values to file
+			fobj.write('\n%d' % (contourId))	
+			for i in range(0,len(slices),1):
+				fobj.write(',%f' % (JInt[i]))
+				
+		fobj.close()
