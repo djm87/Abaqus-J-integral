@@ -217,7 +217,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 					sets[linInd]=list(tmp1)
 			tUnion=tUnion+time.time()-tlast
 	t1=time.time()
-	#nodeSets: setq1, setq0p5, setq0, setSlice
+	#build nodeSets: setq1, setq0p5, setq0, setSlice
 	for contour in range(0,nContours,1):
 		for slice in range(0,nSlices,1):
 			linInd = contour*nSlices+slice
@@ -230,43 +230,52 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 				elOutsideset=elsetp1[~np.in1d(elsetp1,elset)]
 				
 				#start loading up the node sets
-				nsetQ1 = () 
+				nsetQ1 = [] 
 				for e in elInsideset:
 					#get nodes in each element in elInsideset
-					nsetQ1 = nsetQ1 + elements[e-1].connectivity
+					toappend = np.array(elements[e-1].connectivity)
+					for n in toappend:
+						nsetQ1.append(n)
 									
-				nsetQ0 = () 
+				nsetQ0 = []
 				for e in elOutsideset:
 					#get nodes in each element in elOutsideset
-					nsetQ0 = nsetQ0 + elements[e-1].connectivity					
+					toappend = np.array(elements[e-1].connectivity)
+					for n in toappend:
+						nsetQ0.append(n)
+
+					
 			else: 
 				elset = np.array(sets[linInd])
 				elsetp1 = np.array(sets[linIndp1c])
 				elOutsideset=elsetp1[~np.in1d(elsetp1,elset)]
 				
-				nsetQ1 = () 
+				nsetQ1 = [] 
 				#for the inner ring use the yx based coordinates 
 				for e in elset:
-					nconn=elements[e-1].connectivity	
-					for n in nconn: 
+					toappend = np.array(elements[e-1].connectivity)	
+					for n in toappend: 
 						if isclose(allNodes[n-1].coordinates[pos1],allNodes[nodeLabelTip-1].coordinates[pos1]) and \
 							isclose(allNodes[n-1].coordinates[pos2],allNodes[nodeLabelTip-1].coordinates[pos2]):
-							nsetQ1 = nsetQ1 + tuple([n])
+							nsetQ1.append(n)
 	
 					#get nodes in each element in elInsideset
 							
 									
-				nsetQ0 = () 
+				nsetQ0 = []
 				for e in elOutsideset:
 					#get nodes in each element in elInsideset
-					nsetQ0 = nsetQ0 + elements[e-1].connectivity					
-				
+					toappend = np.array(elements[e-1].connectivity)
+					for n in toappend:
+						nsetQ0.append(n)
 			#get all node we are interested in in the nodesets nsetQ0, etc..
-			nsetSlice = () #empty tuple
+			nsetSlice = [] #empty tuple
 			for e in sets[linInd]:
 				#get nodes in each element in elset
-				nsetSlice = nsetSlice + elements[e-1].connectivity
-			
+				toappend = np.array(elements[e-1].connectivity)
+				for n in toappend:
+					nsetSlice.append(n)
+					
 			#trim node sets by unions
 			nsetQ0=np.array(nsetQ0)
 			nsetQ1=np.array(nsetQ1)
@@ -274,26 +283,21 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			
 			nsetQ0=nsetQ0[np.in1d(nsetQ0,nsetSlice)]
 			nsetQ0p5=nsetSlice[~np.in1d(nsetSlice,nsetQ0)]
-			#nsetQ1=np.unique(nsetQ1)
-			#nsetQ0p5=np.unique(nsetQ0p5)
 			nsetQ0p5=tuple(nsetQ0p5[~np.in1d(nsetQ0p5,nsetQ1)])
 
-			nsetQ0=tuple(nsetQ0)
-			nsetQ0p5=tuple(nsetQ0p5)
-			nsetQ1=tuple(nsetQ1)
-			nsetSlice=tuple(nsetSlice)
 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ0),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ0)),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0p5'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ0p5),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ0p5)),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q1'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetQ1),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ1)),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetSlice),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetSlice)),)) 
 			
 	t2=time.time()		
-			
+	
+	#build the interface sets
 	for slice in range(0,nSlices,1):		
 		for contour in range(nContours-1,-1,-1):
 		
@@ -380,7 +384,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,tuple(elsetInterfaceBottom)),)) 	
 			
 	t3=time.time()
-	#write sets to odb 
+	#write element sets to odb 
 	for contour in range(0,nContours,1):
 		for slice in range(0,nSlices,1):#slices	
 			linInd=contour*nSlices+slice	
