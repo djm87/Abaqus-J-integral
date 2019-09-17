@@ -292,49 +292,83 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetSlice),)) 
 			
+	t2=time.time()		
+			
+	for slice in range(0,nSlices,1):		
+		for contour in range(nContours-1,-1,-1):
+		
+			linInd = contour*nSlices+slice
 			#Build the interface sets for surface integration
 			elset = np.array(sets[linInd])
-
+			
 			elsetInterfaceTop = []
 			elsetInterfaceBottom = []
 			nsetInterface = []
-			for e in elset:
-				ec=elemNbr[e]
-				ec=np.array([x - 1 for x in ec]) #due to list comprehension issues..
-				potentialInterface=elMaterial[ec]!=elMaterial[e-1]
-
-				if np.any(potentialInterface):
-					ec=ec[potentialInterface]
-					eNodes=np.array(elements[e-1].connectivity)
-
-					for ee in ec:
-						eeNodes=np.array(elements[ee].connectivity)
-						nodes2Append=eeNodes[np.in1d(eeNodes,eNodes)]
-						
-						if len(nodes2Append)>3: #i.e. if it is a face relationship
-
-							for toappend in nodes2Append:
-								nsetInterface.append(toappend)
-								
-							posee=0
-							for n in eeNodes: 
-								posee+=allNodes[n-1].coordinates[1]
-							pose=0
-							for n in eNodes: 
-								pose+=allNodes[n-1].coordinates[1]
-								
-							if posee>pose:
-								elsetInterfaceTop.append(ee+1)
-								elsetInterfaceBottom.append(e)
-							else:
-								elsetInterfaceTop.append(e)
-								elsetInterfaceBottom.append(ee+1)
 			
-			#Ensure unique
-			nsetInterface=np.unique(np.array(nsetInterface))
-			elsetInterfaceTop,ind=np.unique(np.array(elsetInterfaceTop), return_index=True)
-			elsetInterfaceBottom=np.array(elsetInterfaceBottom)
-			elsetInterfaceBottom=elsetInterfaceBottom[ind]
+			if contour==nContours-1:
+				masterElSet=elset
+				for e in masterElSet:
+					ec=elemNbr[e]
+					ec=np.array([x - 1 for x in ec]) #due to list comprehension issues..
+					potentialInterface=elMaterial[ec]!=elMaterial[e-1]
+
+					if np.any(potentialInterface):
+						ec=ec[potentialInterface]
+						eNodes=np.array(elements[e-1].connectivity)
+
+						for ee in ec:
+							eeNodes=np.array(elements[ee].connectivity)
+							nodes2Append=eeNodes[np.in1d(eeNodes,eNodes)]
+							
+							if len(nodes2Append)>3: #i.e. if it is a face relationship
+
+								for toappend in nodes2Append:
+									nsetInterface.append(toappend)
+									
+								posee=0
+								for n in eeNodes: 
+									posee+=allNodes[n-1].coordinates[1]
+								pose=0
+								for n in eNodes: 
+									pose+=allNodes[n-1].coordinates[1]
+									
+								if posee>pose:
+									elsetInterfaceTop.append(ee+1)
+									elsetInterfaceBottom.append(e)
+								else:
+									elsetInterfaceTop.append(e)
+									elsetInterfaceBottom.append(ee+1)
+				
+				elsetInterfaceTop,ind=np.unique(np.array(elsetInterfaceTop), return_index=True)
+				elsetInterfaceBottom=np.array(elsetInterfaceBottom)
+				elsetInterfaceBottom=elsetInterfaceBottom[ind]
+				nsetInterface = np.unique(np.array(nsetInterface))
+				masterElSetInterfaceTop = elsetInterfaceTop
+				masterElSetInterfaceBottom = elsetInterfaceBottom
+				masterNSetInterface = nsetInterface
+			else: 
+				elset=np.array(elset)
+				elementsToKeep = np.in1d(masterElSetInterfaceTop,elset) \
+					+ np.in1d(masterElSetInterfaceBottom,elset)
+				elsetInterfaceTop=masterElSetInterfaceTop[elementsToKeep]
+				elsetInterfaceBottom=masterElSetInterfaceBottom[elementsToKeep]
+				n=[]
+				for e in elsetInterfaceTop:
+					ntmp=np.array(elements[e-1].connectivity)
+					for toappend in ntmp:
+						n.append(toappend)
+				for e in elsetInterfaceBottom:
+					ntmp=np.array(elements[e-1].connectivity)
+					for toappend in ntmp:
+						n.append(toappend)
+				n=np.array(n)
+				nsetInterface=masterNSetInterface[np.in1d(masterNSetInterface,n)]	
+					
+			#Ensure unique (now should be handled by a clean master set
+			#nsetInterface=np.unique(np.array(nsetInterface))
+			#elsetInterfaceTop,ind=np.unique(np.array(elsetInterfaceTop), return_index=True)
+			#elsetInterfaceBottom=np.array(elsetInterfaceBottom)
+			#elsetInterfaceBottom=elsetInterfaceBottom[ind]
 			
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice) + '-interface'
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,nsetInterface),)) 		
@@ -345,7 +379,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-interfaceBottom'
 			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,tuple(elsetInterfaceBottom)),)) 	
 			
-	t2=time.time()
+	t3=time.time()
 	#write sets to odb 
 	for contour in range(0,nContours,1):
 		for slice in range(0,nSlices,1):#slices	
@@ -356,7 +390,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			newSetElements=tuple(sets[linInd])
 			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,newSetElements),)) 
 	
-	t3=time.time()
+	t4=time.time()
 	
 	print "time report"
 	print '++++++++++++'
@@ -365,6 +399,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 	print 'time in first loop get union',tUnion
 	print 'time in second loop',t2-t1
 	print 'time in third loop',t3-t2
+	print 'time in third loop',t4-t3
 	print '++++++++++++'
 	print '++++++++++++'	
 
@@ -444,18 +479,14 @@ def GetStrain(root,frame,elSetName):
 
 	return EE,elLabelU,nEl,nInt
 	
-def GetW(S,EE,nEl,nInt):
+def GetW(S,dudX,nEl,nInt):
 	W=np.zeros((nEl,nInt),dtype='float64')
 	#returns strain energy for a linear elastic material
 	for el in range(0,nEl,1):
 		for p in range(0,nInt,1):
 			for i in range(0,3,1):
 				for j in range(0,3,1):
-					#This is correct because off diagonal terms are the shear strains
-					#if i!=j:
-					#	W[el,p]+=0.25*(S[el,p,i,j]*EE[el,p,i,j])
-					#else:
-					W[el,p]+=0.5*(S[el,p,i,j]*EE[el,p,i,j])
+					W[el,p]+=0.25*S[el,p,i,j]*(dudX[el,p,i,j]+dudX[el,p,j,i])
 					
 	return W				
 
@@ -1421,8 +1452,6 @@ def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 	
 	#Get stress and energy for the elements
 	S3D,elLabel,_,_ = GetStress(root,frame,elSetName)
-	EE3D,_,nEl,nInt = GetStrain(root,frame,elSetName)
-	W3D = GetW(S3D,EE3D,nEl,nInt)
 
 	#Interpolate from gauss to surface positions
 	S = np.zeros((nElements,nInt2D,3,3),dtype='float64')
@@ -1435,9 +1464,8 @@ def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 	S[:,:,1,0] = S[:,:,0,1]
 	S[:,:,2,0] = S[:,:,0,2]
 	S[:,:,2,1] = S[:,:,1,2]
-	W = Convert_Gauss_to_Face_integration(W3D,surf,elements)
 
-	return S,W,surf,elLabel
+	return S,surf,elLabel
 
 def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
 	#inputs:
@@ -1518,15 +1546,12 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				#Stress Sij 
 				S,SElLabels,nEl,nInt = GetStress(root,frame,elSetSlice)
 
-				#Get strain EEij 
-				EE,EEElLabels,nEl,nInt = GetStrain(root,frame,elSetSlice)
-				
-				#Mechanical strain energy density, W=U (stored by Abaqus in SENER and computed for linear elasticity as U=1/2*SijEEij)
-				W = GetW(S,EE,nEl,nInt) 
-				
 				#Get du/dX, where X is the reference coordinates and u is displacement in the current frame. 
 				#The Jacobian is also computed when calculating the derivatives and is returned here
 				dudX,detJac,dudXElLabels = GetdudX(root,partInstance,frame,allNodes,nSetSlice,elSetSlice)
+				
+				#Strain energy density defined for linear elasticity as computed for linear elasticity as U=1/2*Sijeij where e is linear strain
+				W = GetW(S,dudX,nEl,nInt)
 				
 				#Get dqdX, a weighting term defined as a pyramid function similar to what Abaqus uses
 				dqdX,intLcL,slicePos,dudXElLabels=GetdqdX(root,frame,allNodes,nSetQ0,nSetQ0p5,nSetQ1,nodeLabelTip,nSetSlice,elSetSlice,isSymm)
@@ -1541,23 +1566,6 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				#Get Gauss integrations weights
 				_,wp = Gauss_Guad_3d(3)
 				wp = np.reshape(wp,(-1))
-				
-									
-				W2=np.zeros((nEl,nInt),dtype='float64')
-				#returns strain energy for a linear elastic material
-				for el in range(0,nEl,1):
-					for p in range(0,nInt,1):
-						for i in range(0,3,1):
-							for j in range(0,3,1):
-								e=0.5*(dudX[el,p,i,j]+dudX[el,p,j,i])
-								if i!=j:
-									W2[el,p]+=0.5*S[el,p,i,j]*e
-								else:
-									W2[el,p]+=0.5*S[el,p,i,j]*e
-									
-									
-					
-				
 				
 				##Perform quadrature
 				##====================
@@ -1671,32 +1679,29 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 					nEls=len(elsm)
 					elSet = root.elementSets[elSetInterfaceBottom]
-					Sm,Wm,surfm,elLabelm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
+					Sm,surfm,elLabelm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
 					dudXm = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
-					#print surfm
+					Wm = GetW(Sm,dudXm,nEls,9)
 
 					#At the top
 					elsp=root.elementSets[elSetInterfaceTop].elements[0]
 					elSet = root.elementSets[elSetInterfaceTop]
-					Sp,Wp,surfp,elLabelp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
+					Sp,surfp,elLabelp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
 					dudXp = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfp)
-					#print surfp
+					Wp = GetW(Sp,dudXp,nEls,9)
 
 					#Average stress 
 					S=(Sp+Sm)/2.0
 					
-					#Take difmferences accross the interface
+					#Take differences accross the interface
 					dudX=dudXp-dudXm
 					W=Wp-Wm
 					
 					#Get the area Jacobian
 					detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsp)
 					
-					#Get q 
+					#Get q (Move GetqNew to just get slice position.
 					enq23D,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
-					
-					elslice=root.elementSets[elSetSlice].elements[0]
-					q=Convert_Q2_to_Face_integration(enq23D,surfm,elsm,surfp,elsp,elslice)
 
 					#Get the Gauss weights (independent on the face so chose random face=1)
 					_,wp=Gauss_Guad_Psuedo_2d(3,1)
@@ -1704,36 +1709,7 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					#print positions of each Js value as header
 					if contourId==contours[0]:
 						fobj.write(',%f' % (slicePos))
-					
-					
-					W2p=np.zeros((nEls,9),dtype='float64')
-					#returns strain energy for a linear elastic material
-					for el in range(0,nEls,1):
-						for p in range(0,9,1):
-							for i in range(0,3,1):
-								for j in range(0,3,1):
-									e=0.5*(dudXp[el,p,i,j]+dudXp[el,p,j,i])
-									if i!=j:
-										W2p[el,p]+=0.5*Sp[el,p,i,j]*e
-									else:
-										W2p[el,p]+=0.5*Sp[el,p,i,j]*e
-										
-					W2m=np.zeros((nEls,9),dtype='float64')
-					#returns strain energy for a linear elastic material
-					for el in range(0,nEls,1):
-						for p in range(0,9,1):
-							for i in range(0,3,1):
-								for j in range(0,3,1):
-									e=0.5*(dudXm[el,p,i,j]+dudXm[el,p,j,i])
-									if i!=j:
-										W2m[el,p]+=0.5*Sm[el,p,i,j]*e
-									else:
-										W2m[el,p]+=0.5*Sm[el,p,i,j]*e
-									
-					W2=W2p-W2m
-					
-					#print W2m
-					#print W
+													
 					##Perform quadrature
 					##====================
 					Jbar=0
@@ -1742,20 +1718,9 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					for el in range(0,nEls,1):
 						for p in range(0,9,1):
 							#dS=detJac[el,p]*wp[p] #verified good for elements in interface
-							tmp=np.dot(Sp[el,p,:,:],dudXp[el,p,:,1])-np.dot(Sm[el,p,:,:],dudXm[el,p,:,1])
-							Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W2[el,p]*krd2,z)*detJac[el,p]*wp[p]
+							#tmp=np.dot(Sp[el,p,:,:],dudXp[el,p,:,1])-np.dot(Sm[el,p,:,:],dudXm[el,p,:,1])
+							Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,z)*detJac[el,p]*wp[p]
 						
-						#if elLabelp[el]==1: 
-						#	#should get 0.028887 for element 1. Test is good!
-						#print 'detJac areas for el# ',elLabelp[el]
-						#area=0
-						#for p in range(0,9,1):
-						#	area+=detJac[el,p]*wp[p]
-						#print area
-						#print 'S, int 0,  for el# ',elLabelp[el],elLabelm[el]
-						#p =0
-						#print Sp[el,p,:,:]
-						#print Sm[el,p,:,:]
 					
 					if isSymm: 
 						JInt[sliceCnt]=2*Jbar/(intLcL*2)
