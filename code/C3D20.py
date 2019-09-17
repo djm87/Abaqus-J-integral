@@ -305,7 +305,7 @@ def Convert_Q2_to_Face_integration(dataElNodal,facem,elsm,facep,elsp,elslice):
 def Convert_Gauss_to_Face_integration(dataGauss,faces,elements):
 	#returns extrapolated values for  3x3 integration for each element on the face specified in faces. 
 	nElements=len(elements)
-	dataGauss = np.transpose(dataGauss) #produces an nIntxnEl array
+	dataGauss = np.transpose(dataGauss) #produces an nIntxnEl array (verified)
 	dataGauss=Reduce_Gauss_Data_to_C3D20_Shape(dataGauss,nElements) #reduce data to equivalent shape function positions
 	
 	dataElSurf=np.zeros((nElements, 9),dtype='float64')

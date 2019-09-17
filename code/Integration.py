@@ -68,7 +68,7 @@ def Gauss_Guad_Psuedo_2d(npoints,surf):
 			for i in range(0,npoints,1): #s dim
 				points[cnt,1]=points_1d[i]
 				points[cnt,2]=points_1d[j]
-				points[cnt,1]=1
+				points[cnt,0]=1
 				weights[cnt]=weights_1d[i]*weights_1d[j]
 				cnt=cnt+1	
 	elif surf==5:

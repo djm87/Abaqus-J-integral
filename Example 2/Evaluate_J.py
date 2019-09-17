@@ -29,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="CT-3D-Fine-mesh"
+odbName="CT-3D-Fine-mesh_copy"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -42,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=True 
+copyOdb=False 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=8#38 
+nContourLvls=38 
 
 #Set the first node label at the crack tip 
 nodeLabelTip=32 
@@ -70,7 +70,7 @@ sectionElSetRange=range(2,4,1) #e.g. range(2,4,1)=[2,3]
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=True
+buildElSet=False
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
 SetPrefix='test-contour'
@@ -82,7 +82,7 @@ computeJ=True
 computeJInterface=True
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=[4,7]#range(28) #explicitly [0,1,2] for instance
+contours=[3,35]#range(28) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
 frameNumbers=[-1]

@@ -451,7 +451,12 @@ def GetW(S,EE,nEl,nInt):
 		for p in range(0,nInt,1):
 			for i in range(0,3,1):
 				for j in range(0,3,1):
-					W[el,p]=W[el,p]+0.5*(S[el,p,i,j]*EE[el,p,i,j])
+					#This is correct because off diagonal terms are the shear strains
+					#if i!=j:
+					#	W[el,p]+=0.25*(S[el,p,i,j]*EE[el,p,i,j])
+					#else:
+					W[el,p]+=0.5*(S[el,p,i,j]*EE[el,p,i,j])
+					
 	return W				
 
 def GetdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName): 
@@ -1280,7 +1285,11 @@ def Get2DdetJac(root,frame,partInstance,surf,allNodes,elements):
 			for p in range(0,nPoints,1):
 				if surf[el]==f:
 					detJ[el,p]=np.linalg.norm(tmp[p,el])
-	
+					#print 'original',detJ[el,p]
+					#detJ[el,p]=np.sqrt((V1[p,el,1]*V2[p,el,2]-V1[p,el,2]*V2[p,el,1])**2 \
+					#+(V1[p,el,2]*V2[p,el,0]-V1[p,el,0]*V2[p,el,2])**2 \
+					#+(V1[p,el,0]*V2[p,el,1]-V1[p,el,1]*V2[p,el,0])**2)
+					#print 'new',detJ[el,p]
 
 	return 	detJ
 
@@ -1362,13 +1371,15 @@ def Get2DdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName,surf):
 		
 		detJ=np.zeros((nElements,nPoints),dtype='float64')
 		Jinvp=np.zeros((nPoints, 3,3),dtype='float64')
-		dudx=np.zeros((nElements,nPoints,3,3),dtype='float64')
 		I=np.eye(3);
 		
 		#Initialize dictionaries for saved element data
 		#print '=====start solution====='	
+		#cnt=0
 		for el in range(0,nElements,1):
 			if surf[el]==f:
+				#cnt+=1
+				#print 'entering to assign dudx for the', cnt, 'time'
 				for p in range(0,nPoints,1): #p is looping over integration points in element elLabel[el]
 					detJ[el,p]=np.linalg.det(J[p,el,:,:])
 					Jinvp[p,:,:]=np.linalg.inv(J[p,el,:,:])	
@@ -1378,7 +1389,7 @@ def Get2DdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName,surf):
 					dudx[el,p,1,:]=np.dot(tmp,ENU2[:,el])
 					dudx[el,p,2,:]=np.dot(tmp,ENU3[:,el])
 				
-	return 	dudx,elLabel
+	return 	dudx
 	
 def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 	#This routine returns data for surface integration defined by nodes using the
@@ -1404,12 +1415,12 @@ def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 		nconn = np.array(el.connectivity) #list of node labels
 		
 		#get nodes of element on the surface 
-		nOnSurf= nOnSurf=np.array([item in nlabels for item in nconn])
+		nOnSurf=np.array([item in nlabels for item in nconn])
 		surf[cnt]=C3D20_GetElementSurface(nOnSurf)
 		cnt+=1
 	
 	#Get stress and energy for the elements
-	S3D,_,_,_ = GetStress(root,frame,elSetName)
+	S3D,elLabel,_,_ = GetStress(root,frame,elSetName)
 	EE3D,_,nEl,nInt = GetStrain(root,frame,elSetName)
 	W3D = GetW(S3D,EE3D,nEl,nInt)
 
@@ -1426,7 +1437,7 @@ def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 	S[:,:,2,1] = S[:,:,1,2]
 	W = Convert_Gauss_to_Face_integration(W3D,surf,elements)
 
-	return S,W,surf
+	return S,W,surf,elLabel
 
 def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
 	#inputs:
@@ -1531,6 +1542,23 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				_,wp = Gauss_Guad_3d(3)
 				wp = np.reshape(wp,(-1))
 				
+									
+				W2=np.zeros((nEl,nInt),dtype='float64')
+				#returns strain energy for a linear elastic material
+				for el in range(0,nEl,1):
+					for p in range(0,nInt,1):
+						for i in range(0,3,1):
+							for j in range(0,3,1):
+								e=0.5*(dudX[el,p,i,j]+dudX[el,p,j,i])
+								if i!=j:
+									W2[el,p]+=0.5*S[el,p,i,j]*e
+								else:
+									W2[el,p]+=0.5*S[el,p,i,j]*e
+									
+									
+					
+				
+				
 				##Perform quadrature
 				##====================
 				Jbar=0
@@ -1541,10 +1569,10 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 						Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),dqdX[el,p,:])*detJac[el,p]*wp[p]
 				
 				if isSymm: 
-					JAll[sliceCnt]=2*Jbar/intLcL
+					JAll[sliceCnt]=2*Jbar/(intLcL)
 				else: 
 					JAll[sliceCnt]=Jbar/intLcL
-
+				print JAll[sliceCnt]
 				sliceCnt+=1
 			fobj.close()
 			fobj = open(fname, 'a+')
@@ -1643,15 +1671,16 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 					nEls=len(elsm)
 					elSet = root.elementSets[elSetInterfaceBottom]
-					Sm,Wm,surfm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
-					dudXm,_ = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
-					
+					Sm,Wm,surfm,elLabelm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
+					dudXm = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
+					#print surfm
+
 					#At the top
 					elsp=root.elementSets[elSetInterfaceTop].elements[0]
 					elSet = root.elementSets[elSetInterfaceTop]
-					Sp,Wp,surfp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
-					dudXp,_ = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfm)
-
+					Sp,Wp,surfp,elLabelp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
+					dudXp = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfp)
+					#print surfp
 
 					#Average stress 
 					S=(Sp+Sm)/2.0
@@ -1661,7 +1690,7 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					W=Wp-Wm
 					
 					#Get the area Jacobian
-					detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsm)
+					detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsp)
 					
 					#Get q 
 					enq23D,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
@@ -1676,6 +1705,35 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					if contourId==contours[0]:
 						fobj.write(',%f' % (slicePos))
 					
+					
+					W2p=np.zeros((nEls,9),dtype='float64')
+					#returns strain energy for a linear elastic material
+					for el in range(0,nEls,1):
+						for p in range(0,9,1):
+							for i in range(0,3,1):
+								for j in range(0,3,1):
+									e=0.5*(dudXp[el,p,i,j]+dudXp[el,p,j,i])
+									if i!=j:
+										W2p[el,p]+=0.5*Sp[el,p,i,j]*e
+									else:
+										W2p[el,p]+=0.5*Sp[el,p,i,j]*e
+										
+					W2m=np.zeros((nEls,9),dtype='float64')
+					#returns strain energy for a linear elastic material
+					for el in range(0,nEls,1):
+						for p in range(0,9,1):
+							for i in range(0,3,1):
+								for j in range(0,3,1):
+									e=0.5*(dudXm[el,p,i,j]+dudXm[el,p,j,i])
+									if i!=j:
+										W2m[el,p]+=0.5*Sm[el,p,i,j]*e
+									else:
+										W2m[el,p]+=0.5*Sm[el,p,i,j]*e
+									
+					W2=W2p-W2m
+					
+					#print W2m
+					#print W
 					##Perform quadrature
 					##====================
 					Jbar=0
@@ -1683,13 +1741,28 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 					krd2[1]=1
 					for el in range(0,nEls,1):
 						for p in range(0,9,1):
-							Jbar=Jbar+np.dot((np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2),z)*detJac[el,p]*wp[p]
+							#dS=detJac[el,p]*wp[p] #verified good for elements in interface
+							tmp=np.dot(Sp[el,p,:,:],dudXp[el,p,:,1])-np.dot(Sm[el,p,:,:],dudXm[el,p,:,1])
+							Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W2[el,p]*krd2,z)*detJac[el,p]*wp[p]
+						
+						#if elLabelp[el]==1: 
+						#	#should get 0.028887 for element 1. Test is good!
+						#print 'detJac areas for el# ',elLabelp[el]
+						#area=0
+						#for p in range(0,9,1):
+						#	area+=detJac[el,p]*wp[p]
+						#print area
+						#print 'S, int 0,  for el# ',elLabelp[el],elLabelm[el]
+						#p =0
+						#print Sp[el,p,:,:]
+						#print Sm[el,p,:,:]
 					
-					print Jbar
 					if isSymm: 
-						JInt[sliceCnt]=2*Jbar/intLcL
+						JInt[sliceCnt]=2*Jbar/(intLcL*2)
 					else: 
 						JInt[sliceCnt]=Jbar/intLcL
+					print JInt[sliceCnt]
+
 				else: 
 					JInt[sliceCnt]=0.0
 					if contourId==contours[0]:
