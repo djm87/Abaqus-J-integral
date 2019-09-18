@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=38 
+nContourLvls=45 
 
 #Set the first node label at the crack tip 
 nodeLabelTip=32 
@@ -76,19 +76,19 @@ buildElSet=False
 SetPrefix='test-contour'
 
 #Should the J integral be computed
-computeJ=True
+computeJ=False
 
 #Should the J integral due to interfaces be computed
 computeJInterface=True
-
+JIntFnamePrefix='Js_Interface_'
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=[3,35]#range(28) #explicitly [0,1,2] for instance
+contours=range(45) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
 frameNumbers=[-1]
 
 #Which slices should be evaluated (a list)
-slices=[0]#range(9)
+slices=range(9)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
@@ -114,14 +114,21 @@ else:
 if buildElSet:
 	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance) #Move elements inside
 
+t1=time.time()
 if computeJ:
 	CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)
 
+t2=time.time()
 if computeJInterface:
-	CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)
-	
+	CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JIntFnamePrefix)
+t3=time.time()	
 if saveOdb:
 	odb.save()
 	
 if closeAfterOdb:
 	odb.close()
+
+print "time report"
+print '++++++++++++'
+print 'time in J integral Volume',t2-t1
+print 'time in J integral Surface',t3-t2
