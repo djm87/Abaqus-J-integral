@@ -8,6 +8,7 @@ import pprint
 import time
 import sys
 import math
+from collections import Counter
 from Utilities import *
 from Integration import *
 from C3D20 import *
@@ -93,7 +94,84 @@ def GetElMaterial(part,elements,sectionElSetRange):
 			elMaterial[e.label-1]=True
 	
 	return elMaterial
+
+def GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,contour):
+	#This is a recursive function that builds the Q nodes sets. Some optimization had to be done
+	#since it is quite slow if done with naive loops
+	#Inputs: elSets is a numpy array containing the element sets of elements
+	linInd = contour*nSlices+slice
+	linIndp1c = (contour+1)*nSlices+slice			
 	
+	if contour>0:
+		Q1Nset,nSetRingInside,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets=GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,contour-1)
+
+		#get nodes in contour set
+		elSet=np.array(elSets[linInd])-1
+		nSet=np.array([], dtype=int)
+		for e in elSet:
+			#get nodes in each element in elInsideset
+			nSet=np.append(nSet,np.array(elements[e].connectivity))
+
+		elSetOutside=np.array(elSets[linIndp1c])-1
+		elSetRing=elSetOutside[~np.in1d(elSetOutside,elSet)]
+		
+		nSetRing=np.array([], dtype=int)
+		for e in elSetRing:
+			#get nodes in each element in elSetRing
+			nSetRing=np.append(nSetRing,np.array(elements[e].connectivity))
+			
+			
+		unionRing=np.in1d(nSetRing,nSetRingInside)
+		Q0Nset=nSetRing[unionRing] #good	
+		Q0Nset=nSetRing[np.in1d(nSetRing,nSetRingInside)]
+		Q0p5Nset=nSetRingInside[~np.in1d(nSetRingInside,Q0Nset)]
+		Q0p5Nset=Q0p5Nset[~np.in1d(Q0p5Nset,Q1Nset)]
+		
+		Q0Nsets[contour]=Q0Nset
+		Q0p5Nsets[contour]=Q0p5Nset
+		Q1Nsets[contour]=Q1Nset
+		sliceNsets[contour]=nSet
+		
+		#Return Q1Nset for contour+1
+		return nSet,nSetRing[~unionRing],Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets
+		
+	else: 
+		#get nodes in contour set
+		elSet=np.array(elSets[linInd])-1
+		nSet=np.array([], dtype=int)
+		Q1Nset=np.array([], dtype=int)
+		for e in elSet:
+			
+			conn=np.array(elements[e].connectivity)
+			#count times each node shows up. If repeated it is a collapsed node and part of Q1
+			count=Counter(conn)
+			for c in conn: 
+				if count[c] > 1: 
+					Q1Nset=np.append(Q1Nset,c) #good
+					
+			nSet=np.append(nSet,conn)
+
+		elSetOutside=np.array(elSets[linIndp1c])-1
+		elSetRing=elSetOutside[~np.in1d(elSetOutside,elSet)]
+		
+		nSetRing=np.array([], dtype=int)
+		for e in elSetRing:
+			#get nodes in each element in elSetRing
+			nSetRing=np.append(nSetRing,np.array(elements[e].connectivity))
+		
+		unionRing=np.in1d(nSetRing,nSet)
+		Q0Nset=nSetRing[unionRing] #good
+		Q0p5Nset=nSet[~np.in1d(nSet,Q0Nset)]
+		Q0p5Nset=Q0p5Nset[~np.in1d(Q0p5Nset,Q1Nset)]
+		
+		Q0Nsets[contour]=Q0Nset
+		Q0p5Nsets[contour]=Q0p5Nset
+		Q1Nsets[contour]=Q1Nset
+		sliceNsets[contour]=nSet
+
+		#Return Q1Nset for contour+1
+		return nSet,nSetRing[~unionRing],Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets
+		
 def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance):
 	#Get components of odb
 	root=odb.rootAssembly
@@ -218,82 +296,21 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			tUnion=tUnion+time.time()-tlast
 	t1=time.time()
 	#build nodeSets: setq1, setq0p5, setq0, setSlice
-	for contour in range(0,nContours,1):
-		for slice in range(0,nSlices,1):
-			linInd = contour*nSlices+slice
-			linIndp1c = (contour+1)*nSlices+slice			
-			if contour > 0:
-				linIndm1c = (contour-1)*nSlices+slice
-				elInsideset = np.array(sets[linIndm1c])
-				elset = np.array(sets[linInd])
-				elsetp1 = np.array(sets[linIndp1c])
-				elOutsideset=elsetp1[~np.in1d(elsetp1,elset)]
-				
-				#start loading up the node sets
-				nsetQ1 = [] 
-				for e in elInsideset:
-					#get nodes in each element in elInsideset
-					toappend = np.array(elements[e-1].connectivity)
-					for n in toappend:
-						nsetQ1.append(n)
-									
-				nsetQ0 = []
-				for e in elOutsideset:
-					#get nodes in each element in elOutsideset
-					toappend = np.array(elements[e-1].connectivity)
-					for n in toappend:
-						nsetQ0.append(n)
-
-					
-			else: 
-				elset = np.array(sets[linInd])
-				elsetp1 = np.array(sets[linIndp1c])
-				elOutsideset=elsetp1[~np.in1d(elsetp1,elset)]
-				
-				nsetQ1 = [] 
-				#for the inner ring use the yx based coordinates 
-				for e in elset:
-					toappend = np.array(elements[e-1].connectivity)	
-					for n in toappend: 
-						if isclose(allNodes[n-1].coordinates[pos1],allNodes[nodeLabelTip-1].coordinates[pos1]) and \
-							isclose(allNodes[n-1].coordinates[pos2],allNodes[nodeLabelTip-1].coordinates[pos2]):
-							nsetQ1.append(n)
-	
-					#get nodes in each element in elInsideset
-							
-									
-				nsetQ0 = []
-				for e in elOutsideset:
-					#get nodes in each element in elInsideset
-					toappend = np.array(elements[e-1].connectivity)
-					for n in toappend:
-						nsetQ0.append(n)
-			#get all node we are interested in in the nodesets nsetQ0, etc..
-			nsetSlice = [] #empty tuple
-			for e in sets[linInd]:
-				#get nodes in each element in elset
-				toappend = np.array(elements[e-1].connectivity)
-				for n in toappend:
-					nsetSlice.append(n)
-					
-			#trim node sets by unions
-			nsetQ0=np.array(nsetQ0)
-			nsetQ1=np.array(nsetQ1)
-			nsetSlice=np.array(nsetSlice)
-			
-			nsetQ0=nsetQ0[np.in1d(nsetQ0,nsetSlice)]
-			nsetQ0p5=nsetSlice[~np.in1d(nsetSlice,nsetQ0)]
-			nsetQ0p5=tuple(nsetQ0p5[~np.in1d(nsetQ0p5,nsetQ1)])
-
-
+	for slice in range(0,nSlices,1):
+		Q0Nsets = {}
+		Q0p5Nsets = {}
+		Q1Nsets = {}
+		sliceNsets = {}
+		_,_,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets=GetQSet(elements,sets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,nContours-1)
+		for contour in range(0,nContours,1):
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ0)),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(Q0Nsets[contour])),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0p5'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ0p5)),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(Q0p5Nsets[contour])),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q1'
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetQ1)),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(Q1Nsets[contour])),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
-			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(nsetSlice)),)) 
+			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(sliceNsets[contour])),)) 
 			
 	t2=time.time()		
 	
@@ -396,16 +413,16 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 	
 	t4=time.time()
 	
-	print "time report"
-	print '++++++++++++'
-	print 'time in first loop',t1-t0
-	print 'time in first loop get El',tGetEl
-	print 'time in first loop get union',tUnion
-	print 'time in second loop',t2-t1
-	print 'time in third loop',t3-t2
-	print 'time in third loop',t4-t3
-	print '++++++++++++'
-	print '++++++++++++'	
+	#print "time report"
+	#print '++++++++++++'
+	#print 'time in first loop',t1-t0
+	#print 'time in first loop get El',tGetEl
+	#print 'time in first loop get union',tUnion
+	#print 'time in second loop',t2-t1
+	#print 'time in third loop',t3-t2
+	#print 'time in third loop',t4-t3
+	#print '++++++++++++'
+	#print '++++++++++++'	
 
 	return odb
 	
@@ -1471,6 +1488,69 @@ def BuildDataForSIFrom3DI(nodes,elements,elSetName,allNodes,root,frame):
 
 	return S,surf,elLabel
 
+def WriteJToFile(namePrefix,contours,slices,J,pos,TTAU):
+	##open file to write Js to
+	time= '%5.3f' % (TTAU)
+	fname=namePrefix+str(TTAU)+'.txt'
+	fobj = open(fname, 'w')
+	
+	#write header for with contour levels
+	fobj.write('%f' % (float('nan'))) #spot holder in upper right corner of table
+	for contour in contours: 
+		fobj.write(',%d' % (contour))
+	for slice in range(0,len(slices),1):	
+		fobj.write('\n%f' % (pos[slice]))
+		for contour in range(0,len(contours),1): 
+			fobj.write(',%f' % (J[slice,contour]))
+	fobj.close()
+
+def GetContourMask(els,elLabel):
+	elLabelSub=[]
+	for el in els:
+		elLabelSub.append(el.label)
+		
+	mask=np.in1d(np.array(elLabel),np.array(elLabelSub))
+	
+	return mask
+
+def GetCrackFrontInterface(root,allNodes,nSetSlice,firstCrackNodeLabel): 
+	#reconstruct crack node front going towards 0 in z
+	nodesSlice=root.nodeSets[nSetSlice].nodes[0]
+	nFirstCrack=allNodes[firstCrackNodeLabel-1]
+	posAxis=[]
+	posAxis.append(nFirstCrack.coordinates[0])
+	posAxis.append(nFirstCrack.coordinates[1])
+	
+	CFnSet=[]
+	CFPosz=[]
+	for n in nodesSlice: 
+		if n.coordinates[0]==posAxis[0] and n.coordinates[1]==posAxis[1]:
+			CFnSet.append(n.label)
+			CFPosz.append(n.coordinates[2])
+			
+	CFnSet,ind=np.unique(np.array(CFnSet), return_index=True)
+	CFPosz=np.array(CFPosz)
+	CFPosz=CFPosz[ind]
+	ind=np.argsort(CFPosz)
+	CFnSet=CFnSet[ind]
+	CFnSet=CFnSet[::-1] #Skips mid nodes
+	CFPosz=CFPosz[ind]
+	CFPosz=CFPosz[::-1] #Skips mid nodes
+	
+	if CFPosz[-1]==0 and len(CFnSet)==3:
+		L=[1.0,1.0,1.0]
+		PoszOut=0
+	elif len(CFnSet)==3:
+		L=[1.0,1.0,1.0]
+		PoszOut=CFPosz[0]
+	else: 
+		L=[1.0,1.0,1.0,1.0,1.0]
+		PoszOut=CFPosz[2]	
+		
+	LenCrackFront=GetTrapIntLc(CFPosz,L) #returns the length of the interface
+		
+	return PoszOut,LenCrackFront
+	
 def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
 	#inputs:
 	#an odb with node sets and element made by BuildElementAndNodeSets
@@ -1595,14 +1675,16 @@ def CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,n
 				
 		fobj.close()
 
-def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance): 
-	#inputs:
-	#an odb with node sets and element made by BuildElementAndNodeSets
-	#frame for computation, must include U,S, and EE (the mechanical strains
-	#
-	#output: 
-	# J(s) - energy release rate along the crack front that is due to the interfaces
+def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JIntFnamePrefix): 
+	##This routine calculates the material force at surfaces where there is a change in material between elements and integrates
+	##the material force over the interface.
+	##Assumptions: C3D20 elements, small strains, interface normal [0,1,0], crack extension direction [0,1,0], straight crackfront
+	##Assumptions: nodeLabelTip is not at zero
+	##output: J-Interface(s) - energy release rate along the crack front that is due to the interfaces
+	##==============================================================================================================
 	
+	##Initialize Abaqus variables
+	##=============================
 	#Get components of odb
 	root=odb.rootAssembly
 	#Get elements
@@ -1624,126 +1706,130 @@ def CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,Se
 	# Get frames in step
 	frames=step.frames
 
-	#Initialize J data container 
-	JInt=np.zeros((len(slices)),dtype='float64')
+	#Initialize J data container and slice position so we can later write to file
+	JInt=np.zeros((len(slices),len(contours)),dtype='float64')
 
-	#loop over frames
+	slicePosition=np.zeros((len(slices)),dtype='float64')
+	
+	#Sort slice and contour lists
+	contours.sort(reverse = True) #starts with largest contour first to save computations
+	slices.sort()	
+	
+	##loop over specified frames and compute J
+	##======================
 	for frameId in frameNumbers:
-		#Get the frame and time
+		##Get the frame and time
+		##======================
 		frame = frames[frameId]
 		TTAU = frame.frameValue
 		
 		#Check that the necessary field variables exist at the appropriate locations
+		##==========================================
 		CheckFieldExists(frame,'U','NODAL') #displacements
-		CheckFieldExists(frame,'EE','INTEGRATION_POINT') #mechanical strain 
 		CheckFieldExists(frame,'S','INTEGRATION_POINT') #stress 
-	
-	
-		#open file to write Js to
-		fname='Js-at-time-'+str(TTAU)+'Interface.txt'
-		fobj = open(fname, 'w')
-		#write empty header
-		fobj.write('%f' % (float('nan')))
+				
+		##loop over the slices and contours specified
+		##==========================================
+		for slice in range(0,len(slices),1):
+			sliceId=slices[slice]
+			print 'Processing slice #:',sliceId
 			
-		#loop over each contour level to be computed 
-		for contourId in contours:	
-			sliceCnt=0
-			print 'Processing Contour: ', contourId
-			for sliceId in slices:
-				print 'slice #:',sliceId
+			#Get slice position and the crack length for the slice
+			nSetSlice=SetPrefix+'-contour-'+str(contours[-1])+'-slice-'+str(sliceId)
+			CheckSetExists(root,nSetSlice,'node')
+			slicePosition[slice],LenCrackFront=GetCrackFrontInterface(root,allNodes,nSetSlice,nodeLabelTip) 
+			
+			for contour in range(0,len(contours),1):
+				contourId=contours[contour]
+				print '___Contour: ', contourId
+				
 				##build the node set and element set names 
 				##========================================
 				nSetSlice=SetPrefix+'-contour-'+str(contourId)+'-slice-'+str(sliceId)
-				nSetQ0=nSetSlice+'-Q0'
-				nSetQ0p5=nSetSlice+'-Q0p5'
-				nSetQ1=nSetSlice+'-Q1'
 				nSetInterface=nSetSlice+'-interface'
-				elSetSlice=nSetSlice
 				elSetInterfaceBottom=nSetSlice+'-interfaceBottom'
 				elSetInterfaceTop=nSetSlice+'-interfaceTop'
-
-				#Check that node and element sets exist	(ensures only that they exist, not that they are valid..)
-				CheckSetExists(root,nSetQ0,'node')
-				CheckSetExists(root,nSetQ0p5,'node')
-				CheckSetExists(root,nSetQ1,'node')
+				
+				##Check that node and element sets exist	(ensures only that they exist, not that they are valid..)
+				##=====================================
 				CheckSetExists(root,nSetInterface,'node')
-				CheckSetExists(root,nSetSlice,'node')
-				CheckSetExists(root,elSetSlice,'element')
 				CheckSetExists(root,elSetInterfaceBottom,'element')
 				CheckSetExists(root,elSetInterfaceTop,'element')
 				
-				if root.elementSets[elSetInterfaceBottom].elements!=None:
-					#Set the surface normal 
-					z=np.array([0,1,0])
-		
-					#Get quantities at integration points on the surface
-					nodes=root.nodeSets[nSetInterface].nodes[0]
-					
-					#At the bottom
-					elsm=root.elementSets[elSetInterfaceBottom].elements[0]
-					nEls=len(elsm)
-					elSet = root.elementSets[elSetInterfaceBottom]
-					Sm,surfm,elLabelm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
-					dudXm = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
-					Wm = GetW(Sm,dudXm,nEls,9)
+				##For a slice compute all data once and after that just compute a mask based on the elementsets
+				##============================================================================================
+				t00=time.time()
+				InterfaceElements=root.elementSets[elSetInterfaceBottom].elements
+				if InterfaceElements!=None:
+					#If the largest contour compute all quantities
+					if contour==0:
+						#Set the surface normal 
+						z=np.array([0,1,0])
+			
+						#Get the nodes at the interface
+						nodes=root.nodeSets[nSetInterface].nodes[0]
+						
+						#At the bottom of the interface
+						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
+						nEls=len(elsm)
+						elSet = root.elementSets[elSetInterfaceBottom]
+						Sm,surfm,elLabelm=BuildDataForSIFrom3DI(nodes,elsm,elSetInterfaceBottom,allNodes,root,frame)
+						dudXm = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
+						Wm = GetW(Sm,dudXm,nEls,9)
 
-					#At the top
-					elsp=root.elementSets[elSetInterfaceTop].elements[0]
-					elSet = root.elementSets[elSetInterfaceTop]
-					Sp,surfp,elLabelp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
-					dudXp = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfp)
-					Wp = GetW(Sp,dudXp,nEls,9)
+						#At the top of the interface
+						elsp=root.elementSets[elSetInterfaceTop].elements[0]
+						elSet = root.elementSets[elSetInterfaceTop]
+						Sp,surfp,elLabelp=BuildDataForSIFrom3DI(nodes,elsp,elSetInterfaceTop,allNodes,root,frame)		
+						dudXp = Get2DdudX(root,partInstance,frame,allNodes,nSetInterface,elSetInterfaceTop,surfp)
+						Wp = GetW(Sp,dudXp,nEls,9)
 
-					#Average stress 
-					S=(Sp+Sm)/2.0
-					
-					#Take differences accross the interface
-					dudX=dudXp-dudXm
-					W=Wp-Wm
-					
-					#Get the area Jacobian
-					detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsp)
-					
-					#Get q (Move GetqNew to just get slice position.
-					enq23D,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
+						#Average stress 
+						S=(Sp+Sm)/2.0
+						
+						#Take differences accross the interface
+						dudX=dudXp-dudXm
+						W=Wp-Wm
+						
+						#Get the area Jacobian
+						detJac = Get2DdetJac(root,frame,partInstance,surfp,allNodes,elsp)
+						
+						#_,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
 
-					#Get the Gauss weights (independent on the face so chose random face=1)
-					_,wp=Gauss_Guad_Psuedo_2d(3,1)
-					
-					#print positions of each Js value as header
-					if contourId==contours[0]:
-						fobj.write(',%f' % (slicePos))
-													
+						
+						#Get the Gauss weights (independent on the face so chose random face=1)
+						_,wp=Gauss_Guad_Psuedo_2d(3,1)
+						
+						#Initialize the croneker delta evaluation 
+						krd2=np.zeros((3),dtype='float64')
+						krd2[1]=1
+						
+						#Create mask with all values true
+						mask=np.ones(nEls,dtype=bool)
+						
+						#Export spatial data
+						#to be done!
+						
+					else:
+						#Compute a mask for calculations
+						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
+						mask = GetContourMask(elsm,elLabelm)
+				
 					##Perform quadrature
 					##====================
 					Jbar=0
-					krd2=np.zeros((3),dtype='float64')
-					krd2[1]=1
 					for el in range(0,nEls,1):
-						for p in range(0,9,1):
-							#dS=detJac[el,p]*wp[p] #verified good for elements in interface
-							#tmp=np.dot(Sp[el,p,:,:],dudXp[el,p,:,1])-np.dot(Sm[el,p,:,:],dudXm[el,p,:,1])
-							Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,z)*detJac[el,p]*wp[p]
-						
+						if mask[el]:
+							for p in range(0,9,1):
+								Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,z)*detJac[el,p]*wp[p]
 					
+					##Normalize and store J
+					##====================
 					if isSymm: 
-						JInt[sliceCnt]=2*Jbar/(intLcL*2)
+						JInt[slice][contour]=2*Jbar/LenCrackFront
 					else: 
-						JInt[sliceCnt]=Jbar/intLcL
-					print JInt[sliceCnt]
-
-				else: 
-					JInt[sliceCnt]=0.0
-					if contourId==contours[0]:
-						_,_,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
-						fobj.write(',%f' % (slicePos))
-					
-				sliceCnt+=1
-			fobj.close()
-			fobj = open(fname, 'a+')
-			#print processed contour values to file
-			fobj.write('\n%d' % (contourId))	
-			for i in range(0,len(slices),1):
-				fobj.write(',%f' % (JInt[i]))
+						JInt[slice][contour]=Jbar/LenCrackFront
 				
-		fobj.close()
+		##Write the computed J values to a file 
+		##=====================================
+		WriteJToFile(JIntFnamePrefix,contours,slices,JInt,slicePosition,TTAU)	
