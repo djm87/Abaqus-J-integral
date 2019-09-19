@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=45 
+nContourLvls=46 
 
 #Set the first node label at the crack tip 
 nodeLabelTip=32 
@@ -76,19 +76,35 @@ buildElSet=False
 SetPrefix='test-contour'
 
 #Should the J integral be computed
-computeJ=False
+computeJ=True
+JFnamePrefix='Js_fineStep_'
 
-#Should the J integral due to interfaces be computed
+#Should the J integral around interfaces be computed
 computeJInterface=True
-JIntFnamePrefix='Js_Interface_'
+JInt=np.array([])
+JIntFnamePrefix='Js_Interface_fineStep_'
+
+#Should the stress intensity factor be computed
+computeK=True
+KFnamePrefix='Ks_fineStep_'
+E=70e9
+v=0.3
+
+#unit scaling
+#For this model we used stress Pa=N/m^2, length mm, and energy 1E-9J as consistent units
+#1E-9J/mm^2*1E6mm^2/m^2 -> unitFactor=0.001 for J/m^2
+Junit=1e3 #uJ/m^2
+Kunit=1e-6#KPa*sqrt(m) 
+
+
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(45) #explicitly [0,1,2] for instance
+contours=range(0,45,1) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
 frameNumbers=[-1]
 
 #Which slices should be evaluated (a list)
-slices=range(9)
+slices=[0]#range(10)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
@@ -110,18 +126,23 @@ if copyOdb:
 else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
-
+t0=time.time()
 if buildElSet:
 	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance) #Move elements inside
 
 t1=time.time()
-if computeJ:
-	CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)
+if computeJInterface:
+	JInt=CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JIntFnamePrefix)
 
 t2=time.time()
-if computeJInterface:
-	CalculateDomainJIntegralInterface(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JIntFnamePrefix)
+if computeJ:
+	J=CalculateDomainJIntegral(Junit,JInt,stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JFnamePrefix)	
+
 t3=time.time()	
+if computeK:
+	CalculateK(Kunit,J,E,v,KFnamePrefix,SetPrefix,contours,slices,nodeLabelTip,stepNumber,frameNumbers,odb,partInstance)
+	
+t4=time.time()
 if saveOdb:
 	odb.save()
 	
@@ -130,5 +151,7 @@ if closeAfterOdb:
 
 print "time report"
 print '++++++++++++'
-print 'time in J integral Volume',t2-t1
-print 'time in J integral Surface',t3-t2
+print 'time building sets',t1-t0
+print 'time in J integral Surface',t2-t1
+print 'time in J integral Volume',t3-t2
+print 'time in J to KI',t4-t3

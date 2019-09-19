@@ -19,7 +19,6 @@ try:
 except KeyError:
 	print 'No modules to remove'
 
-
 from Utilities import *
 from JCore import *
 
@@ -43,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=False 
+copyOdb=True 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -53,43 +52,67 @@ saveOdb=False
 #Set the part instance to perform calculations on
 partInstance = "PLATE-1"
 
-
 ##The following are specific to the J integral 
 #The crack front axis
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=12 
+nContourLvls=14 
 
 #Set the first node label at the crack tip 
 nodeLabelTip=17 
+
+#Set the beginning and ending elSet range for the material sections
+sectionElSetRange=[8]#range(2,4,1) #e.g. range(2,4,1)=[2,3]
 
 #model is symmetric about the crack tip (matters only for scaling J integral by 2)
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=False
+buildElSet=True
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-SetPrefix='test'
+SetPrefix='test-contour'
 
 #Should the J integral be computed
 computeJ=True
+JFnamePrefix='Js_'
+
+#Should the J integral around interfaces be computed
+computeJInterface=False
+JInt=np.array([])
+JIntFnamePrefix='Js_Interface_'
+
+#Should the stress intensity factor be computed
+computeK=True
+KFnamePrefix='Ks_'
+E=200e9
+v=0.32
+
+#unit scaling
+#For this model we used stress Pa=N/m^2, length mm, and energy 1E-9J as consistent units
+#1E-9J/mm^2*1E6mm^2/m^2 -> unitFactor=0.001 for J/m^2
+Junit=1 #uJ/m^2
+Kunit=1#KPa*sqrt(m) 
+
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(12) #explicitly [0,1,2] for instance
+contours=range(0,13,2) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
 frameNumbers=[-1]
 
 #Which slices should be evaluated (a list)
-slices=range(20)
+slices=range(0,21,1)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
+
+
 #******************************************************************************
 #Open ODB
 #******************************************************************************
+
 if closeBeforeOdb:
 	if copyOdb:
 		Ensure_ODB_Is_Closed(copyodbPath,session)
@@ -102,14 +125,32 @@ if copyOdb:
 else:
 	odb = openOdb(path=odbPath,readOnly=readOnlyOdb)
 
+t0=time.time()
 if buildElSet:
-	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,odb,partInstance) #Move elements inside
+	odb = BuildElementAndNodeSets(nContourLvls,SetPrefix,nodeLabelTip,crackFrontAxis,sectionElSetRange,odb,partInstance) #Move elements inside
 
+t1=time.time()
+if computeJInterface:
+	JInt=CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JIntFnamePrefix)
+
+t2=time.time()
 if computeJ:
-	CalculateDomainJIntegral(stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance)
+	J=CalculateDomainJIntegral(Junit,JInt,stepNumber,frameNumbers,contours,slices,SetPrefix,nodeLabelTip,isSymm,odb,partInstance,JFnamePrefix)	
+
+t3=time.time()	
+if computeK:
+	CalculateK(Kunit,J,E,v,KFnamePrefix,SetPrefix,contours,slices,nodeLabelTip,stepNumber,frameNumbers,odb,partInstance)
 	
+t4=time.time()
 if saveOdb:
 	odb.save()
 	
 if closeAfterOdb:
 	odb.close()
+
+print "time report"
+print '++++++++++++'
+print 'time building sets',t1-t0
+print 'time in J integral Surface',t2-t1
+print 'time in J integral Volume',t3-t2
+print 'time in J to KI',t4-t3

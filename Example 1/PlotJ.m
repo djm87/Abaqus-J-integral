@@ -21,6 +21,14 @@ KI_Infinite=sig*sqrt(pi*a)
 v=0.32
 E=200e9
 K1=sqrt(data1(10,2)*(E/(1-v^2)))
-K2=sqrt(data2(5,2)*(E/(1-v^2)))
+K2=sqrt(7.213E-04*(E/(1-v^2)))
+K1=1.268935E+04
 Error1 =abs(KI_Infinite-K1)/KI_Infinite*100
 Error2 =abs(KI_Infinite-K2)/KI_Infinite*100
+Error3 =abs(K1-K2)/K1*100
+%%
+E1=70e9
+v=0.3
+K1=sqrt(32.285*(E1/(1-v^2)))
+K2=sqrt(32.2998*(E1/(1-v^2)))
+Error3 =abs(K1-K2)/K1*100
