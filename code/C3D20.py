@@ -265,13 +265,23 @@ def Convert_Coordinate_Nodal_to_Face_integration(nodes,component,faces,elements)
 	
 	return dataElSurf			
 
-def Convert_Q2_to_Face_integration(dataElNodal,facem,elsm,facep,elsp,elslice):
-
+def Convert_Q2_to_Face_integration(dataElNodal,facem,elsm,elslice,z):
+	#dataElNodal needs to be in nodes x elements array
 	dataElSurf=np.zeros((len(elsm), 9,3),dtype='float64')
 	ellabelsm=np.array([v.label for v in elsm])
-	ellabelsp=np.array([v.label for v in elsp])
 	ellabelsslice=np.array([v.label for v in elslice])
-
+	
+	#First we should map dataElNodal to interface element sets
+	inElInterfacem=np.in1d(ellabelsslice,ellabelsm)
+	dataElNodaltmp=np.zeros((len(elsm),20),dtype='float64')
+	for i in range(0,len(inElInterfacem),1): 
+		elabel=ellabelsslice[i]
+		if inElInterfacem[i]: 
+			indEl=np.where(ellabelsm==elabel)
+			dataElNodaltmp[indEl,:]=dataElNodal[:,i]
+	
+	dataElNodal=np.transpose(dataElNodaltmp)
+	
 	for f in range(1,7,1):
 		#scale natural nodal coordinates due to shift in basis from nodal to Gauss points
 		points,_ =Gauss_Guad_Psuedo_2d(3,f)
@@ -287,19 +297,15 @@ def Convert_Q2_to_Face_integration(dataElNodal,facem,elsm,facep,elsp,elslice):
 			tmp = C3D20_Shape(r,Bi)
 			tmp = np.squeeze(tmp)
 			h[i,:]=tmp
-			#print tmp
 		
 		#compute the interpolated values dataElSurftmp
 		dataElSurftmp = np.dot(h,dataElNodal) #produces a nPointxnEl array
 		cnt=0
 		for el in range(0,len(elsm),1):	
-			#This may be slow..
-			if facem[el]==f and np.in1d(ellabelsm[el],ellabelsslice):
-				dataElSurf[el,:,1]=np.reshape(dataElSurftmp[:,np.in1d(ellabelsslice,ellabelsm[el])],9)
-				
-			elif facep[el]==f and np.in1d(ellabelsp[el],ellabelsslice):
-				dataElSurf[el,:,1]=np.reshape(dataElSurftmp[:,np.in1d(ellabelsslice,ellabelsp[el])],9)	
-				
+			if facem[el]==f:
+				for i in range(0,3,1):
+					dataElSurf[el,:,i]=dataElSurftmp[:,el]*z[i]
+
 	return dataElSurf	
 	
 def Convert_Gauss_to_Face_integration(dataGauss,faces,elements):

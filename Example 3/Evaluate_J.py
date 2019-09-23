@@ -29,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="J-Indenter_Quarter"
+odbName="J-Indenter_Quarter_copy"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -42,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=True 
+copyOdb=False 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=46 
+nContourLvls=21
 
 #Set the first node label at the crack tip 
 nodeLabelTip=1780 
@@ -70,7 +70,7 @@ sectionElSetRange=range(0,125,1) #e.g. for sets include 0 through 124
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=True
+buildElSet=False
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
 SetPrefix='test-contour'
@@ -98,13 +98,13 @@ Kunit=1 #sqrt(1e-6J/um^2 N/um^2  )
 
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(0,45,1) #explicitly [0,1,2] for instance
+contours=range(0,20,1) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
-frameNumbers=range(2,10,1)
+frameNumbers=[-1]#range(2,10,1)
 
 #Which slices should be evaluated (a list)
-slices=range(29)
+slices=[0]#range(29)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1

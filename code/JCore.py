@@ -916,7 +916,105 @@ def GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,firstCrackNodeLabel,root,allNodes,e
 	dataElementNodal = np.transpose(dataElementNodal)
 	
 	return dataElementNodal
+
+def GetqNew2D(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,firstCrackNodeLabel,root,allNodes,elSetName,L,rPoszRelTol,CFPosz):
+	
+	nodesQ0=root.nodeSets[nSetQ0].nodes[0] #Outside nodes
+	nodesQ1=root.nodeSets[nSetQ1].nodes[0] #Inside nodes
+	nodesQ0p5=root.nodeSets[nSetQ0p5].nodes[0] #In between nodes
+	nodesSlice=root.nodeSets[nSetSlice].nodes[0]
+	elements=root.elementSets[elSetName].elements[0]
+	#elLabel = [el.label for el in elements]
+	
+	#build the element node connectivity since we want Q defined at 
+	#element nodal locations for compute the gradient
+	connectivityMat=np.zeros((len(elements), len(elements[0].connectivity)))
+	cnt=0
+	for el in elements:
+		connectivityMat[cnt,:]=el.connectivity
+		cnt+=1
+	
+	#reshape connectivity to linear array
+	connectivityMat = connectivityMat.astype(int)
+	connectivity=np.reshape(connectivityMat,(-1,1))
+	lenConnectivty=len(connectivity)
+	
+	#convert connectivity to a dictionary so node labels can be used to index position
+	conn={}
+	for n in connectivity: 
+		conn[n[0]]=-1
+	
+	#This is the same as the 3D case except Q0, Q0p5 and Q1 are all set to L along the crack front!
+	#Initialize Q0
+	lenq=len(nodesQ0)
+	labelq=np.zeros((lenq),dtype='int64')
+	Coord2q=np.zeros((lenq),dtype='float64')		
+	for i in range(0,lenq,1):
+		n=nodesQ0[i]
+		labelq[i]=n.label
+		Coord2q[i]=n.coordinates[2]
 		
+	for p in range(0,len(CFPosz)):	
+		labelq2=labelq[np.abs(Coord2q-CFPosz[p])<rPoszRelTol]	
+		q=np.array(L[p])
+		for i in range(0,len(labelq2),1):
+				conn[labelq2[i]]=q
+		
+	#Initialize Q0.5
+	lenq=len(nodesQ0p5)
+	labelq=np.zeros((lenq),dtype='int64')
+	Coord2q=np.zeros((lenq),dtype='float64')		
+	for i in range(0,lenq,1):
+		n=nodesQ0p5[i]
+		labelq[i]=n.label
+		Coord2q[i]=n.coordinates[2]
+		
+	for p in range(0,len(CFPosz)):	
+		labelq2=labelq[np.abs(Coord2q-CFPosz[p])<rPoszRelTol]	
+		q=np.array(L[p])
+		for i in range(0,len(labelq2),1):
+				conn[labelq2[i]]=q
+			
+	#Initialize Q1
+	lenq=len(nodesQ1)
+	labelq=np.zeros((lenq),dtype='int64')
+	Coord2q=np.zeros((lenq),dtype='float64')		
+	for i in range(0,lenq,1):
+		n=nodesQ1[i]
+		labelq[i]=n.label
+		Coord2q[i]=n.coordinates[2]
+		
+	for p in range(0,len(CFPosz)):	
+		labelq2=labelq[np.abs(Coord2q-CFPosz[p])<rPoszRelTol]	
+		q=np.array(L[p])
+		for i in range(0,len(labelq2),1):
+				conn[labelq2[i]]=q
+				
+						
+	#map everything back to dataElementNodal
+	dataElementNodal=np.zeros((lenConnectivty),dtype='float64')
+	#fobj = open('debug_q3d.txt', 'w')
+	for i in range(0,lenConnectivty): 
+		#id=connectivity[i][0]
+		#crd=allNodes[id-1].coordinates
+		#label=allNodes[id-1].label
+		#fobj.write('%d,%f,%f,%f,%f\n' % (label,crd[0],crd[1],crd[2],conn[id]))
+		dataElementNodal[i]=conn[connectivity[i][0]]
+		
+	#fobj.close()
+	if any(x==-1 for x in conn):
+		print '=================' 
+		print 'not all of the q could be set appriately!! You must fix before J can be calculated'
+		print '=================' 
+		raise
+		
+	#Remove dimensions of size 1, reshape to #nodes/element * #element array
+	dataElementNodal = np.squeeze(dataElementNodal)
+	dataElementNodal = np.reshape(dataElementNodal,(len(elements),-1))
+	dataElementNodal = np.transpose(dataElementNodal)
+	
+	return dataElementNodal
+	
 def Getq(nSetQ0,nSetQ0p5,nSetQ1,allNodes,AxisPosition1,AxisPosition2,AxisPosition3,elSetName):
 	
 	nodesQ0=root.nodeSets[nSetQ0].nodes[0]
@@ -1502,7 +1600,7 @@ def GetContourMask(els,elLabel):
 	
 	return mask
 	
-def WriteSpatialJint(namePrefix,S,dudX,W,detJac,wp,krd2,z,allNodes,elements,surf,slice,TTAU,factor):
+def WriteSpatialJint(namePrefix,S,dudX,W,detJac,wp,krd2,lz,allNodes,elements,surf,slice,TTAU,factor):
 	##Get the coordinates of the integration points on the element surfaces
 	COORD1=Convert_Coordinate_Nodal_to_Face_integration(allNodes,0,surf,elements)	#nElements x nPoints
 	COORD2=Convert_Coordinate_Nodal_to_Face_integration(allNodes,1,surf,elements)	#nElements x nPoints
@@ -1520,12 +1618,11 @@ def WriteSpatialJint(namePrefix,S,dudX,W,detJac,wp,krd2,z,allNodes,elements,surf
 	Jint=0
 	for el in range(0,len(elements),1):
 		for p in range(0,9,1):
-			J=factor*np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,z)*detJac[el,p]*wp[p]
-			Jint+=J
+			J=factor*np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz[el,p,:])#*detJac[el,p]*wp[p]
+			#J=factor*np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz)#*detJac[el,p]*wp[p]
 			fobj.write('%f, %f, %f, %f, %d\n' % (J,COORD1[el,p],COORD2[el,p],COORD3[el,p],slice))
 	
 	fobj.close()
-	return Jint
 	
 def GetCrackFrontInterface(root,allNodes,nSetSlice,firstCrackNodeLabel): 
 
@@ -1967,7 +2064,7 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 			#Get slice position and the crack length for the slice
 			nSetSlice=SetPrefix+'-contour-'+str(contours[-1])+'-slice-'+str(sliceId)
 			CheckSetExists(root,nSetSlice,'node')
-			slicePosition[slice],LenCrackFront=GetCrackFrontInterface2D(root,allNodes,nSetSlice,nodeLabelTip) 
+			slicePosition[slice],L,Lc,rPoszRelTol,CFPosz=GetCrackFrontInterface(root,allNodes,nSetSlice,nodeLabelTip) 
 			
 			for contour in range(0,len(contours),1):
 				contourId=contours[contour]
@@ -1976,13 +2073,22 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 				##build the node set and element set names 
 				##========================================
 				nSetSlice=SetPrefix+'-contour-'+str(contourId)+'-slice-'+str(sliceId)
+				nSetQ0=nSetSlice+'-Q0'
+				nSetQ0p5=nSetSlice+'-Q0p5'
+				nSetQ1=nSetSlice+'-Q1'
 				nSetInterface=nSetSlice+'-interface'
+				elSetSlice=nSetSlice
 				elSetInterfaceBottom=nSetSlice+'-interfaceBottom'
 				elSetInterfaceTop=nSetSlice+'-interfaceTop'
 				
 				##Check that node and element sets exist	(ensures only that they exist, not that they are valid..)
 				##=====================================
+				CheckSetExists(root,nSetQ0,'node')
+				CheckSetExists(root,nSetQ0p5,'node')
+				CheckSetExists(root,nSetQ1,'node')
+				CheckSetExists(root,nSetSlice,'node')
 				CheckSetExists(root,nSetInterface,'node')
+				CheckSetExists(root,elSetSlice,'element')
 				CheckSetExists(root,elSetInterfaceBottom,'element')
 				CheckSetExists(root,elSetInterfaceTop,'element')
 				
@@ -1999,14 +2105,14 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						#At the bottom of the interface
 						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 						nEls=len(elsm)
-						elSet = root.elementSets[elSetInterfaceBottom]
+						elsSetm = root.elementSets[elSetInterfaceBottom].elements[0]
 						Sm,surfm,elLabelm=Get2DStress(nodes,elsm,elSetInterfaceBottom,allNodes,root,cframe)
 						dudXm,elLabelm = Get2DdudX(root,partInstance,cframe,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
 						Wm = GetW(Sm,dudXm,nEls,9)
 
 						#At the top of the interface
 						elsp=root.elementSets[elSetInterfaceTop].elements[0]
-						elSet = root.elementSets[elSetInterfaceTop]
+						elsSetp = root.elementSets[elSetInterfaceTop].elements[0]
 						Sp,surfp,elLabelp=Get2DStress(nodes,elsp,elSetInterfaceTop,allNodes,root,cframe)		
 						dudXp,elLabelp2 = Get2DdudX(root,partInstance,cframe,allNodes,nSetInterface,elSetInterfaceTop,surfp)
 						Wp = GetW(Sp,dudXp,nEls,9)
@@ -2021,8 +2127,10 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						#Get the area Jacobian
 						detJac,elLabel = Get2DdetJac(root,cframe,partInstance,surfp,allNodes,elsp)
 						
-						#_,intLcL,slicePos=GetqNew(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,isSymm)
-
+						#Get Q2 along L
+						Q2EN=GetqNew2D(nSetQ0,nSetQ0p5,nSetQ1,nSetSlice,nodeLabelTip,root,allNodes,elSetSlice,L,rPoszRelTol,CFPosz)
+						elSlice = root.elementSets[elSetSlice].elements[0]
+						lz=Convert_Q2_to_Face_integration(Q2EN,surfm,elsm,elSlice,z)													
 						
 						#Get the Gauss weights (independent on the face so chose random face=1)
 						_,wp=Gauss_Guad_Psuedo_2d(3,1)
@@ -2032,32 +2140,32 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						krd2[1]=1
 										
 						if isSymm:
-							factor=Junit*2.0/LenCrackFront
+							factor=Junit*2.0/Lc 
 						else:
-							factor=Junit*1.0/LenCrackFront
+							factor=Junit*1.0/Lc
 						
 						#Export spatial data of the material force as energy density
 						#Currently exporting J/m^3*m^2/m.. not the density. Fix when units are fixed
-						JInt[frame][slice][contour]=WriteSpatialJint(JIntFnamePrefix,S,dudX,W,detJac,wp,krd2,z,allNodes,elsm,surfm,slice,TTAU,factor)	
+						WriteSpatialJint(JIntFnamePrefix,S,dudX,W,detJac,wp,krd2,lz,allNodes,elsm,surfm,slice,TTAU,1.0)	
 
-						print 'Jint =',JInt[frame][slice][contour]
+						#Initialize mask
+						mask=np.ones((len(elsm)),dtype='bool')
 					else:
 						#Compute a mask for calculations
 						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 						mask = GetContourMask(elsm,elLabelm)
 
-						##Perform quadrature
-						##====================
-						Jbar=0
-						for el in range(0,nEls,1):
-							if mask[el]:
-								for p in range(0,9,1):
-									Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,z)*detJac[el,p]*wp[p]
-								
+					##Perform quadrature
+					##====================
+					Jbar=0
+					for el in range(0,nEls,1):
+						if mask[el]:
+							for p in range(0,9,1):
+								Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz[el,p,:])*detJac[el,p]*wp[p]
 
-						#Store Jint
-						JInt[frame][slice][contour]=factor*Jbar
-						print 'Jint =',JInt[frame][slice][contour]
+					#Store Jint
+					JInt[frame][slice][contour]=factor*Jbar
+					print 'Jint =',JInt[frame][slice][contour]
 
 		##Write the computed J values to a file 
 		##=====================================

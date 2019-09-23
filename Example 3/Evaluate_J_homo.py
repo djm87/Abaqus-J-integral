@@ -29,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="CT-3D-Fine-mesh_halfPrecision"
+odbName="J-Indenter_Quarter_homo"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -42,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=False 
+copyOdb=True 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -58,53 +58,53 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=46 
+nContourLvls=31
 
 #Set the first node label at the crack tip 
-nodeLabelTip=32 
+nodeLabelTip=1780 
 
 #Set the beginning and ending elSet range for the material sections
-sectionElSetRange=range(2,4,1) #e.g. range(2,4,1)=[2,3]
+sectionElSetRange=range(0,125,1) #e.g. for sets include 0 through 124
 
 #model is symmetric about the crack tip (matters only for scaling J integral by 2)
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=False
+buildElSet=True
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-SetPrefix='JIntergral'
+SetPrefix='test-contour'
 
 #Should the J integral be computed
 computeJ=True
 JFnamePrefix='Js_'
 
 #Should the J integral around interfaces be computed
-computeJInterface=True
+computeJInterface=False
 JInt=np.array([])
-JIntFnamePrefix='Js_Interface_fineStep_'
+JIntFnamePrefix='Js_Interface_'
 
 #Should the stress intensity factor be computed
 computeK=True
-KFnamePrefix='Ks_fineStep_'
-E=70e9
+KFnamePrefix='Ks_'
+E=60e3
 v=0.3
 
 #unit scaling
-#For this model we used stress Pa=N/m^2, length mm, and energy 1E-9J as consistent units
-#1E-9J/mm^2*1E6mm^2/m^2 -> unitFactor=0.001 for J/m^2
-Junit=1e3 #uJ/m^2
-Kunit=1e-6#KPa*sqrt(m) 
+#This model doesn't seem to have consistent SI units based on the modulus values and lengths.. revisit
+#
+Junit=1 #1e-6J/um^2 
+Kunit=1 #sqrt(1e-6J/um^2 N/um^2  ) 
 
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(0,45,1) #explicitly [0,1,2] for instance
+contours=range(0,30,1) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
-frameNumbers=[-1]
+frameNumbers=[-1]#range(2,10,1)
 
 #Which slices should be evaluated (a list)
-slices=[0]#range(10)
+slices=[0]#range(29)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1

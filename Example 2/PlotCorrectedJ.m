@@ -1,5 +1,5 @@
-Jtip=load('Js_fineStep_corrected_1.000.txt')
-Jfar=load('Js_fineStep_1.000.txt')
+Jtip=load('Js_corrected_1.000.txt')
+Jfar=load('Js_1.000.txt')
 
 figure1 = figure;
 
