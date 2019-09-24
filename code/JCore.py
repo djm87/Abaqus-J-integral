@@ -382,17 +382,23 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 
 				elsetInterfaceTop=masterElSetInterfaceTop[elementsToKeep]
 				elsetInterfaceBottom=masterElSetInterfaceBottom[elementsToKeep]
-				n=[]
+				ntop=[]
 				for e in elsetInterfaceTop:
 					ntmp=np.array(elements[e-1].connectivity)
 					for toappend in ntmp:
-						n.append(toappend)
+						ntop.append(toappend)
+				nbottom=[]		
 				for e in elsetInterfaceBottom:
 					ntmp=np.array(elements[e-1].connectivity)
 					for toappend in ntmp:
-						n.append(toappend)
-				n=np.array(n)
-				nsetInterface=masterNSetInterface[np.in1d(masterNSetInterface,n)]	
+						nbottom.append(toappend)
+
+				tmp1=np.in1d(masterNSetInterface,np.array(ntop))
+				tmp2=np.in1d(masterNSetInterface,np.array(nbottom))
+				nodesToKeep=np.zeros((len(tmp2)),dtype='bool')
+				for i in range(0,len(tmp2),1):
+					nodesToKeep[i]=tmp1[i]==tmp2[i] and tmp2[i]
+				nsetInterface=masterNSetInterface[nodesToKeep]	
 					
 			#Ensure unique (now should be handled by a clean master set
 			#nsetInterface=np.unique(np.array(nsetInterface))
@@ -1525,13 +1531,14 @@ def Get2DdudX(root,partInstance,frame,allNodes,nodeSetName,elSetName,surf):
 				
 	return 	dudx,elLabel
 	
-def Get2DStress(nodes,elements,elSetName,allNodes,root,frame):
+	
+def Get2DStress(nodes,elements1,elements2,elSetName,allNodes,root,frame):
 	#This routine returns data for surface integration defined by nodes using the
 	#data at integration points in elements/elSet 
 	#Quantities returned: Stress,du/dX,W, and q
 	#number of elements and integration points
-	
-	nElements=len(elements)
+
+	nElements=len(elements1)
 	nInt2D=9 #2D
 	
 	#load node labels into array
@@ -1544,13 +1551,24 @@ def Get2DStress(nodes,elements,elSetName,allNodes,root,frame):
 	#Get the face of each element where the surface is
 	surf=np.zeros((nElements),dtype='uint8')#may be useful so storing.. 
 	cnt=0
-	for el in elements:
-		#elem=elements[elem]
-		e     = el.label
-		nconn = np.array(el.connectivity) #list of node labels
+	for i in range(0,nElements,1):
+		#Get on one side of the interface
+		el1=elements1[i]
+		e1     = el1.label
+		nconn1 = np.array(el1.connectivity) #list of node labels
+		
+		#Get on other side of interface
+		el2=elements2[i]
+		e2     = el2.label
+		nconn2 = np.array(el2.connectivity) #list of node labels
 		
 		#get nodes of element on the surface 
-		nOnSurf=np.array([item in nlabels for item in nconn])
+		nOnSurf=np.array([item in nconn2 for item in nconn1])
+		
+		#nOnSurf=nconnm[np.in1d(nconnm,nconnp)]
+		#print nconnm
+		#print nconnp
+		#print nOnSurf
 		surf[cnt]=C3D20_GetElementSurface(nOnSurf)
 		cnt+=1
 		
@@ -1559,12 +1577,12 @@ def Get2DStress(nodes,elements,elSetName,allNodes,root,frame):
 
 	#Interpolate from gauss to surface positions
 	S = np.zeros((nElements,nInt2D,3,3),dtype='float64')
-	S[:,:,0,0] = Convert_Gauss_to_Face_integration(S3D[:,:,0,0],surf,elements)
-	S[:,:,1,1] = Convert_Gauss_to_Face_integration(S3D[:,:,1,1],surf,elements)
-	S[:,:,2,2] = Convert_Gauss_to_Face_integration(S3D[:,:,2,2],surf,elements)
-	S[:,:,0,1] = Convert_Gauss_to_Face_integration(S3D[:,:,0,1],surf,elements)
-	S[:,:,0,2] = Convert_Gauss_to_Face_integration(S3D[:,:,0,2],surf,elements)
-	S[:,:,1,2] = Convert_Gauss_to_Face_integration(S3D[:,:,1,2],surf,elements)
+	S[:,:,0,0] = Convert_Gauss_to_Face_integration(S3D[:,:,0,0],surf,elements1)
+	S[:,:,1,1] = Convert_Gauss_to_Face_integration(S3D[:,:,1,1],surf,elements1)
+	S[:,:,2,2] = Convert_Gauss_to_Face_integration(S3D[:,:,2,2],surf,elements1)
+	S[:,:,0,1] = Convert_Gauss_to_Face_integration(S3D[:,:,0,1],surf,elements1)
+	S[:,:,0,2] = Convert_Gauss_to_Face_integration(S3D[:,:,0,2],surf,elements1)
+	S[:,:,1,2] = Convert_Gauss_to_Face_integration(S3D[:,:,1,2],surf,elements1)
 	S[:,:,1,0] = S[:,:,0,1]
 	S[:,:,2,0] = S[:,:,0,2]
 	S[:,:,2,1] = S[:,:,1,2]
@@ -2104,19 +2122,20 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						
 						#At the bottom of the interface
 						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
+						elsp=root.elementSets[elSetInterfaceTop].elements[0]
 						nEls=len(elsm)
 						elsSetm = root.elementSets[elSetInterfaceBottom].elements[0]
-						Sm,surfm,elLabelm=Get2DStress(nodes,elsm,elSetInterfaceBottom,allNodes,root,cframe)
-						dudXm,elLabelm = Get2DdudX(root,partInstance,cframe,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
+						Sm,surfm,elLabelm=Get2DStress(nodes,elsm,elsp,elSetInterfaceBottom,allNodes,root,cframe)
+						dudXm,_ = Get2DdudX(root,partInstance,cframe,allNodes,nSetInterface,elSetInterfaceBottom,surfm)
 						Wm = GetW(Sm,dudXm,nEls,9)
 
 						#At the top of the interface
-						elsp=root.elementSets[elSetInterfaceTop].elements[0]
 						elsSetp = root.elementSets[elSetInterfaceTop].elements[0]
-						Sp,surfp,elLabelp=Get2DStress(nodes,elsp,elSetInterfaceTop,allNodes,root,cframe)		
+						Sp,surfp,elLabelp=Get2DStress(nodes,elsp,elsm,elSetInterfaceTop,allNodes,root,cframe)		
 						dudXp,elLabelp2 = Get2DdudX(root,partInstance,cframe,allNodes,nSetInterface,elSetInterfaceTop,surfp)
 						Wp = GetW(Sp,dudXp,nEls,9)
-
+						
+						
 						#Average stress 
 						S=(Sp+Sm)/2.0
 						
@@ -2150,11 +2169,12 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 
 						#Initialize mask
 						mask=np.ones((len(elsm)),dtype='bool')
+						
 					else:
 						#Compute a mask for calculations
 						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 						mask = GetContourMask(elsm,elLabelm)
-
+						
 					##Perform quadrature
 					##====================
 					Jbar=0
@@ -2162,6 +2182,8 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						if mask[el]:
 							for p in range(0,9,1):
 								Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz[el,p,:])*detJac[el,p]*wp[p]
+													
+							print elLabelm[el],elLabelp[el],surfm[el],surfm[el],S[el,0,0,0]
 
 					#Store Jint
 					JInt[frame][slice][contour]=factor*Jbar
