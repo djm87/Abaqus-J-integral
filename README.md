@@ -11,6 +11,6 @@ The results of (Simha, N.K. et al 2005) are reproduced. Mainly, the material for
 Similar to Example 2, but with the addition of many interfaces.
 
 # Documentation 
-All theory and examples are presented in the [summary](https://github.com/djm87/Abaqus-J-integral/blob/master/Documentation/Summary.pdf) document.
+All theory and examples are presented in the [Summary](https://github.com/djm87/Abaqus-J-integral/blob/master/Documentation/Summary.pdf) document.
 
 For the literature referenced in the summary document see the [Documentation](https://github.com/djm87/Abaqus-J-integral/tree/master/Documentation) folder.
