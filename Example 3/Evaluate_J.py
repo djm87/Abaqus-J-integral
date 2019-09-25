@@ -29,7 +29,7 @@ workingDir=os.getcwd()
 #Run options 
 #******************************************************************************
 #ODB name 
-odbName="J-Indenter_Quarter_copy"
+odbName="J-Indenter-All-structured"
 odbPath = os.path.normpath(workingDir+"/odb/"+odbName+".odb")
 
 #Open odb read only mode
@@ -42,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=False 
+copyOdb=True 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -58,7 +58,7 @@ partInstance = "SPECIMEN-1"
 crackFrontAxis=3 #i.e. 3 is along the z direction
 
 #Set the number of contour levels
-nContourLvls=45
+nContourLvls=60
 
 #Set the first node label at the crack tip 
 nodeLabelTip=1780 
@@ -70,22 +70,22 @@ sectionElSetRange=range(0,125,1) #e.g. for sets include 0 through 124
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=False
+buildElSet=True
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
 SetPrefix='test-contour'
 
 #Should the J integral be computed
-computeJ=True
+computeJ=False
 JFnamePrefix='Js_'
 
 #Should the J integral around interfaces be computed
-computeJInterface=True
+computeJInterface=False
 JInt=np.array([])
 JIntFnamePrefix='Js_Interface_'
 
 #Should the stress intensity factor be computed
-computeK=True
+computeK=False
 KFnamePrefix='Ks_'
 E=60e3
 v=0.3

@@ -218,6 +218,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 	tGetEl=0
 	
 	t0=time.time()
+	print 'Building Slice Element sets'
 	#compute nContours + 1 due to how node sets are defined and for interfaces to be appropriately captured
 	for contour in range(0,nContours+1,1):
 		if contour==0:
@@ -298,8 +299,11 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 					tmp1=tmp1[~np.in1d(tmp1,tmp2)]
 					sets[linInd]=list(tmp1)
 			tUnion=tUnion+time.time()-tlast
+	print 'Time=',time.time()-t0		
+			
 	t1=time.time()
 	#build nodeSets: setq1, setq0p5, setq0, setSlice
+	print 'Building Q node sets'
 	for slice in range(0,nSlices,1):
 		Q0Nsets = {}
 		Q0p5Nsets = {}
@@ -315,9 +319,10 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(Q1Nsets[contour])),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(sliceNsets[contour])),)) 
-			
+	print 'Time=',time.time()-t1		
+		
 	t2=time.time()		
-	
+	print 'Building interface sets'
 	#build the interface sets
 	for slice in range(0,nSlices,1):		
 		for contour in range(nContours-1,-1,-1):
@@ -414,7 +419,8 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-interfaceBottom'
 			root.ElementSetFromElementLabels(name = setName, elementLabels = ((partInstance,tuple(elsetInterfaceBottom)),)) 	
-			
+	print 'Time=',time.time()-t2	
+	
 	t3=time.time()
 	#write element sets to odb 
 	for contour in range(0,nContours,1):
@@ -1971,7 +1977,7 @@ def CalculateDomainJIntegral(Junit,JInt,stepNumber,frameNumbers,contours,slices,
 					mask=np.ones(nEl,dtype=bool)
 
 				else:
-					#Compute a mask for calculations
+					#Compute a mask for sub contours
 					els=root.elementSets[elSetSlice].elements[0]
 					mask = GetContourMask(els,SElLabels)
 
@@ -2139,7 +2145,7 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						#Average stress 
 						S=(Sp+Sm)/2.0
 						
-						#Take differences accross the interface
+						#Take differences across the interface
 						dudX=dudXp-dudXm
 						W=Wp-Wm
 						
@@ -2154,7 +2160,7 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 						#Get the Gauss weights (independent on the face so chose random face=1)
 						_,wp=Gauss_Guad_Psuedo_2d(3,1)
 						
-						#Initialize the croneker delta evaluation 
+						#Initialize the Kronecker delta evaluation 
 						krd2=np.zeros((3),dtype='float64')
 						krd2[1]=1
 										
@@ -2169,9 +2175,8 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 
 						#Initialize mask
 						mask=np.ones((len(elsm)),dtype='bool')
-						
 					else:
-						#Compute a mask for calculations
+						#Compute a mask sub contours
 						elsm=root.elementSets[elSetInterfaceBottom].elements[0]
 						mask = GetContourMask(elsm,elLabelm)
 						
