@@ -17,6 +17,7 @@ def GetCrackFrontNodes(allNodes,firstCrackNodeLabel,q):
 
 	#reconstruct crack node front going towards 0 in z
 	nFirstCrack=allNodes[firstCrackNodeLabel-1]
+
 	posAxis=[]
 	cOnAxis=[]
 	for i in range(0,3,1):
@@ -103,6 +104,7 @@ def GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,c
 	linIndp1c = (contour+1)*nSlices+slice			
 	
 	if contour>0:
+		
 		Q1Nset,nSetRingInside,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets=GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,contour-1)
 
 		#get nodes in contour set
@@ -141,7 +143,7 @@ def GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,c
 		nSet=np.array([], dtype=int)
 		Q1Nset=np.array([], dtype=int)
 		for e in elSet:
-			
+			#print e
 			conn=np.array(elements[e].connectivity)
 			#count times each node shows up. If repeated it is a collapsed node and part of Q1
 			count=Counter(conn)
@@ -150,7 +152,7 @@ def GetQSet(elements,elSets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,c
 					Q1Nset=np.append(Q1Nset,c) #good
 					
 			nSet=np.append(nSet,conn)
-
+		#raise
 		elSetOutside=np.array(elSets[linIndp1c])-1
 		elSetRing=elSetOutside[~np.in1d(elSetOutside,elSet)]
 		
@@ -186,7 +188,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 	#Get nodes
 	allNodes = root.instances[partInstance].nodes
 	labels,CFPosx,CFPosy,position,pos1,pos2 = GetCrackFrontNodes(allNodes,nodeLabelTip,crackFrontAxis)
-	
+
 	#debug labels
 	#for i in range(0,len(labels),1):
 	#	print labels[i],position[i],CFPosx[i],CFPosy[i]
@@ -309,6 +311,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 		Q0p5Nsets = {}
 		Q1Nsets = {}
 		sliceNsets = {}
+		print slice
 		_,_,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets=GetQSet(elements,sets,Q0Nsets,Q0p5Nsets,Q1Nsets,sliceNsets,slice,nSlices,nContours-1)
 		for contour in range(0,nContours,1):
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)+'-Q0'
@@ -319,6 +322,7 @@ def BuildElementAndNodeSets(nContours,SetPrefix,nodeLabelTip,crackFrontAxis,sect
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(Q1Nsets[contour])),)) 
 			setName=SetPrefix+'-contour-' + str(contour) +'-slice-'+str(slice)
 			root.NodeSetFromNodeLabels(name = setName, nodeLabels = ((partInstance,tuple(sliceNsets[contour])),)) 
+	
 	print 'Time=',time.time()-t1		
 		
 	t2=time.time()		
@@ -1644,7 +1648,7 @@ def WriteSpatialJint(namePrefix,S,dudX,W,detJac,wp,krd2,lz,allNodes,elements,sur
 		for p in range(0,9,1):
 			J=factor*np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz[el,p,:])#*detJac[el,p]*wp[p]
 			#J=factor*np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz)#*detJac[el,p]*wp[p]
-			fobj.write('%f, %f, %f, %f, %d\n' % (J,COORD1[el,p],COORD2[el,p],COORD3[el,p],slice))
+			fobj.write('%E, %f, %f, %f, %d\n' % (J,COORD1[el,p],COORD2[el,p],COORD3[el,p],slice))
 	
 	fobj.close()
 	
@@ -2188,7 +2192,7 @@ def CalculateDomainJIntegralInterface(Junit,stepNumber,frameNumbers,contours,sli
 							for p in range(0,9,1):
 								Jbar+=np.dot(np.dot(S[el,p,:,:],dudX[el,p,:,1])-W[el,p]*krd2,lz[el,p,:])*detJac[el,p]*wp[p]
 													
-							print elLabelm[el],elLabelp[el],surfm[el],surfm[el],S[el,0,0,0]
+							#print elLabelm[el],elLabelp[el],surfm[el],surfm[el],S[el,0,0,0]
 
 					#Store Jint
 					JInt[frame][slice][contour]=factor*Jbar

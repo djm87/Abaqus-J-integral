@@ -1,6 +1,11 @@
 Jtip=load('Js_corrected_3.000.txt')
 Jfar=load('Js_3.000.txt')
-
+Jtip=load('Js_corrected_0.300.txt')
+Jfar=load('Js_0.300.txt')
+Jtip=load('Js_lowest_micron_finalcorrected_10.000.txt')
+Jfar=load('Js_lowest_micron_final10.000.txt')
+Jtip=load('Js_lowest_micron_finalcorrected_0.350.txt')
+Jfar=load('Js_lowest_micron_final0.350.txt')
 figure1 = figure;
 
 % Create axes

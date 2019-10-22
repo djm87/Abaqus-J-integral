@@ -42,7 +42,7 @@ closeBeforeOdb=True
 closeAfterOdb=False
 
 #Copy odb to new odb if writing 
-copyOdb=True 
+copyOdb=False 
 copyodbNameEnd="_copy"
 copyodbPath=os.path.normpath(workingDir+"/odb/"+odbName+copyodbNameEnd+".odb")
 
@@ -70,22 +70,22 @@ sectionElSetRange=range(0,125,1) #e.g. for sets include 0 through 124
 isSymm=True
 
 #Build element sets (needed for calculating the J integral
-buildElSet=True
+buildElSet=False
 
 #Element set preface name (Once a set has been added with this name it cannot be overwritten or removed)
-SetPrefix='test-contour'
+SetPrefix='user-defined'
 
 #Should the J integral be computed
-computeJ=False
+computeJ=True
 JFnamePrefix='Js_'
 
 #Should the J integral around interfaces be computed
-computeJInterface=False
+computeJInterface=True
 JInt=np.array([])
 JIntFnamePrefix='Js_Interface_'
 
 #Should the stress intensity factor be computed
-computeK=False
+computeK=True
 KFnamePrefix='Ks_'
 E=60e3
 v=0.3
@@ -98,13 +98,13 @@ Kunit=1 #sqrt(1e-6J/um^2 N/um^2  )
 
 
 #Which contours should be evaluated (a list and cant exceed the number of contours in ElSet)
-contours=range(0,27,1) #explicitly [0,1,2] for instance
+contours=range(0,60,1) #explicitly [0,1,2] for instance
 
 #Which frame should be evaluate (a list, a frame corresponds to some time, -1 is automatically the last frame)
-frameNumbers=[-1]#range(2,10,1)
+frameNumbers=[3,-1]#range(2,10,1)
 
 #Which slices should be evaluated (a list)
-slices=[0]#range(29)
+slices=[0,5,10]#range(29)
 
 #Specify the step number (not a list, -1 is automatically the last step) 
 stepNumber=-1
